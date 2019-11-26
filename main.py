@@ -107,7 +107,9 @@ class PyMenu():
         self.main_menu.set_fps(FPS)
 
         #main loop
-        while True:
+        exit = False
+        self.main_menu.mainloop()
+        while not exit:
 
             #it's just fps limitation
             self.clock.tick(FPS)
@@ -117,15 +119,25 @@ class PyMenu():
 
             #events
             events = pygame.event.get()
+            print(str(events))
             for event in events:
                 if event.type == pygame.QUIT:
-                    exit()
+                    exit = True
+                elif event.type == pygame.KEYDOWN:
+                    print("keydown!")
+                    if event.key == pygame.K_ESCAPE and self.main_menu.is_enabled():
+                        exit = True
 
             # Main menu
             self.main_menu.mainloop(events, disable_loop=False)
 
             # Flip surface
             pygame.display.flip()
+
+        print("bye")
+        exit()
+
+
 
     def progressbar(self):
         #hide main menu
@@ -134,7 +146,11 @@ class PyMenu():
 
         time = random.random()
 
-        while time<=1.002:
+        exit = False
+
+        while time<=1.002 and not exit:
+
+            self.clock.tick(FPS)
 
             self.main_background()
 
@@ -161,27 +177,24 @@ class PyMenu():
             txt = FONT.render(str(round(time, 2)), True, color)
             self.surface.blit(txt, (20, 20))
 
-            self.clock.tick(FPS)
 
             time+=0.002
 
             # Application events
             events = pygame.event.get()
+            print(str(events))
             for e in events:
                 if e.type == pygame.QUIT:
                     exit()
                 elif e.type == pygame.KEYDOWN:
                     if e.key == pygame.K_ESCAPE and self.main_menu.is_disabled():
-                        self.main_menu.enable()
-                        # Quit this function, then skip to loop of main-menu on line 317
-                        return
-
-            #pass events to mainmenu (previous menu)
-            self.main_menu.mainloop(events)
+                        exit = True
 
             pygame.display.flip()
 
-        exit()
+        #self.main_menu.mainloop(events, disable_loop=False)
+        self.main_menu.enable()
+        self.main_menu.reset(1)
 
 
 if __name__ == '__main__':
