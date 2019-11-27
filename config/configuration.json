@@ -1,6 +1,6 @@
 {
-  "accountHashId" : "c0357e4daa3e83048eec7d1f2f3d6a5418e2b005f7a8e1b2e31fb9bb47151990",
-  "accountId":"00000001",
-  "firstname":"dummyname",
-  "lastname":"dummylastname"
+    "accountHashId": "c0357e4daa3e83048eec7d1f2f3d6a5418e2b005f7a8e1b2e31fb9bb47151990", 
+    "surname": "dummy surname", 
+    "name": "dummy name", 
+    "accountId": "00000001"
 }
