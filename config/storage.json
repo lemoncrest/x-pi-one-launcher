@@ -8,6 +8,12 @@
       "title" : "retro mario",
       "thumbnail" : "Mario-Level-1/screenshot.png",
       "launcher": "python2 Mario-Level-1/mario_level_1.py"
+    },
+    {
+      "id": "0002",
+      "title" : "pong",
+      "thumbnail" : "Pong-Python/thumbnail.png",
+      "launcher": "python2 Pong-Python/Pong.py"
     }
   ]
 }
