@@ -5,6 +5,7 @@ import pygameMenu
 import json
 import random
 import os
+import subprocess
 #os.environ['SDL_VIDEO_CENTERED'] = '1'
 
 COLOR_BACKGROUND = (61, 61, 202)
@@ -43,7 +44,8 @@ class PyMenu():
         pygame.init()
 
         # Create pygame screen and objects
-        self.surface = pygame.display.set_mode(WINDOW_SIZE)
+        #self.surface = pygame.display.set_mode(WINDOW_SIZE)
+        self.surface = pygame.display.set_mode(WINDOW_SIZE, pygame.HWSURFACE | pygame.DOUBLEBUF)
         pygame.display.set_caption('Menu principal')
         self.clock = pygame.time.Clock()
 
@@ -182,7 +184,11 @@ class PyMenu():
                             selected+=1
                     elif e.key == pygame.K_RETURN:
                         #close and launch program
-                        pass
+                        path2 = os.path.join(path,data["games"][selected]["source"])
+                        cmd = "cd %s && %s" % (path2,data["games"][selected]["launcher"])
+                        subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
+                        #os.system(cmd)
+                        #exit()
                 else:
                     print(str(e))
             pygame.display.flip()
@@ -209,8 +215,7 @@ class PyMenu():
         pygame.draw.rect(self.surface, COLOR_GRAY, flow, 0)
 
         #now draw image if exists
-        thumbnail = element["thumbnail"]
-        filename = os.path.join(path,thumbnail)
+        filename = os.path.join(path,element["source"],element["thumbnail"])
 
         picture = pygame.image.load(filename)
         pic = pygame.transform.scale(picture, (300, 300))
