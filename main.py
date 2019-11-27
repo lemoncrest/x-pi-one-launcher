@@ -2,7 +2,7 @@
 
 import pygame
 import pygameMenu
-
+import json
 import random
 
 #import os
@@ -138,15 +138,18 @@ class PyMenu():
             pygame.display.flip()
         exit()
 
-    def save_name(self,name):
-        print("%s saved!"%name)
+    def save_firstname(self,name):
+        print("%s saved!1"%name)
+
+    def save_lastname(self,name):
+        print("%s saved!2"%name)
 
     def createSettingsMenu(self):
 
         self.settings_menu = pygameMenu.Menu(self.surface,
             bgfun=self.main_background,
             color_selected=COLOR_BLUE,
-            font=pygameMenu.font.FONT_8BIT,
+            font=pygameMenu.font.FONT_COMIC_NEUE,
             font_color=COLOR_LIGHT_GREEN,
             font_size=30,
             menu_alpha=70,
@@ -161,10 +164,13 @@ class PyMenu():
             window_height=WINDOW_SIZE[1],
             window_width=WINDOW_SIZE[0]
         )
-        self.settings_menu.add_text_input('First name: ', default='Bit', onreturn=self.save_name)
-        self.settings_menu.add_option('Return to menu', pygameMenu.events.BACK)
+        #load settings
+        with open('config/configuration.json') as json_file:
+            data = json.load(json_file)
 
-        print("done!")
+            self.settings_menu.add_text_input('First name: ', default=str(data["firstname"]), onreturn=self.save_firstname)
+            self.settings_menu.add_text_input('Last name: ', default=str(data["lastname"]), onreturn=self.save_lastname)
+            self.settings_menu.add_option('Return to menu', pygameMenu.events.BACK)
 
     def progressbar(self):
         #hide main menu
