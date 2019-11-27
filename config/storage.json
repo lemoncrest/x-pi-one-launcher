@@ -1,0 +1,13 @@
+{
+  "repo":{
+    "path":"/home/user/Descargas/"
+  },
+  "games":[
+    {
+      "id": "0001",
+      "title" : "retro mario",
+      "thumbnail" : "Mario-Level-1/screenshot.png",
+      "launcher": "python2 Mario-Level-1/mario_level_1.py"
+    }
+  ]
+}

@@ -4,8 +4,7 @@ import pygame
 import pygameMenu
 import json
 import random
-
-#import os
+import os
 #os.environ['SDL_VIDEO_CENTERED'] = '1'
 
 COLOR_BACKGROUND = (61, 61, 202)
@@ -107,7 +106,7 @@ class PyMenu():
             window_width=WINDOW_SIZE[0]
         )
 
-        self.main_menu.add_option('Repositorio', self.progressbar)
+        self.main_menu.add_option('Repositorio local', self.createLocalRepo)
         self.main_menu.add_option('Tutorial', self.about_menu)
         self.main_menu.add_option('Configuracion', self.settings_menu)
         self.main_menu.add_option('Salir', pygameMenu.events.EXIT)
@@ -151,9 +150,85 @@ class PyMenu():
         with open('config/configuration.json', 'w+') as json_file:
             json.dump(data, json_file, indent=4)
 
+    def createLocalRepo(self):
+        data = {}
+
+        with open('config/storage.json', 'r') as json_file:
+            data = json.load(json_file)
+
+        path = data["repo"]["path"]
+        exit = False
+        selected = 0
+        while not exit:
+
+            self.clock.tick(FPS)
+            self.main_background()
+            #display selected element
+            self.drawSelectedElement(data["games"][selected],path)
+
+            # menu events
+            events = pygame.event.get()
+            for e in events:
+                if e.type == pygame.QUIT:
+                    exit()
+                elif e.type == pygame.KEYDOWN:
+                    if e.key == pygame.K_ESCAPE and self.main_menu.is_disabled():
+                        exit = True
+                    elif e.key == pygame.K_UP:
+                        if selected > 0:
+                            selected-=1
+                    elif e.key == pygame.K_DOWN:
+                        if selected < len(data["games"])-1:
+                            selected+=1
+                    elif e.key == pygame.K_RETURN:
+                        #close and launch program
+                        pass
+                else:
+                    print(str(e))
+            pygame.display.flip()
+
+        #show main menu
+        self.main_menu.enable()
+        self.main_menu.reset(1)
+
+    def drawSelectedElement(self,element,path):
+        fontSize = 36
+        margin = 50
+        #draw card
+        card = pygame.Rect(margin, margin, (WINDOW_SIZE[0]-(margin*2)), (WINDOW_SIZE[1]-(margin*2)))
+        font = pygame.font.Font(None, fontSize)
+        pygame.draw.rect(self.surface, COLOR_BLUE, card, 0)
+
+        txt = font.render(str(element["title"]), True, COLOR_GREEN)
+        self.surface.blit(txt, (margin*2, WINDOW_SIZE[1]-(margin*2)-(fontSize*2)))
+
+        txt2 = font.render(str(element["launcher"]), True, COLOR_GREEN)
+        self.surface.blit(txt2, (margin*2, WINDOW_SIZE[1]-(margin)-(fontSize*2)))
+
+        flow = pygame.Rect(WINDOW_SIZE[0]-(margin*2), margin, margin, (WINDOW_SIZE[1]-(margin*2)))
+        pygame.draw.rect(self.surface, COLOR_GRAY, flow, 0)
+
+        #now draw image if exists
+        thumbnail = element["thumbnail"]
+        filename = os.path.join(path,thumbnail)
+
+        picture = pygame.image.load(filename)
+        pic = pygame.transform.scale(picture, (300, 300))
+
+        self.surface.blit(pic, (margin*2, margin*2))
+
+        pygame.display.flip()
+
+
+    def load_game(self,**kwargs):
+        #print("path %s launcher %s "% (path,launcher))
+        print(str(kwargs))
+        print(str(self.local_repo))
+        for key, value in kwargs.items():
+            print ("%s == %s" %(key, value))
+
 
     def createSettingsMenu(self):
-
         self.settings_menu = pygameMenu.Menu(self.surface,
             bgfun=self.main_background,
             color_selected=COLOR_BLUE,
@@ -213,12 +288,10 @@ class PyMenu():
             else:
                 color = COLOR_WHITE
 
-
             pygame.draw.rect(self.surface, color, (51, 100, width-1, 80))
 
             txt = FONT.render(str(round(time, 2)), True, color)
             self.surface.blit(txt, (20, 20))
-
 
             time+=0.002
 
