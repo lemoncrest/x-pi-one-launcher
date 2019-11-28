@@ -153,22 +153,39 @@ class PyMenu():
 
     def drawNavigationBar(self,selection,total):
         margin = 50
+        up = False
+        down = False
 
         #draw navigation flower
         flow = pygame.Rect(WINDOW_SIZE[0]-(margin*2), margin*2, margin, (WINDOW_SIZE[1]-(margin*4)))
         pygame.draw.rect(self.surface, COLOR_GRAY, flow, 0)
 
-        #navigation right
+        #navigation up
         triangle1 = [WINDOW_SIZE[0]-(margin*2), margin*2]
         triangle2 = [WINDOW_SIZE[0]-(margin*2)+margin/2, margin]
         triangle3 = [WINDOW_SIZE[0]-(margin), margin*2]
-        pygame.draw.polygon(self.surface, COLOR_LIGHT_GRAY, [triangle1, triangle2, triangle3], 0)
+        color = COLOR_LIGHT_GRAY
 
-        #navigation right
+        position = pygame.mouse.get_pos()
+        #calculate color with rectangles
+        if pygame.Rect(WINDOW_SIZE[0]-(margin*2),margin,margin,margin).collidepoint(position):
+            color = COLOR_GREEN
+            up = True
+
+        pygame.draw.polygon(self.surface, color, [triangle1, triangle2, triangle3], 0)
+
+        #navigation down
         triangle1 = [WINDOW_SIZE[0]-(margin*2), WINDOW_SIZE[1]-margin*2]
         triangle2 = [WINDOW_SIZE[0]-(margin*2)+margin/2, WINDOW_SIZE[1]-margin]
         triangle3 = [WINDOW_SIZE[0]-(margin), WINDOW_SIZE[1]-margin*2]
-        pygame.draw.polygon(self.surface, COLOR_LIGHT_GRAY, [triangle1, triangle2, triangle3], 0)
+
+        color = COLOR_LIGHT_GRAY
+        #calculate color with rectangles
+        if pygame.Rect(WINDOW_SIZE[0]-(margin*2),WINDOW_SIZE[1]-margin*2,margin,margin).collidepoint(position):
+            color = COLOR_GREEN
+            down = True
+
+        pygame.draw.polygon(self.surface, color, [triangle1, triangle2, triangle3], 0)
 
         #now calculates where should be the indicator of up and down in navigation bar
         selection+=1
@@ -183,6 +200,8 @@ class PyMenu():
         flow = pygame.Rect(flowX, flowY, flowX2, flowY2)
         pygame.draw.rect(self.surface, COLOR_DARK_GRAY, flow, 0)
 
+        return up,down
+
     def createLocalRepo(self):
         self.main_menu.disable()
 
@@ -195,15 +214,16 @@ class PyMenu():
         exit = False
         selected = 0
         proc = None
+        up = False
+        down = False
         while not exit:
-            self.main_background()
-            #display selected element
-            self.drawSelectedElement(data["games"][selected],path)
-            self.drawNavigationBar(selected,len(data["games"]))
+
             pid = 0
             # menu events
             events = pygame.event.get()
-
+            mouse_pos = None
+            mouse_up = False
+            mouse_down = False
             for e in events:
                 if e.type == pygame.QUIT:
                     exit()
@@ -238,8 +258,33 @@ class PyMenu():
                         #pid = int(proc.stdout)+1
                         os.system(cmd)
                         exit()
+                elif e.type == pygame.MOUSEBUTTONUP:
+                    mouse_pos = e.pos
+                    mouse_up = True
+                    mouse_down = False
+                    print("mUP: %s" % str(mouse_down))
+                elif e.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_pos = e.pos
+                    mouse_up = False
+                    mouse_down = True
+
+                    if selected > 0 and up:
+                        selected-=1
+                    elif selected < len(data["games"])-1 and down:
+                        selected+=1
+
+                    print("mDOWN: %s" % str(mouse_down))
+                elif e.type == pygame.MOUSEMOTION:
+                    mouse_pos = e.pos
+                    print("focus: %s" % str(mouse_down))
                 else:
-                    print(str(e))
+                    print("other: %s"%str(e))
+
+            self.main_background()
+            #display selected element
+            self.drawSelectedElement(data["games"][selected],path)
+            up,down = self.drawNavigationBar(selected,len(data["games"]))
+
             pygame.display.update()
 
         #show main menu
