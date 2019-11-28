@@ -1,4 +1,6 @@
 # coding=utf-8
+#python2 issues, div with float, not int
+from __future__ import division
 
 import pygame
 import pygameMenu
@@ -15,7 +17,7 @@ COLOR_GREEN = (0, 255, 0)
 COLOR_BLUE = (0, 0, 255)
 COLOR_LIGHT_GREEN = (10, 200, 10)
 COLOR_LIGHT_GRAY = (120, 120, 120)
-COLOR_GRAY = (30, 30, 30)
+COLOR_GRAY = (60, 60, 60)
 
 FPS = 60.0
 MENU_BACKGROUND_COLOR = (153, 153, 255)
@@ -147,6 +149,40 @@ class PyMenu():
         with open('config/configuration.json', 'w+') as json_file:
             json.dump(data, json_file, indent=4)
 
+    def drawNavigationBar(self,selection,total):
+        margin = 50
+
+        #draw navigation flower
+        flow = pygame.Rect(WINDOW_SIZE[0]-(margin*2), margin*2, margin, (WINDOW_SIZE[1]-(margin*4)))
+        pygame.draw.rect(self.surface, COLOR_GRAY, flow, 0)
+
+        #navigation right
+        triangle1 = [WINDOW_SIZE[0]-(margin*2), margin*2]
+        triangle2 = [WINDOW_SIZE[0]-(margin*2)+margin/2, margin]
+        triangle3 = [WINDOW_SIZE[0]-(margin), margin*2]
+        pygame.draw.polygon(self.surface, COLOR_LIGHT_GRAY, [triangle1, triangle2, triangle3], 0)
+
+        #navigation right
+        triangle1 = [WINDOW_SIZE[0]-(margin*2), WINDOW_SIZE[1]-margin*2]
+        triangle2 = [WINDOW_SIZE[0]-(margin*2)+margin/2, WINDOW_SIZE[1]-margin]
+        triangle3 = [WINDOW_SIZE[0]-(margin), WINDOW_SIZE[1]-margin*2]
+        pygame.draw.polygon(self.surface, COLOR_LIGHT_GRAY, [triangle1, triangle2, triangle3], 0)
+
+        #now calculates where should be the indicator of up and down in navigation bar
+        selection+=1
+        portionY = (WINDOW_SIZE[1]-(margin*4))/total
+        #first point
+        flowX = WINDOW_SIZE[0]-(margin*2)
+        flowY2 = (portionY)#((WINDOW_SIZE[1]-(margin*4))/total) * selection
+        #size (portion)
+        flowX2 = margin
+        flowY = margin*2 + (portionY*(selection-1))
+        print("%s , %s "% (flowY,flowY2))
+        flow = pygame.Rect(flowX, flowY, flowX2, flowY2)
+        pygame.draw.rect(self.surface, COLOR_LIGHT_GREEN, flow, 0)
+
+
+
     def createLocalRepo(self):
         self.main_menu.disable()
 
@@ -162,6 +198,7 @@ class PyMenu():
             self.main_background()
             #display selected element
             self.drawSelectedElement(data["games"][selected],path)
+            self.drawNavigationBar(selected,len(data["games"]))
 
             # menu events
             events = pygame.event.get()
@@ -206,10 +243,6 @@ class PyMenu():
         txt2 = font.render(str(element["launcher"]), True, COLOR_LIGHT_GRAY)
         self.surface.blit(txt2, (margin*2, WINDOW_SIZE[1]-(margin)-(fontSize*2)))
 
-
-        flow = pygame.Rect(WINDOW_SIZE[0]-(margin*2), margin, margin, (WINDOW_SIZE[1]-(margin*2)))
-        pygame.draw.rect(self.surface, COLOR_GRAY, flow, 0)
-
         #now draw image if exists
         filename = os.path.join(path,element["source"],element["thumbnail"])
 
@@ -217,18 +250,6 @@ class PyMenu():
         pic = pygame.transform.scale(picture, (300, 300))
 
         self.surface.blit(pic, (margin*2, margin*2))
-
-        #navigation right
-        triangle1 = [WINDOW_SIZE[0]-(margin*2), margin*2]
-        triangle2 = [WINDOW_SIZE[0]-(margin*2)+margin/2, margin]
-        triangle3 = [WINDOW_SIZE[0]-(margin), margin*2]
-        pygame.draw.polygon(self.surface, COLOR_LIGHT_GRAY, [triangle1, triangle2, triangle3], 0)
-
-        #navigation right
-        triangle1 = [WINDOW_SIZE[0]-(margin*2), WINDOW_SIZE[1]-margin*2]
-        triangle2 = [WINDOW_SIZE[0]-(margin*2)+margin/2, WINDOW_SIZE[1]-margin]
-        triangle3 = [WINDOW_SIZE[0]-(margin), WINDOW_SIZE[1]-margin*2]
-        pygame.draw.polygon(self.surface, COLOR_LIGHT_GRAY, [triangle1, triangle2, triangle3], 0)
 
 
     def load_game(self,**kwargs):
