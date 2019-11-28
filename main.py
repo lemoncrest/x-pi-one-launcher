@@ -14,7 +14,7 @@ COLOR_BACKGROUND = (61, 61, 202)
 COLOR_BLACK = (0, 0, 0)
 COLOR_WHITE = (255, 255, 255)
 COLOR_RED = (255, 0, 0)
-COLOR_GREEN = (0, 255, 0)
+COLOR_GREEN = (0, 220, 0)
 COLOR_BLUE = (0, 0, 255)
 COLOR_LIGHT_GREEN = (10, 200, 10)
 COLOR_LIGHT_GRAY = (150, 150, 150)
@@ -267,16 +267,11 @@ class PyMenu():
                     mouse_pos = e.pos
                     mouse_up = False
                     mouse_down = True
-
                     if selected > 0 and up:
                         selected-=1
                     elif selected < len(data["games"])-1 and down:
                         selected+=1
-
                     print("mDOWN: %s" % str(mouse_down))
-                elif e.type == pygame.MOUSEMOTION:
-                    mouse_pos = e.pos
-                    print("focus: %s" % str(mouse_down))
                 else:
                     print("other: %s"%str(e))
 
@@ -312,6 +307,18 @@ class PyMenu():
         pic = pygame.transform.scale(picture, (300, 300))
 
         self.surface.blit(pic, (margin*2, margin*2))
+
+        #button A
+        radio = 36
+        pygame.draw.circle(self.surface, COLOR_GREEN, (300+margin*4+radio, margin*2+radio), radio, 0)
+        txt3 = font.render("A", True, COLOR_WHITE)
+        self.surface.blit(txt3, (300+margin*4+radio-8, margin*2+radio-10))
+
+        #button B
+        radio = 36
+        pygame.draw.circle(self.surface, COLOR_RED, (300+margin*4+radio, margin*4+radio), radio, 0)
+        txt4 = font.render("B", True, COLOR_WHITE)
+        self.surface.blit(txt4, (300+margin*4+radio-8,  margin*4+radio-10))
 
 
     def load_game(self,**kwargs):
