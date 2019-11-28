@@ -33,7 +33,6 @@ ABOUT = [
 
 class PyMenu():
 
-    clock = None
     main_menu = None
     about_menu = None
     settings_menu = None
@@ -47,16 +46,15 @@ class PyMenu():
         #self.surface = pygame.display.set_mode(WINDOW_SIZE)
         self.surface = pygame.display.set_mode(WINDOW_SIZE, pygame.HWSURFACE | pygame.DOUBLEBUF)
         pygame.display.set_caption('Menu principal')
-        self.clock = pygame.time.Clock()
 
     def main(self):
         # Create menus
-        #self.createAboutMenu()
-        #self.createSettingsMenu()
-        #self.createMainMenu() #last, instance because of
-        self.createLocalRepo()
+        self.createAboutMenu()
+        self.createSettingsMenu()
+        self.createMainMenu() #last, instance because of
+
         # mainloop
-        #self.mainloop()
+        self.mainloop()
 
     def main_background(self):
         self.surface.fill(COLOR_BACKGROUND)
@@ -120,8 +118,6 @@ class PyMenu():
         exit = False
         self.main_menu.mainloop()
         while not exit:
-            #it's just fps limitation
-            self.clock.tick(FPS)
             #colored background
             self.main_background()
             #get events and configure
@@ -136,7 +132,7 @@ class PyMenu():
             # Main menu
             self.main_menu.mainloop(events, disable_loop=False)
             # Flip surface
-            pygame.display.flip()
+            pygame.display.update()
         exit()
 
     def saveSettings(self):
@@ -162,8 +158,6 @@ class PyMenu():
         exit = False
         selected = 0
         while not exit:
-
-            self.clock.tick(FPS)
             self.main_background()
             #display selected element
             self.drawSelectedElement(data["games"][selected],path)
@@ -191,7 +185,7 @@ class PyMenu():
                         #exit()
                 else:
                     print(str(e))
-            pygame.display.flip()
+            pygame.display.update()
 
         #show main menu
         self.main_menu.enable()
@@ -234,8 +228,6 @@ class PyMenu():
         triangle2 = [WINDOW_SIZE[0]-(margin*2)+margin/2, WINDOW_SIZE[1]-margin]
         triangle3 = [WINDOW_SIZE[0]-(margin), WINDOW_SIZE[1]-margin*2]
         pygame.draw.polygon(self.surface, COLOR_LIGHT_GRAY, [triangle1, triangle2, triangle3], 5)
-
-        pygame.display.flip()
 
 
     def load_game(self,**kwargs):
@@ -284,9 +276,6 @@ class PyMenu():
         exit = False
 
         while time<=1.002 and not exit:
-
-            self.clock.tick(FPS)
-
             self.main_background()
 
             button_rect = pygame.Rect(50, 100, (WINDOW_SIZE[0]-(50*2)), 80)
