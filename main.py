@@ -51,12 +51,12 @@ class PyMenu():
 
     def main(self):
         # Create menus
-        self.createAboutMenu()
-        self.createSettingsMenu()
-        self.createMainMenu() #last, instance because of
-
+        #self.createAboutMenu()
+        #self.createSettingsMenu()
+        #self.createMainMenu() #last, instance because of
+        self.createLocalRepo()
         # mainloop
-        self.mainloop()
+        #self.mainloop()
 
     def main_background(self):
         self.surface.fill(COLOR_BACKGROUND)
