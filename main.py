@@ -247,7 +247,9 @@ class PyMenu():
                     elif e.key == pygame.K_DOWN:
                         if selected < len(data["games"])-1:
                             selected+=1
-                    elif e.key == pygame.K_RETURN:
+                    elif e.key == pygame.K_b:
+                        exit = True
+                    elif e.key == pygame.K_a or e.key == pygame.K_RETURN:
                         #close and launch program
                         path2 = os.path.join(path,data["games"][selected]["source"])
                         cmd = "cd %s && %s" % (path2,data["games"][selected]["launcher"])
@@ -314,11 +316,17 @@ class PyMenu():
         txt3 = font.render("A", True, COLOR_WHITE)
         self.surface.blit(txt3, (300+margin*4+radio-8, margin*2+radio-10))
 
+        txt33 = font.render("Enter inside program", True, COLOR_WHITE)
+        self.surface.blit(txt33, (300+margin*4+radio*3, margin*2+radio-10))
+
         #button B
         radio = 36
         pygame.draw.circle(self.surface, COLOR_RED, (300+margin*4+radio, margin*4+radio), radio, 0)
         txt4 = font.render("B", True, COLOR_WHITE)
         self.surface.blit(txt4, (300+margin*4+radio-8,  margin*4+radio-10))
+
+        txt4 = font.render("Back to previous menu", True, COLOR_WHITE)
+        self.surface.blit(txt4, (300+margin*4+radio*3,  margin*4+radio-10))
 
 
     def load_game(self,**kwargs):
