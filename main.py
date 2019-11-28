@@ -136,7 +136,7 @@ class PyMenu():
             self.main_menu.mainloop(events, disable_loop=False)
             # Flip surface
             pygame.display.update()
-        exit()
+        quit()
 
     def saveSettings(self):
 
@@ -226,7 +226,7 @@ class PyMenu():
             mouse_down = False
             for e in events:
                 if e.type == pygame.QUIT:
-                    exit()
+                    quit()
                 elif e.type == pygame.KEYDOWN:
                     if e.key == pygame.K_ESCAPE:
                         if self.main_menu.is_disabled() and proc == None:
@@ -259,7 +259,7 @@ class PyMenu():
                         #print("program output: %s"%str(proc.stdout))
                         #pid = int(proc.stdout)+1
                         os.system(cmd)
-                        exit()
+                        quit()
                 elif e.type == pygame.MOUSEBUTTONUP:
                     mouse_pos = e.pos
                     mouse_up = True
@@ -406,7 +406,7 @@ class PyMenu():
             print(str(events))
             for e in events:
                 if e.type == pygame.QUIT:
-                    exit()
+                    quit()
                 elif e.type == pygame.KEYDOWN:
                     if e.key == pygame.K_ESCAPE and self.main_menu.is_disabled():
                         exit = True
