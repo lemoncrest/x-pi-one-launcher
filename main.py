@@ -148,6 +148,8 @@ class PyMenu():
             json.dump(data, json_file, indent=4)
 
     def createLocalRepo(self):
+        self.main_menu.disable()
+
         data = {}
 
         with open('config/storage.json', 'r') as json_file:
@@ -178,7 +180,7 @@ class PyMenu():
                     elif e.key == pygame.K_RETURN:
                         #close and launch program
                         path2 = os.path.join(path,data["games"][selected]["source"])
-                        cmd = "cd %s && %s" % (path2,data["games"][selected]["launcher"])
+                        cmd = "cd %s && %s &" % (path2,data["games"][selected]["launcher"])
                         subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
                         #os.system(cmd)
                         #exit()
