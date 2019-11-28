@@ -208,8 +208,9 @@ class PyMenu():
         txt = font.render(str(element["title"]), True, COLOR_GREEN)
         self.surface.blit(txt, (margin*2, WINDOW_SIZE[1]-(margin*2)-(fontSize*2)))
 
-        txt2 = font.render(str(element["launcher"]), True, COLOR_GREEN)
+        txt2 = font.render(str(element["launcher"]), True, COLOR_LIGHT_GRAY)
         self.surface.blit(txt2, (margin*2, WINDOW_SIZE[1]-(margin)-(fontSize*2)))
+
 
         flow = pygame.Rect(WINDOW_SIZE[0]-(margin*2), margin, margin, (WINDOW_SIZE[1]-(margin*2)))
         pygame.draw.rect(self.surface, COLOR_GRAY, flow, 0)
@@ -221,6 +222,18 @@ class PyMenu():
         pic = pygame.transform.scale(picture, (300, 300))
 
         self.surface.blit(pic, (margin*2, margin*2))
+
+        #navigation right
+        triangle1 = [WINDOW_SIZE[0]-(margin*2), margin*2]
+        triangle2 = [WINDOW_SIZE[0]-(margin*2)+margin/2, margin]
+        triangle3 = [WINDOW_SIZE[0]-(margin), margin*2]
+        pygame.draw.polygon(self.surface, COLOR_LIGHT_GRAY, [triangle1, triangle2, triangle3], 5)
+
+        #navigation right
+        triangle1 = [WINDOW_SIZE[0]-(margin*2), WINDOW_SIZE[1]-margin*2]
+        triangle2 = [WINDOW_SIZE[0]-(margin*2)+margin/2, WINDOW_SIZE[1]-margin]
+        triangle3 = [WINDOW_SIZE[0]-(margin), WINDOW_SIZE[1]-margin*2]
+        pygame.draw.polygon(self.surface, COLOR_LIGHT_GRAY, [triangle1, triangle2, triangle3], 5)
 
         pygame.display.flip()
 
