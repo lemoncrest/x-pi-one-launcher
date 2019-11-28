@@ -230,12 +230,13 @@ class PyMenu():
                     elif e.key == pygame.K_RETURN:
                         #close and launch program
                         path2 = os.path.join(path,data["games"][selected]["source"])
-                        cmd = "cd %s && %s & echo $! > /tmp/lastpid.pid" % (path2,data["games"][selected]["launcher"])
+                        cmd = "cd %s && %s" % (path2,data["games"][selected]["launcher"])
                         #proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
                         #(out, err) = proc.communicate()
-                        proc = subprocess.Popen(cmd, shell=True)
+                        #proc = subprocess.Popen(cmd, shell=True)
                         #print("program output: %s"%str(proc.stdout))
                         #pid = int(proc.stdout)+1
+                        os.system(cmd)
                         exit()
                 else:
                     print(str(e))
