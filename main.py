@@ -43,7 +43,7 @@ class PyMenu():
 
         # Create pygame screen and objects
         #self.surface = pygame.display.set_mode(WINDOW_SIZE)
-        self.surface = pygame.display.set_mode(WINDOW_SIZE, pygame.HWSURFACE | pygame.DOUBLEBUF)
+        self.surface = pygame.display.set_mode(WINDOW_SIZE)
         pygame.display.set_caption('Menu principal')
 
     def main(self):
