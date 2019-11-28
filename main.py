@@ -222,13 +222,13 @@ class PyMenu():
         triangle1 = [WINDOW_SIZE[0]-(margin*2), margin*2]
         triangle2 = [WINDOW_SIZE[0]-(margin*2)+margin/2, margin]
         triangle3 = [WINDOW_SIZE[0]-(margin), margin*2]
-        pygame.draw.polygon(self.surface, COLOR_LIGHT_GRAY, [triangle1, triangle2, triangle3], 5)
+        pygame.draw.polygon(self.surface, COLOR_LIGHT_GRAY, [triangle1, triangle2, triangle3], 0)
 
         #navigation right
         triangle1 = [WINDOW_SIZE[0]-(margin*2), WINDOW_SIZE[1]-margin*2]
         triangle2 = [WINDOW_SIZE[0]-(margin*2)+margin/2, WINDOW_SIZE[1]-margin]
         triangle3 = [WINDOW_SIZE[0]-(margin), WINDOW_SIZE[1]-margin*2]
-        pygame.draw.polygon(self.surface, COLOR_LIGHT_GRAY, [triangle1, triangle2, triangle3], 5)
+        pygame.draw.polygon(self.surface, COLOR_LIGHT_GRAY, [triangle1, triangle2, triangle3], 0)
 
 
     def load_game(self,**kwargs):
