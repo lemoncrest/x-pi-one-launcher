@@ -181,8 +181,8 @@ class PyMenu():
                         #close and launch program
                         path2 = os.path.join(path,data["games"][selected]["source"])
                         cmd = "cd %s && %s &" % (path2,data["games"][selected]["launcher"])
-                        subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
-                        #os.system(cmd)
+                        #subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
+                        os.system(cmd)
                         #exit()
                 else:
                     print(str(e))
