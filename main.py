@@ -7,6 +7,7 @@ import pygameMenu
 import json
 import random
 import os
+import sys
 import subprocess
 
 COLOR_BACKGROUND = (61, 61, 202)
@@ -16,8 +17,9 @@ COLOR_RED = (255, 0, 0)
 COLOR_GREEN = (0, 255, 0)
 COLOR_BLUE = (0, 0, 255)
 COLOR_LIGHT_GREEN = (10, 200, 10)
-COLOR_LIGHT_GRAY = (120, 120, 120)
-COLOR_GRAY = (60, 60, 60)
+COLOR_LIGHT_GRAY = (150, 150, 150)
+COLOR_DARK_GRAY = (60, 60, 60)
+COLOR_GRAY = (90, 90, 90)
 
 FPS = 60.0
 MENU_BACKGROUND_COLOR = (153, 153, 255)
@@ -173,15 +175,13 @@ class PyMenu():
         portionY = (WINDOW_SIZE[1]-(margin*4))/total
         #first point
         flowX = WINDOW_SIZE[0]-(margin*2)
-        flowY2 = (portionY)#((WINDOW_SIZE[1]-(margin*4))/total) * selection
-        #size (portion)
+        flowY2 = (portionY)
+        #sized (portion width and height)
         flowX2 = margin
         flowY = margin*2 + (portionY*(selection-1))
-        print("%s , %s "% (flowY,flowY2))
+
         flow = pygame.Rect(flowX, flowY, flowX2, flowY2)
-        pygame.draw.rect(self.surface, COLOR_LIGHT_GREEN, flow, 0)
-
-
+        pygame.draw.rect(self.surface, COLOR_DARK_GRAY, flow, 0)
 
     def createLocalRepo(self):
         self.main_menu.disable()
@@ -194,20 +194,33 @@ class PyMenu():
         path = data["repo"]["path"]
         exit = False
         selected = 0
+        proc = None
         while not exit:
             self.main_background()
             #display selected element
             self.drawSelectedElement(data["games"][selected],path)
             self.drawNavigationBar(selected,len(data["games"]))
-
+            pid = 0
             # menu events
             events = pygame.event.get()
+
             for e in events:
                 if e.type == pygame.QUIT:
                     exit()
                 elif e.type == pygame.KEYDOWN:
-                    if e.key == pygame.K_ESCAPE and self.main_menu.is_disabled():
-                        exit = True
+                    if e.key == pygame.K_ESCAPE:
+                        if self.main_menu.is_disabled() and proc == None:
+                            exit = True
+                        else:
+                            #todo, kill with scape
+                            cmd = ""
+                            with open("/tmp/lastpid.pid") as f:
+                                pid = f.read()
+                                pid = int(pid)+1
+                                cmd = "kill -9 %s" % str(pid)
+                            proc = subprocess.Popen(cmd, shell=True)
+                            print("program output: %s"%str(proc.stdout))
+                            os.remove("/tmp/lastpid.pid")
                     elif e.key == pygame.K_UP:
                         if selected > 0:
                             selected-=1
@@ -217,9 +230,12 @@ class PyMenu():
                     elif e.key == pygame.K_RETURN:
                         #close and launch program
                         path2 = os.path.join(path,data["games"][selected]["source"])
-                        cmd = "cd %s && %s &" % (path2,data["games"][selected]["launcher"])
-                        #subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
-                        os.system(cmd)
+                        cmd = "cd %s && %s & echo $! > /tmp/lastpid.pid" % (path2,data["games"][selected]["launcher"])
+                        #proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+                        #(out, err) = proc.communicate()
+                        proc = subprocess.Popen(cmd, shell=True)
+                        #print("program output: %s"%str(proc.stdout))
+                        #pid = int(proc.stdout)+1
                         #exit()
                 else:
                     print(str(e))
