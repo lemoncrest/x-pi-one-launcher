@@ -212,7 +212,7 @@ class PyMenu():
                         if self.main_menu.is_disabled() and proc == None:
                             exit = True
                         else:
-                            #todo, kill with scape
+                            #TODO, kill with scape
                             cmd = ""
                             with open("/tmp/lastpid.pid") as f:
                                 pid = f.read()
@@ -236,7 +236,7 @@ class PyMenu():
                         proc = subprocess.Popen(cmd, shell=True)
                         #print("program output: %s"%str(proc.stdout))
                         #pid = int(proc.stdout)+1
-                        #exit()
+                        exit()
                 else:
                     print(str(e))
             pygame.display.update()
