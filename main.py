@@ -60,10 +60,13 @@ class PyMenu():
         if (len(self.joysticks) > 0):
             self.joystick = pygame.joystick.Joystick(0)
             self.joystick.init()
-
-        max_joy = max(self.joystick.get_numaxes(),
-                      self.joystick.get_numbuttons(),
-                      self.joystick.get_numhats())
+        try:
+            max_joy = max(self.joystick.get_numaxes(),
+                          self.joystick.get_numbuttons(),
+                          self.joystick.get_numhats())
+        except:
+            print("no controllers found")
+            pass
 
         # play background music
         self.music = pygame.mixer.music.load("assert/background.mp3")
