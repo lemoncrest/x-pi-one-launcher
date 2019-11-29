@@ -40,13 +40,33 @@ class PyMenu():
     about_menu = None
     settings_menu = None
     surface = None
+    joystick = None
+    joysticks = None
 
     def __init__(self):
         #init
         pygame.init()
+        pygame.joystick.init()
+
+        self.joystick = None
+        self.joysticks = []
+
+        # Enumerate joysticks
+        for i in range(0, pygame.joystick.get_count()):
+            self.joysticks.append(pygame.joystick.Joystick(i).get_name())
+
+        print(str(self.joysticks))
+
+        # By default, load the first available joystick.
+        if (len(self.joysticks) > 0):
+            self.joystick = pygame.joystick.Joystick(0)
+            self.joystick.init()
+
+        max_joy = max(self.joystick.get_numaxes(),
+                      self.joystick.get_numbuttons(),
+                      self.joystick.get_numhats())
 
         # Create pygame screen and objects
-        #self.surface = pygame.display.set_mode(WINDOW_SIZE)
         self.surface = pygame.display.set_mode(WINDOW_SIZE)
         pygame.display.set_caption('Menu principal')
 
@@ -250,15 +270,7 @@ class PyMenu():
                     elif e.key == pygame.K_b:
                         exit = True
                     elif e.key == pygame.K_a or e.key == pygame.K_RETURN:
-                        #close and launch program
-                        path2 = os.path.join(path,data["games"][selected]["source"])
-                        cmd = "cd %s && %s" % (path2,data["games"][selected]["launcher"])
-                        #proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-                        #(out, err) = proc.communicate()
-                        #proc = subprocess.Popen(cmd, shell=True)
-                        #print("program output: %s"%str(proc.stdout))
-                        #pid = int(proc.stdout)+1
-                        os.system(cmd)
+                        self.launch(path,data,selected)
                         quit()
                 elif e.type == pygame.MOUSEBUTTONUP:
                     mouse_pos = e.pos
@@ -274,6 +286,26 @@ class PyMenu():
                     elif selected < len(data["games"])-1 and down:
                         selected+=1
                     print("mDOWN: %s" % str(mouse_down))
+                elif e.type == pygame.JOYBUTTONDOWN:
+                    print(str(e))
+                    if hasattr(e,"button"):
+                        if e.button == 1: #button A - enter
+                            self.launch(path,data,selected)
+                            quit()
+                        elif e.button == 2: #button B - back
+                            exit = True
+                elif e.type == pygame.JOYAXISMOTION:
+                    if e.axis == 1: # up and down
+                        #get value -1 is up and 1 is down
+                        if e.value > 0:
+                            if selected > 0:
+                                selected-=1
+                        elif e.value <0:
+                            if selected < len(data["games"])-1:
+                                selected+=1
+                    elif e.axis == 0: # left and right
+                        pass
+
                 else:
                     print("other: %s"%str(e))
 
@@ -287,6 +319,17 @@ class PyMenu():
         #show main menu
         self.main_menu.enable()
         self.main_menu.reset(1)
+
+    def launch(self,path,data,selected):
+        #close and launch program
+        path2 = os.path.join(path,data["games"][selected]["source"])
+        cmd = "cd %s && %s" % (path2,data["games"][selected]["launcher"])
+        #proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+        #(out, err) = proc.communicate()
+        #proc = subprocess.Popen(cmd, shell=True)
+        #print("program output: %s"%str(proc.stdout))
+        #pid = int(proc.stdout)+1
+        os.system(cmd)
 
     def drawSelectedElement(self,element,path):
         fontSize = 36
