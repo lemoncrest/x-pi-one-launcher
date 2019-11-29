@@ -55,7 +55,6 @@ class PyMenu():
         for i in range(0, pygame.joystick.get_count()):
             self.joysticks.append(pygame.joystick.Joystick(i).get_name())
 
-        print(str(self.joysticks))
 
         # By default, load the first available joystick.
         if (len(self.joysticks) > 0):
@@ -65,6 +64,10 @@ class PyMenu():
         max_joy = max(self.joystick.get_numaxes(),
                       self.joystick.get_numbuttons(),
                       self.joystick.get_numhats())
+
+        # play background music
+        self.music = pygame.mixer.music.load("assert/background.mp3")
+        pygame.mixer.music.play(-1)
 
         # Create pygame screen and objects
         self.surface = pygame.display.set_mode(WINDOW_SIZE)
@@ -287,13 +290,11 @@ class PyMenu():
                         selected+=1
                     print("mDOWN: %s" % str(mouse_down))
                 elif e.type == pygame.JOYBUTTONDOWN:
-                    print(str(e))
-                    if hasattr(e,"button"):
-                        if e.button == 1: #button A - enter
-                            self.launch(path,data,selected)
-                            quit()
-                        elif e.button == 2: #button B - back
-                            exit = True
+                    if e.button == 1: #button A - enter
+                        self.launch(path,data,selected)
+                        quit()
+                    elif e.button == 2: #button B - back
+                        exit = True
                 elif e.type == pygame.JOYAXISMOTION:
                     if e.axis == 1: # up and down
                         #get value -1 is up and 1 is down
