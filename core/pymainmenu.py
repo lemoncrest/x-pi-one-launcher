@@ -11,20 +11,13 @@ import os
 import sys
 import subprocess
 
-COLOR_BACKGROUND = (61, 61, 202)
-COLOR_BLACK = (0, 0, 0)
-COLOR_WHITE = (255, 255, 255)
-COLOR_RED = (255, 0, 0)
-COLOR_GREEN = (0, 220, 0)
-COLOR_BLUE = (0, 0, 255)
-COLOR_LIGHT_GREEN = (10, 200, 10)
-COLOR_LIGHT_GRAY = (150, 150, 150)
-COLOR_DARK_GRAY = (60, 60, 60)
-COLOR_GRAY = (90, 90, 90)
+from colors import *
 
+WINDOW_SIZE = (1024, 600)
+
+COLOR_BACKGROUND = (61, 61, 202)
 FPS = 60.0
 MENU_BACKGROUND_COLOR = (153, 153, 255)
-WINDOW_SIZE = (1024, 600)
 MENU_OPTION_MARGIN = 45  # Option margin (px)
 
 ABOUT = [
@@ -200,8 +193,21 @@ class PyMainMenu():
         with open('config/configuration.json', 'r') as json_file:
             data = json.load(json_file)
             for key,value in self.settings_menu.get_input_data().items():
-                print("saving -> key: %s, value: %s" % (key,value))
-                data[key]=value
+                print("saving -> key: %s, value: %s - type %s" % (key,value,type(value)))
+                if isinstance(value, str):
+                    print("saving str")
+                    data[key]=value
+                elif isinstance(value, tuple):
+                    print("saving tuple..")
+                    value2 = value[0]
+                    if value2 in ["On","Off"]:
+                        value2 = bool(value[1])
+                    data[key] = value2
+                elif isinstance(value,bool):
+                    print("saving bool")
+                    data[key]=value
+                else:
+                    print("no saving nothing!")
 
         with open('config/configuration.json', 'w+') as json_file:
             json.dump(data, json_file, indent=4)
@@ -409,14 +415,6 @@ class PyMainMenu():
         self.surface.blit(txt4, (300+margin*4+radio*3,  margin*4+radio-10))
 
 
-    def load_game(self,**kwargs):
-        #print("path %s launcher %s "% (path,launcher))
-        print(str(kwargs))
-        print(str(self.local_repo))
-        for key, value in kwargs.items():
-            print ("%s == %s" %(key, value))
-
-
     def createSettingsMenu(self):
         self.settings_menu = pygameMenu.Menu(self.surface,
             bgfun=self.main_background,
@@ -443,7 +441,38 @@ class PyMainMenu():
             self.settings_menu.add_text_input(title='Name: ',textinput_id="name", default=str(data["name"]))
             self.settings_menu.add_text_input(title='Surname: ',textinput_id="surname", default=str(data["surname"]))
 
+            vals = []
+            # r=root, d=directories, f = files
+            for r, d, f in os.walk(os.path.join(os.getcwd(),"assert/wallpapers")):
+                for file in f:
+                    vals.append((file,file)) #key - value
 
+            self.settings_menu.add_selector(
+                selector_id = "wallpaper-file",
+                default=0,
+                title = 'Wallpapers',
+                values = vals
+            )
+
+            vals2 = []
+            # r=root, d=directories, f = files
+            for r, d, f in os.walk(os.path.join(os.getcwd(),"assert/music")):
+                for file in f:
+                    vals2.append((file,file)) #key - value
+
+            self.settings_menu.add_selector(
+                selector_id = "music",
+                default=0,
+                title = 'Enable music',
+                values = [("Off",0),("On",1)]
+            )
+
+            self.settings_menu.add_selector(
+                selector_id = "music-file",
+                default=0,
+                title = 'Music track',
+                values = vals2
+            )
 
             self.settings_menu.add_option('Apply - Save', self.saveSettings)
             self.settings_menu.add_option('Back', pygameMenu.events.BACK)
