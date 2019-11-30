@@ -2,7 +2,7 @@
 
 #python2 issues, div with float, not int
 from __future__ import division
-
+import gettext
 import pygame
 import pygameMenu
 import json
@@ -15,10 +15,14 @@ from colors import *
 
 WINDOW_SIZE = (1024, 600)
 
-COLOR_BACKGROUND = (61, 61, 202)
+COLOR_BACKGROUND = (61, 61, 202) # by default if there is no image to load will be shown it
 FPS = 60.0
-MENU_BACKGROUND_COLOR = (153, 153, 255)
+MENU_BACKGROUND_COLOR = (153, 153, 255) #transparency color in the main rectangle. TODO put it in a theme file
 MENU_OPTION_MARGIN = 20  # Option margin (px)
+MARGIN = 25
+THUMBNAIL_WIDTH = 300
+THUMBNAIL_HEIGHT = 300
+BUTTON_RADIO = 28
 
 ABOUT = [
     'using library version {0}'.format(pygameMenu.__version__),
@@ -40,11 +44,8 @@ class PyMainMenu():
     def __init__(self):
         #init
         pygame.init()
-
         self.initJoysticks()
-
         self.playMusicFromSettings()
-
         # Create pygame screen and objects
         self.surface = pygame.display.set_mode(WINDOW_SIZE)
         pygame.display.set_caption('Menu principal')
@@ -87,6 +88,7 @@ class PyMainMenu():
             data = json.load(json_file)
             file = data["music-file"]
             on = data["music"]
+        pygame.mixer.init()
         pygame.mixer.music.stop()
         if on and file is not None: # play background music
             self.music = pygame.mixer.music.load(os.path.join(os.getcwd(),"assert/music",file))
@@ -215,36 +217,36 @@ class PyMainMenu():
             json.dump(data, json_file, indent=4)
 
     def drawNavigationBar(self,selection,total):
-        margin = 50
+
         up = False
         down = False
 
         #draw navigation flower
-        flow = pygame.Rect(WINDOW_SIZE[0]-(margin*2), margin*2, margin, (WINDOW_SIZE[1]-(margin*4)))
+        flow = pygame.Rect(WINDOW_SIZE[0]-(MARGIN*2), MARGIN*2, MARGIN, (WINDOW_SIZE[1]-(MARGIN*4)))
         pygame.draw.rect(self.surface, COLOR_GRAY, flow, 0)
 
         #navigation up
-        triangle1 = [WINDOW_SIZE[0]-(margin*2), margin*2]
-        triangle2 = [WINDOW_SIZE[0]-(margin*2)+margin/2, margin]
-        triangle3 = [WINDOW_SIZE[0]-(margin), margin*2]
+        triangle1 = [WINDOW_SIZE[0]-(MARGIN*2), MARGIN*2]
+        triangle2 = [WINDOW_SIZE[0]-(MARGIN*2)+MARGIN/2, MARGIN]
+        triangle3 = [WINDOW_SIZE[0]-(MARGIN), MARGIN*2]
         color = COLOR_LIGHT_GRAY
 
         position = pygame.mouse.get_pos()
         #calculate color with rectangles
-        if pygame.Rect(WINDOW_SIZE[0]-(margin*2),margin,margin,margin).collidepoint(position):
+        if pygame.Rect(WINDOW_SIZE[0]-(MARGIN*2),MARGIN,MARGIN,MARGIN).collidepoint(position):
             color = COLOR_GREEN
             up = True
 
         pygame.draw.polygon(self.surface, color, [triangle1, triangle2, triangle3], 0)
 
         #navigation down
-        triangle1 = [WINDOW_SIZE[0]-(margin*2), WINDOW_SIZE[1]-margin*2]
-        triangle2 = [WINDOW_SIZE[0]-(margin*2)+margin/2, WINDOW_SIZE[1]-margin]
-        triangle3 = [WINDOW_SIZE[0]-(margin), WINDOW_SIZE[1]-margin*2]
+        triangle1 = [WINDOW_SIZE[0]-(MARGIN*2), WINDOW_SIZE[1]-MARGIN*2]
+        triangle2 = [WINDOW_SIZE[0]-(MARGIN*2)+MARGIN/2, WINDOW_SIZE[1]-MARGIN]
+        triangle3 = [WINDOW_SIZE[0]-(MARGIN), WINDOW_SIZE[1]-MARGIN*2]
 
         color = COLOR_LIGHT_GRAY
         #calculate color with rectangles
-        if pygame.Rect(WINDOW_SIZE[0]-(margin*2),WINDOW_SIZE[1]-margin*2,margin,margin).collidepoint(position):
+        if pygame.Rect(WINDOW_SIZE[0]-(MARGIN*2),WINDOW_SIZE[1]-MARGIN*2,MARGIN,MARGIN).collidepoint(position):
             color = COLOR_GREEN
             down = True
 
@@ -252,13 +254,13 @@ class PyMainMenu():
 
         #now calculates where should be the indicator of up and down in navigation bar
         selection+=1
-        portionY = (WINDOW_SIZE[1]-(margin*4))/total
+        portionY = (WINDOW_SIZE[1]-(MARGIN*4))/total
         #first point
-        flowX = WINDOW_SIZE[0]-(margin*2)
+        flowX = WINDOW_SIZE[0]-(MARGIN*2)
         flowY2 = (portionY)
         #sized (portion width and height)
-        flowX2 = margin
-        flowY = margin*2 + (portionY*(selection-1))
+        flowX2 = MARGIN
+        flowY = MARGIN*2 + (portionY*(selection-1))
 
         flow = pygame.Rect(flowX, flowY, flowX2, flowY2)
         pygame.draw.rect(self.surface, COLOR_DARK_GRAY, flow, 0)
@@ -278,6 +280,8 @@ class PyMainMenu():
         proc = None
         up = False
         down = False
+        circleA = None
+        circleB = None
         while not exit:
 
             pid = 0
@@ -351,7 +355,7 @@ class PyMainMenu():
 
             self.main_background()
             #display selected element
-            self.drawSelectedElement(data["games"][selected],path)
+            circleA,circleB = self.drawSelectedElement(data["games"][selected],path)
             up,down = self.drawNavigationBar(selected,len(data["games"]))
 
             pygame.display.update()
@@ -377,44 +381,52 @@ class PyMainMenu():
         os.system(cmd)
 
     def drawSelectedElement(self,element,path):
-        fontSize = 36
-        margin = 50
-        #draw card
-        card = pygame.Rect(margin, margin, (WINDOW_SIZE[0]-(margin*2)), (WINDOW_SIZE[1]-(margin*2)))
+        fontSize = 30
         font = pygame.font.Font(None, fontSize)
-        pygame.draw.rect(self.surface, COLOR_BLUE, card, 0)
+
+        #draw card
+        #card = pygame.Rect(MARGIN, MARGIN, (WINDOW_SIZE[0]-(MARGIN*2)), (WINDOW_SIZE[1]-(MARGIN*2)))
+        #pygame.draw.rect(self.surface, COLOR_BLUE, card, 0)
+        #pygame.draw.rect(self.surface, pygame.Color(0,0,255,255), card, 0)
+
+        #draw card with transparency
+        card = pygame.Surface((WINDOW_SIZE[0]-(MARGIN*2), WINDOW_SIZE[1]-(MARGIN*2)), pygame.SRCALPHA)
+        color_with_alpha = COLOR_BLUE
+        color_with_alpha = color_with_alpha+(128,)
+        pygame.draw.rect(card, color_with_alpha, (0,0, WINDOW_SIZE[0]-(MARGIN*2),WINDOW_SIZE[1]-(MARGIN*2)))
+        self.surface.blit(card,(MARGIN,MARGIN))
 
         txt = font.render(str(element["title"]), True, COLOR_GREEN)
-        self.surface.blit(txt, (margin*2, WINDOW_SIZE[1]-(margin*2)-(fontSize*2)))
+        self.surface.blit(txt, (MARGIN*2, WINDOW_SIZE[1]-(MARGIN*2)-(fontSize*2)))
 
         txt2 = font.render(str(element["launcher"]), True, COLOR_LIGHT_GRAY)
-        self.surface.blit(txt2, (margin*2, WINDOW_SIZE[1]-(margin)-(fontSize*2)))
+        self.surface.blit(txt2, (MARGIN*2, WINDOW_SIZE[1]-(MARGIN)-(fontSize*2)))
 
         #now draw image if exists
         filename = os.path.join(path,element["source"],element["thumbnail"])
 
         picture = pygame.image.load(filename)
-        pic = pygame.transform.scale(picture, (300, 300))
+        pic = pygame.transform.scale(picture, (THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT))
 
-        self.surface.blit(pic, (margin*2, margin*2))
+        self.surface.blit(pic, (MARGIN*2, MARGIN*2))
 
         #button A
-        radio = 36
-        pygame.draw.circle(self.surface, COLOR_GREEN, (300+margin*4+radio, margin*2+radio), radio, 0)
+        circleA = (THUMBNAIL_WIDTH+MARGIN*4+BUTTON_RADIO, MARGIN*2+BUTTON_RADIO)
+        pygame.draw.circle(self.surface, COLOR_GREEN, circleA, BUTTON_RADIO, 0)
         txt3 = font.render("A", True, COLOR_WHITE)
-        self.surface.blit(txt3, (300+margin*4+radio-8, margin*2+radio-10))
-
+        self.surface.blit(txt3, (circleA[0]-8, circleA[1]-10))
         txt33 = font.render("Enter inside program", True, COLOR_WHITE)
-        self.surface.blit(txt33, (300+margin*4+radio*3, margin*2+radio-10))
+        self.surface.blit(txt33, (circleA[0]+BUTTON_RADIO*2,circleA[1]-10))
 
         #button B
-        radio = 36
-        pygame.draw.circle(self.surface, COLOR_RED, (300+margin*4+radio, margin*4+radio), radio, 0)
+        circleB = (THUMBNAIL_WIDTH+MARGIN*4+BUTTON_RADIO, MARGIN*2+int(MARGIN/2)+BUTTON_RADIO*3)
+        pygame.draw.circle(self.surface, COLOR_RED, circleB , BUTTON_RADIO, 0)
         txt4 = font.render("B", True, COLOR_WHITE)
-        self.surface.blit(txt4, (300+margin*4+radio-8,  margin*4+radio-10))
-
+        self.surface.blit(txt4, (circleB[0]-8,circleB[1]-10))
         txt4 = font.render("Back to previous menu", True, COLOR_WHITE)
-        self.surface.blit(txt4, (300+margin*4+radio*3,  margin*4+radio-10))
+        self.surface.blit(txt4, (circleB[0]+BUTTON_RADIO*2,circleB[1]-10))
+
+        return circleA,circleB
 
 
     def createSettingsMenu(self):
