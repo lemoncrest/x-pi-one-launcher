@@ -12,6 +12,7 @@ import sys
 import subprocess
 
 from colors import *
+from pygame_vkeyboard import *
 
 WINDOW_SIZE = (1024, 600)
 
@@ -190,16 +191,25 @@ class PyMainMenu():
         self.progress = 0
         self.progressbar()
 
+        #clear
+        self.main_background()
+
         #show main menu
         #self.main_menu.enable()
         #self.main_menu.reset(1)
 
         #show slider with downloaded data
-        self.drawSlider()
+        self.drawKeyboard()
 
-    def drawSlider(self):
-        #TODO
-        pass
+    def consumer(self,text):
+        print('Current text : %s' % text)
+
+    def drawKeyboard(self):
+
+        # Initializes and activates vkeyboard
+        layout = VKeyboardLayout(VKeyboardLayout.QWERTY)
+        self.keyboard = VKeyboard(self.surface, self.consumer, layout)
+        self.keyboard.enable()
 
 
     def updateProgress(self):
@@ -216,10 +226,18 @@ class PyMainMenu():
             events = pygame.event.get()
             print("main loop %s"%str(events))
             for event in events:
+                #keyboard library
+                self.keyboard.on_event(event)
+                #normal events
                 if event.type == pygame.QUIT:
                     exit = True
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
+                        exit = True
+                elif event.type == pygame.JOYBUTTONDOWN:
+                    if event.button == 1: #button A - enter
+                        pass
+                    elif event.button == 2: #button B - back
                         exit = True
 
 
