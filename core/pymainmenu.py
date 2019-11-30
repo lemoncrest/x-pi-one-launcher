@@ -18,7 +18,7 @@ WINDOW_SIZE = (1024, 600)
 COLOR_BACKGROUND = (61, 61, 202)
 FPS = 60.0
 MENU_BACKGROUND_COLOR = (153, 153, 255)
-MENU_OPTION_MARGIN = 45  # Option margin (px)
+MENU_OPTION_MARGIN = 20  # Option margin (px)
 
 ABOUT = [
     'using library version {0}'.format(pygameMenu.__version__),
@@ -87,9 +87,11 @@ class PyMainMenu():
             data = json.load(json_file)
             file = data["music-file"]
             on = data["music"]
+        pygame.mixer.music.stop()
         if on and file is not None: # play background music
             self.music = pygame.mixer.music.load(os.path.join(os.getcwd(),"assert/music",file))
             pygame.mixer.music.play(-1)
+
 
     def main_background(self):
         on = False
@@ -421,7 +423,7 @@ class PyMainMenu():
             color_selected=COLOR_BLUE,
             font=pygameMenu.font.FONT_COMIC_NEUE,
             font_color=COLOR_BLACK,
-            font_size=30,
+            font_size=20,
             menu_alpha=70,
             menu_color=MENU_BACKGROUND_COLOR,
             menu_height=int(WINDOW_SIZE[1] * 0.85),
@@ -474,8 +476,14 @@ class PyMainMenu():
                 values = vals2
             )
 
-            self.settings_menu.add_option('Apply - Save', self.saveSettings)
+            self.settings_menu.add_option('Apply - Save', self.applySettings)
             self.settings_menu.add_option('Back', pygameMenu.events.BACK)
+
+    def applySettings(self):
+        self.saveSettings()
+        #wallpapers are reloaded when you save because background image is painted all time, but needs music configuration because it's controlled at the first execution time
+        self.playMusicFromSettings()
+
 
     def progressbar(self):
         #hide main menu
