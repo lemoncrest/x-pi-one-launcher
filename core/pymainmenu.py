@@ -229,8 +229,11 @@ class PyMainMenu():
             events = pygame.event.get()
             logger.debug("main loop %s"%str(events))
             for event in events:
-                #keyboard library
-                self.keyboard.on_event(event)
+                try:
+                    self.keyboard.on_event(event) #keyboard library
+                except:
+                    logger.debug("no keyboard")
+                    pass
                 #normal events
                 if event.type == pygame.QUIT:
                     exit = True
