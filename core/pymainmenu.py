@@ -370,8 +370,11 @@ class PyMainMenu():
                     elif e.key == pygame.K_b:
                         exit = True
                     elif e.key == pygame.K_a or e.key == pygame.K_RETURN:
+                        #first stop music
+                        pygame.mixer.music.stop()
+                        #next launch game
                         self.launch(path,data,selected)
-                        quit()
+                        #quit()
                 elif e.type == pygame.MOUSEBUTTONUP:
                     mouse_pos = e.pos
                     mouse_up = True
@@ -392,7 +395,7 @@ class PyMainMenu():
                         pygame.mixer.music.stop()
                         #next launch game
                         self.launch(path,data,selected)
-                        quit()
+                        #quit()
                     elif e.button == 2: #button B - back
                         exit = True
                 elif e.type == pygame.JOYAXISMOTION:
