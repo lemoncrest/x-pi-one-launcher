@@ -24,6 +24,7 @@ keyboard.enable()
 
 import logging
 import pygame
+import os
 from os.path import join, dirname
 from pygame.locals import *
 
@@ -154,7 +155,8 @@ class VKeyboardRenderer(object):
 
 """ Default style implementation. """
 VKeyboardRenderer.DEFAULT = VKeyboardRenderer(
-    pygame.font.Font(join(dirname(__file__), 'DejaVuSans.ttf'), 25),
+    #os.path.abspath('.')
+    pygame.font.Font(os.path.join(os.getcwd(),"assert/fonts", 'DejaVuSans.ttf'), 25),
     (255, 255, 255),
     ((255, 255, 255), (0, 0, 0)),
     ((0, 0, 0), (255, 255, 255)),

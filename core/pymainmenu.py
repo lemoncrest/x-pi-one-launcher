@@ -506,7 +506,7 @@ class PyMainMenu():
         with open('config/configuration.json') as json_file:
             data = json.load(json_file)
 
-            self.settings_menu.add_text_input(title='Name: ',textinput_id="name", default=str(data["name"]))
+            self.settings_menu.add_text_input(title='Name: ',textinput_id="name", default=str(data["name"]),onfocus=self.drawKeyboard)
             self.settings_menu.add_text_input(title='Surname: ',textinput_id="surname", default=str(data["surname"]))
 
             vals = []
