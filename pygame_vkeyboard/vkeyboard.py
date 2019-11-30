@@ -1,27 +1,6 @@
 #!/usr/bin/python
 # coding: utf-8
 
-"""Visual keyboard for Pygame engine. Aims to be easy to use as highly customizable as well.
-
-``VKeyboard`` only require a pygame surface to be displayed on and a text consumer function, as in the following example :
-
-```python
-from pygame_vkeyboard import *
-
-# Initializes your window object or surface your want
-# vkeyboard to be displayed on top of.
-surface = ...
-
-def consume(text):
-    print(repr('Current text : %s' % text))
-
-# Initializes and activates vkeyboard
-layout = VKeyboardLayout(VKeyboardLayout.AZERTY)
-keyboard = VKeyboard(window, consumer, layout)
-keyboard.enable()
-```
-"""
-
 import logging
 import pygame
 import os

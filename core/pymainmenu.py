@@ -10,7 +10,9 @@ import random
 import os
 import sys
 import subprocess
-
+import logging
+logging.basicConfig()
+logger = logging.getLogger(__name__)
 from colors import *
 from pygame_vkeyboard import *
 
@@ -94,7 +96,7 @@ class PyMainMenu():
                           self.joystick.get_numbuttons(),
                           self.joystick.get_numhats())
         except:
-            print("no controllers found")
+            logger.debug("no controllers found")
             pass
 
     def playMusicFromSettings(self):
@@ -202,14 +204,15 @@ class PyMainMenu():
         self.drawKeyboard()
 
     def consumer(self,text):
-        print('Current text : %s' % text)
+        #TODO self.keyboard.disable() when press enter and use pynput to write all content stored in "text"
+        logger.debug('Current text : %s' % text)
 
     def drawKeyboard(self):
-
         # Initializes and activates vkeyboard
         layout = VKeyboardLayout(VKeyboardLayout.QWERTY)
         self.keyboard = VKeyboard(self.surface, self.consumer, layout)
         self.keyboard.enable()
+
 
 
     def updateProgress(self):
@@ -224,7 +227,7 @@ class PyMainMenu():
             self.main_background()
             #get events and configure
             events = pygame.event.get()
-            print("main loop %s"%str(events))
+            logger.debug("main loop %s"%str(events))
             for event in events:
                 #keyboard library
                 self.keyboard.on_event(event)
@@ -248,21 +251,21 @@ class PyMainMenu():
         with open('config/configuration.json', 'r') as json_file:
             data = json.load(json_file)
             for key,value in self.settings_menu.get_input_data().items():
-                print("saving -> key: %s, value: %s - type %s" % (key,value,type(value)))
+                logger.debug("saving -> key: %s, value: %s - type %s" % (key,value,type(value)))
                 if isinstance(value, str):
-                    print("saving str")
+                    logger.debug("saving str")
                     data[key]=value
                 elif isinstance(value, tuple):
-                    print("saving tuple..")
+                    logger.debug("saving tuple..")
                     value2 = value[0]
                     if value2 in ["On","Off"]:
                         value2 = bool(value[1])
                     data[key] = value2
                 elif isinstance(value,bool):
-                    print("saving bool")
+                    logger.debug("saving bool")
                     data[key]=value
                 else:
-                    print("no saving nothing!")
+                    logger.debug("no saving nothing!")
 
         with open('config/configuration.json', 'w+') as json_file:
             json.dump(data, json_file, indent=4)
@@ -356,7 +359,7 @@ class PyMainMenu():
                                 pid = int(pid)+1
                                 cmd = "kill -9 %s" % str(pid)
                             proc = subprocess.Popen(cmd, shell=True)
-                            print("program output: %s"%str(proc.stdout))
+                            logger.debug("program output: %s"%str(proc.stdout))
                             os.remove("/tmp/lastpid.pid")
                     elif e.key == pygame.K_UP:
                         if selected > 0:
@@ -373,7 +376,7 @@ class PyMainMenu():
                     mouse_pos = e.pos
                     mouse_up = True
                     mouse_down = False
-                    print("mUP: %s" % str(mouse_down))
+                    logger.debug("mUP: %s" % str(mouse_down))
                 elif e.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = e.pos
                     mouse_up = False
@@ -382,7 +385,7 @@ class PyMainMenu():
                         selected-=1
                     elif selected < len(data["games"])-1 and down:
                         selected+=1
-                    print("mDOWN: %s" % str(mouse_down))
+                    logger.debug("mDOWN: %s" % str(mouse_down))
                 elif e.type == pygame.JOYBUTTONDOWN:
                     if e.button == 1: #button A - enter
                         #first stop music
@@ -405,7 +408,7 @@ class PyMainMenu():
                         pass
 
                 else:
-                    print("other: %s"%str(e))
+                    logger.debug("other: %s"%str(e))
 
             self.main_background()
             #display selected element
@@ -430,7 +433,7 @@ class PyMainMenu():
         #proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
         #(out, err) = proc.communicate()
         #proc = subprocess.Popen(cmd, shell=True)
-        #print("program output: %s"%str(proc.stdout))
+        #logger.debug("program output: %s"%str(proc.stdout))
         #pid = int(proc.stdout)+1
         os.system(cmd)
 
@@ -585,7 +588,7 @@ class PyMainMenu():
 
             # Application events
             events = pygame.event.get()
-            print("event %s"%str(events))
+            logger.debug("event %s"%str(events))
             for e in events:
                 if e.type == pygame.QUIT:
                     quit()
