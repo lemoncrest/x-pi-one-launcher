@@ -41,6 +41,8 @@ class PyMainMenu():
     joystick = None
     joysticks = None
 
+    progress = 0
+
     def __init__(self):
         #init
         pygame.init()
@@ -50,14 +52,28 @@ class PyMainMenu():
         self.surface = pygame.display.set_mode(WINDOW_SIZE)
         pygame.display.set_caption('Menu principal')
 
+    def start(self):
+        #limit fps
+        self.main_menu.set_fps(FPS)
+        #main loop
+        self.main_menu.mainloop()
+
+        #next main loop (when exits from self.main_menu it returns the control to pymenu main)
+        self.mainloop()
+
+        self.main_menu.enable()
+        self.main_menu.reset(1)
+        #quit()
+        #going back - baby
+        self.start()
+
     def main(self):
         # Create menus
         self.createAboutMenu()
         self.createSettingsMenu()
         self.createMainMenu() #last, instance because of
 
-        # mainloop
-        self.mainloop()
+        self.start()
 
     def initJoysticks(self):
         pygame.joystick.init()
@@ -160,35 +176,52 @@ class PyMainMenu():
             window_height=WINDOW_SIZE[1],
             window_width=WINDOW_SIZE[0]
         )
-
-        self.main_menu.add_option('Repositorio local', self.createLocalRepo)
+        self.main_menu.add_option('Repositorio', self.navigateRepository)
+        self.main_menu.add_option('Local', self.createLocalRepo)
         self.main_menu.add_option('Tutorial', self.about_menu)
         self.main_menu.add_option('Configuracion', self.settings_menu)
         self.main_menu.add_option('Salir', pygameMenu.events.EXIT)
 
+    def navigateRepository(self):
+        #hide main menu
+        self.main_menu.disable()
+        self.main_menu.reset(1)
+
+        self.progress = 0
+        self.progressbar()
+
+        #show main menu
+        #self.main_menu.enable()
+        #self.main_menu.reset(1)
+
+        #show slider with downloaded data
+        self.drawSlider()
+
+    def drawSlider(self):
+        #TODO
+        pass
+
+
+    def updateProgress(self):
+        #simulate downloading... TODO download real metadata
+        self.progress += 0.01
+        return self.progress
+
     def mainloop(self):
-        #limit fps
-        self.main_menu.set_fps(FPS)
-        #main loop
         exit = False
-        self.main_menu.mainloop()
         while not exit:
             #colored background
             self.main_background()
             #get events and configure
             events = pygame.event.get()
-            print(str(events))
+            print("main loop %s"%str(events))
             for event in events:
                 if event.type == pygame.QUIT:
                     exit = True
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE and self.main_menu.is_enabled():
+                    if event.key == pygame.K_ESCAPE:
                         exit = True
-            # Main menu
-            self.main_menu.mainloop(events, disable_loop=False)
-            # Flip surface
-            pygame.display.update()
-        quit()
+
 
     def saveSettings(self):
 
@@ -334,6 +367,9 @@ class PyMainMenu():
                     print("mDOWN: %s" % str(mouse_down))
                 elif e.type == pygame.JOYBUTTONDOWN:
                     if e.button == 1: #button A - enter
+                        #first stop music
+                        pygame.mixer.music.stop()
+                        #next launch game
                         self.launch(path,data,selected)
                         quit()
                     elif e.button == 2: #button B - back
@@ -365,7 +401,7 @@ class PyMainMenu():
 
         self.manageEvents()
 
-        #show main menu
+        #show main menu when terminates and returns the control
         self.main_menu.enable()
         self.main_menu.reset(1)
 
@@ -498,44 +534,40 @@ class PyMainMenu():
 
 
     def progressbar(self):
-        #hide main menu
-        self.main_menu.disable()
-        self.main_menu.reset(1)
 
-        time = random.random()
+        progress = 0
 
         exit = False
-
-        while time<=1.002 and not exit:
+        while progress<1.002 and not exit:
             self.main_background()
 
             button_rect = pygame.Rect(50, 100, (WINDOW_SIZE[0]-(50*2)), 80)
-            width = (WINDOW_SIZE[0]-100)*time
+            width = (WINDOW_SIZE[0]-100)*progress
             FONT = pygame.font.Font(None, 36)
 
             pygame.draw.rect(self.surface, COLOR_GRAY, button_rect, 2)
             color = COLOR_LIGHT_GRAY
-            if time<=0.25:
+            if progress<=0.25:
                 color = COLOR_RED
-            elif time<=0.5:
+            elif progress<=0.5:
                 color = COLOR_LIGHT_GRAY
-            elif time<=0.75:
+            elif progress<=0.75:
                 color = COLOR_BLUE
-            elif time<1:
+            elif progress<1:
                 color = COLOR_GREEN
             else:
                 color = COLOR_WHITE
 
             pygame.draw.rect(self.surface, color, (51, 100, width-1, 80))
 
-            txt = FONT.render(str(round(time, 2)), True, color)
+            txt = FONT.render("Downloading... %s %%"%str(round(progress, 2)*100), True, color)
             self.surface.blit(txt, (20, 20))
 
-            time+=0.002
+            progress = self.updateProgress()
 
             # Application events
             events = pygame.event.get()
-            print(str(events))
+            print("event %s"%str(events))
             for e in events:
                 if e.type == pygame.QUIT:
                     quit()
@@ -544,7 +576,3 @@ class PyMainMenu():
                         exit = True
 
             pygame.display.flip()
-
-        #show main menu
-        self.main_menu.enable()
-        self.main_menu.reset(1)
