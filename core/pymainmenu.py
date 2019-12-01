@@ -15,6 +15,7 @@ logging.basicConfig()
 logger = logging.getLogger(__name__)
 from colors import *
 from pygame_vkeyboard import *
+from core.components.upbar import UpBar
 
 WINDOW_SIZE = (1024, 600)
 
@@ -55,6 +56,8 @@ class PyMainMenu():
         self.surface = pygame.display.set_mode(WINDOW_SIZE)
         pygame.display.set_caption('Menu principal')
 
+        self.upbar = UpBar(surface=self.surface)
+
     def start(self):
         #limit fps
         self.main_menu.set_fps(FPS)
@@ -71,11 +74,11 @@ class PyMainMenu():
         self.start()
 
     def main(self):
+        self.drawComponents() #at this moment bars
         # Create menus
         self.createAboutMenu()
         self.createSettingsMenu()
         self.createMainMenu() #last, instance because of
-
         self.start()
 
     def initJoysticks(self):
@@ -113,6 +116,8 @@ class PyMainMenu():
             self.music = pygame.mixer.music.load(os.path.join(os.getcwd(),"assert/music",file))
             pygame.mixer.music.play(-1)
 
+    def drawComponents(self):
+        self.upbar.draw()
 
     def main_background(self):
         on = False
@@ -195,6 +200,8 @@ class PyMainMenu():
 
         #clear
         self.main_background()
+
+        self.drawComponents()
 
         #show main menu
         #self.main_menu.enable()
@@ -377,6 +384,8 @@ class PyMainMenu():
                         pygame.mixer.music.stop()
                         #next launch game
                         self.launch(path,data,selected)
+                        #reload music when returns
+                        self.playMusicFromSettings()
                         #quit()
                 elif e.type == pygame.MOUSEBUTTONUP:
                     mouse_pos = e.pos
@@ -398,6 +407,8 @@ class PyMainMenu():
                         pygame.mixer.music.stop()
                         #next launch game
                         self.launch(path,data,selected)
+                        #reload music when returns
+                        self.playMusicFromSettings()
                         #quit()
                     elif e.button == 2: #button B - back
                         exit = True
@@ -417,6 +428,8 @@ class PyMainMenu():
                     logger.debug("other: %s"%str(e))
 
             self.main_background()
+
+            self.drawComponents()
             #display selected element
             circleA,circleB = self.drawSelectedElement(data["games"][selected],path)
             up,down = self.drawNavigationBar(selected,len(data["games"]))
@@ -567,6 +580,8 @@ class PyMainMenu():
         exit = False
         while progress<1.002 and not exit:
             self.main_background()
+
+            self.drawComponents()
 
             button_rect = pygame.Rect(50, 100, (WINDOW_SIZE[0]-(50*2)), 80)
             width = (WINDOW_SIZE[0]-100)*progress

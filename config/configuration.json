@@ -1,9 +1,9 @@
 {
-    "wallpaper-file": "arm.jpg", 
+    "wallpaper-file": "wallpaper.jpg", 
     "surname": "surname", 
     "name": "name", 
     "wallpaper": true, 
-    "music": true, 
+    "music": false, 
     "sounds": true, 
     "accountHashId": "c0357e4daa3e83048eec7d1f2f3d6a5418e2b005f7a8e1b2e31fb9bb47151990", 
     "music-file": "5-Free-Background-Music.mp3", 
