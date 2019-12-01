@@ -3,12 +3,12 @@ import pygame
 import os
 from core.colors import *
 from core.utils import Utils
+from core.components.menu import Menu
 
 WINDOW_SIZE = (1024, 600)
 ALPHA = 192
 BARSIZE = 60
 FONT_SIZE = 20
-
 
 class UpBar():
 
@@ -16,22 +16,11 @@ class UpBar():
         self.surface = surface # main screen
         self.bar = pygame.Surface((WINDOW_SIZE[0], BARSIZE), pygame.SRCALPHA)
         self.font = pygame.font.Font(os.path.join(os.getcwd(),"assert/fonts","DejaVuSans.ttf"), FONT_SIZE)
+        self.menu = Menu(title="Menu", first=(0,0) ,parent=(WINDOW_SIZE[0],60), font=self.font, surface=self.surface)
 
     def draw(self):
         self.drawBackground()
-        self.drawMenuButton()
-
-    def drawMenuButton(self):
-        self.menu = Utils.drawRectangleButton(
-            text="Todo lo que tiene un principio tiene un final",
-            font=self.font,surface=self.surface,
-            fillHeight= True,
-            fillWidth = False,
-            centeredY = True,
-            centeredX = False,
-            margin = 0,
-            padding = 0,
-            parentSize=(WINDOW_SIZE[0],60))
+        self.menu.draw()
 
     def drawBackground(self):
         # add alpha to tuple {transform (,,,) to (,,,,ALPHA)}

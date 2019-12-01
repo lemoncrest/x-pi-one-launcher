@@ -1,10 +1,28 @@
-from core.colors import *
+
 import pygame
+from core.colors import *
+
+from core.components.button import Button
+
+import logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 
 class Utils():
 
     @staticmethod
-    def drawRectangleButton(text,font,surface,parentSize=(0,0),margin=0,padding=0,fillWidth=False,fillHeight=False,centeredX = False,centeredY = False):
+    def getRectangleButton(
+            text,
+            font,
+            surface = None,
+            parentSize = (0,0),
+            margin = 0,
+            padding = 0,
+            fillWidth = False,
+            fillHeight = False,
+            centeredX = False,
+            centeredY = False):
 
         rectangleX = margin
         rectangleY = margin
@@ -13,9 +31,9 @@ class Utils():
 
         #calculate
         if not fillWidth and parentSize[0]>0:
-            width = font.size(text)[0]+(font.size(text[0])[0])-(padding*2)-(margin*2)
+            width = font.size(text)[0]+(font.size(text[0])[0])+(padding*2)-(margin*2)
         if not fillHeight and parentSize[1]>0:
-            height = font.size(text)[1]+(font.size(text[0])[1])-(padding*2)-(margin*2)
+            height = font.size(text)[1]+(font.size(text[0])[1])+(padding*2)-(margin*2)
 
         x = width/2-(font.size(text)[0]/2)
         y = height/2-(font.size(text)[1]/2)
@@ -31,11 +49,13 @@ class Utils():
         else:
             y+=margin
 
-        print("init: %s %s" % (rectangleX,rectangleY))
-        print("size: %s %s" % (width,height))
         button = pygame.Rect(rectangleX, rectangleY, width, height)
-        pygame.draw.rect(surface, COLOR_GRAY, button, 0)
+        #pygame.draw.rect(surface, COLOR_GRAY, button, 0)
 
         txt = font.render(text, True, COLOR_WHITE)
-        surface.blit(txt, (x, y) )
-        return button
+        textPoint = (x, y)
+        #surface.blit(txt, textPoint )
+
+        rectangleButton = Button(rectangle=button,txt=txt,textPoint=textPoint,surface=surface)
+
+        return rectangleButton
