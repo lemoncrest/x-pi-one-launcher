@@ -5,7 +5,7 @@ from core.colors import *
 from core.utils import Utils
 from core.components.menu import Menu
 
-WINDOW_SIZE = (1024, 600)
+WINDOW_SIZE = (1366, 768)
 ALPHA = 192
 BARSIZE = 60
 FONT_SIZE = 20
@@ -16,7 +16,7 @@ class UpBar():
         self.surface = surface # main screen
         self.bar = pygame.Surface((WINDOW_SIZE[0], BARSIZE), pygame.SRCALPHA)
         self.font = pygame.font.Font(os.path.join(os.getcwd(),"assert/fonts","DejaVuSans.ttf"), FONT_SIZE)
-        self.menu = Menu(title="Menu", first=(0,0) ,parent=(WINDOW_SIZE[0],60), font=self.font, surface=self.surface)
+        self.menu = Menu(title="Menu", first=(0,0) ,parent=(WINDOW_SIZE[0],BARSIZE), font=self.font, surface=self.surface)
 
     def draw(self):
         self.drawBackground()

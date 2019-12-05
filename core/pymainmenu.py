@@ -203,7 +203,7 @@ class PyMainMenu():
 
         self.drawComponents()
 
-        ProgressBar(width=WINDOW_SIZE[0],height=80,surface=self.surface).progressbar()
+        ProgressBar(width=200,height=30,surface=self.surface,x=800, y=100,margin=0,centeredText=True).progressbar()
 
         #show main menu
         #self.main_menu.enable()
