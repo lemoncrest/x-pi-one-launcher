@@ -16,8 +16,9 @@ logger = logging.getLogger(__name__)
 from colors import *
 from pygame_vkeyboard import *
 from core.components.upbar import UpBar
+from core.components.progressbar import ProgressBar
 
-WINDOW_SIZE = (1024, 600)
+WINDOW_SIZE = (1366, 768)
 
 COLOR_BACKGROUND = (61, 61, 202) # by default if there is no image to load will be shown it
 FPS = 60.0
@@ -196,12 +197,13 @@ class PyMainMenu():
         self.main_menu.reset(1)
 
         self.progress = 0
-        self.progressbar()
 
         #clear
         self.main_background()
 
         self.drawComponents()
+
+        ProgressBar(width=WINDOW_SIZE[0],height=80,surface=self.surface).progressbar()
 
         #show main menu
         #self.main_menu.enable()
@@ -220,12 +222,6 @@ class PyMainMenu():
         self.keyboard = VKeyboard(self.surface, self.consumer, layout)
         self.keyboard.enable()
 
-
-
-    def updateProgress(self):
-        #simulate downloading... TODO download real metadata
-        self.progress += 0.01
-        return self.progress
 
     def mainloop(self):
         exit = False
@@ -571,50 +567,3 @@ class PyMainMenu():
         self.saveSettings()
         #wallpapers are reloaded when you save because background image is painted all time, but needs music configuration because it's controlled at the first execution time
         self.playMusicFromSettings()
-
-
-    def progressbar(self):
-
-        progress = 0
-
-        exit = False
-        while progress<1.002 and not exit:
-            self.main_background()
-
-            self.drawComponents()
-
-            button_rect = pygame.Rect(50, 100, (WINDOW_SIZE[0]-(50*2)), 80)
-            width = (WINDOW_SIZE[0]-100)*progress
-            FONT = pygame.font.Font(None, 36)
-
-            pygame.draw.rect(self.surface, COLOR_GRAY, button_rect, 2)
-            color = COLOR_LIGHT_GRAY
-            if progress<=0.25:
-                color = COLOR_RED
-            elif progress<=0.5:
-                color = COLOR_LIGHT_GRAY
-            elif progress<=0.75:
-                color = COLOR_BLUE
-            elif progress<1:
-                color = COLOR_GREEN
-            else:
-                color = COLOR_WHITE
-
-            pygame.draw.rect(self.surface, color, (51, 100, width-1, 80))
-
-            txt = FONT.render("Downloading... %s %%"%str(round(progress, 2)*100), True, color)
-            self.surface.blit(txt, (20, 20))
-
-            progress = self.updateProgress()
-
-            # Application events
-            events = pygame.event.get()
-            logger.debug("event %s"%str(events))
-            for e in events:
-                if e.type == pygame.QUIT:
-                    quit()
-                elif e.type == pygame.KEYDOWN:
-                    if e.key == pygame.K_ESCAPE and self.main_menu.is_disabled():
-                        exit = True
-
-            pygame.display.flip()
