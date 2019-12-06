@@ -11,6 +11,7 @@ import os
 import sys
 import subprocess
 import urllib2
+import time
 try:
     from urllib2 import urlopen # Python2
 except ImportError:
@@ -226,13 +227,48 @@ class PyMainMenu():
         pass
 
     def drawList(self,data):
-        self.main_background()
         selected = 0
-        #display selected element
-        circleA,circleB = self.drawSelectedElement(element=data["games"][selected],path=None,aTxt="Install from repository",bTxt="Back to previous menu")
-        up,down = self.drawNavigationBar(selected,len(data["games"]))
+        exit = False
 
-        pygame.display.update()
+        while not exit:
+            #colored background
+            self.main_background()
+
+            #get events and configure
+            events = pygame.event.get()
+            logger.debug("drawList event %s"%str(events))
+            for event in events:
+                try:
+                    self.keyboard.on_event(event) #keyboard library
+                except:
+                    logger.debug("no keyboard")
+                    pass
+                #normal events
+                if event.type == pygame.QUIT:
+                    exit = True
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        exit = True
+                    elif event.key == pygame.K_UP:
+                        if selected > 0:
+                            selected-=1
+                    elif event.key == pygame.K_DOWN:
+                        if selected < len(data["games"])-1:
+                            selected+=1
+                    elif event.key == pygame.K_b:
+                        exit = True
+                    elif event.key == pygame.K_a or event.key == pygame.K_RETURN:
+                        exit = True #TODO install script
+                elif event.type == pygame.JOYBUTTONDOWN:
+                    if event.button == 1: #button A - enter
+                        exit = True #TODO install script
+                    elif event.button == 2: #button B - back
+                        exit = True
+
+            #display selected element
+            circleA,circleB = self.drawSelectedElement(element=data["games"][selected],path=None,aTxt="Install from repository",bTxt="Back to previous menu")
+            up,down = self.drawNavigationBar(selected,len(data["games"]))
+            pygame.display.update()
 
 
     def chunk_report(self, bytes_so_far, chunk_size, total_size):
@@ -397,7 +433,7 @@ class PyMainMenu():
 
         data = {}
 
-        with open('config/storage.json', 'r') as json_file:
+        with open(os.path.join(os.getcwd(),'config/storage.json'), 'r') as json_file:
             data = json.load(json_file)
 
         path = data["repo"]["path"]
