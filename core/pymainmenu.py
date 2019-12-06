@@ -11,6 +11,7 @@ import os
 import sys
 import subprocess
 import logging
+import urllib2
 logging.basicConfig()
 logger = logging.getLogger(__name__)
 from colors import *
@@ -196,7 +197,58 @@ class PyMainMenu():
         self.main_menu.disable()
         self.main_menu.reset(1)
 
-        self.progress = 0
+        #first download metadata
+        #https://gitlab.gameboyzero.es/pygames/repository/raw/master/pool.json
+        margin = 50
+        self.progressbar = ProgressBar(width=WINDOW_SIZE[0]-margin,height=30,surface=self.surface,x=0, y=50,margin=margin,centeredText=True)
+        #repository = "https://gitlab.gameboyzero.es/pygames/repository/raw/master/pool.json"
+        repository = "https://speed.hetzner.de/100MB.bin"
+        response = urllib2.urlopen(repository)
+        self.progressbar.updateProgressBar() #first frame
+        self.lastFramed = 0
+        self.chunk_read(response, report_hook=self.chunk_report)
+        self.progressbar.updateProgressBar() #last frame
+
+
+
+    def chunk_report(self, bytes_so_far, chunk_size, total_size):
+        percent = float(bytes_so_far) / total_size
+        progress = round(percent*100, 2)
+        #print("Downloaded %d of %d bytes (%0.2f%%)" % (bytes_so_far, total_size, progress))
+        #print(str(progress/100))
+        if float(self.lastFramed + 0.0015) < progress/100 or progress>=100:
+            self.lastFramed = self.progressbar.progress
+            self.progressbar.updateProgressBar()
+
+        #less frames, better times, it's not necessary refresh all time, CPU is gold for interpreter
+        self.progressbar.progress = progress/100
+
+
+    def chunk_read(self, response, chunk_size=8192, report_hook=None):
+        total_size = response.info().getheader('Content-Length').strip()
+        total_size = int(total_size)
+        bytes_so_far = 0
+
+        while 1:
+            chunk = response.read(chunk_size)
+            bytes_so_far += len(chunk)
+
+            if not chunk:
+                break
+
+            if report_hook:
+                report_hook(bytes_so_far, chunk_size, total_size)
+
+        return bytes_so_far
+
+
+
+    def tests(self):
+        #hide main menu
+        self.main_menu.disable()
+        self.main_menu.reset(1)
+
+        #self.progress = 0
 
         #clear
         self.main_background()

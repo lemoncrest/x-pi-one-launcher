@@ -1,3 +1,8 @@
+# coding=utf-8
+
+#python2 issues, div with float, not int
+from __future__ import division
+
 import pygame
 from core.colors import *
 import logging
@@ -6,14 +11,7 @@ logger = logging.getLogger(__name__)
 
 class ProgressBar():
 
-    button_rect = None
-    width = None
-    height = None
-    font = None
-    progress = None
-    txt = None
-
-    def __init__(self, x, y, width, height, surface, margin=0, fontSize=20, border=2, centeredText = True ):
+    def __init__(self, x, y, width, height, surface, margin=0, fontSize=20, border=2, centeredText = True ,progress = 0,color_progress=True):
         self.centeredText = centeredText
         self.height = height
         self.margin = margin
@@ -25,53 +23,61 @@ class ProgressBar():
         self.font = pygame.font.Font(None, fontSize)
         self.border = border
         self.surface = surface
-
-    def progressbar(self,progress=0):
-
         self.progress = progress
+        self.color_progress = color_progress
+
+    def updateProgressBar(self):
+
+        #print("OK (%.2f%%)" % self.progress)
+
+        #self.progress = progress
 
         exit = False
-        while progress<=1.002 and not exit:
+        #while progress<=1.002 and not exit:
 
-            pygame.draw.rect(self.surface, COLOR_BLACK, self.button_rect, 0) #fill background
-
+        pygame.draw.rect(self.surface, COLOR_BLACK, self.button_rect, 0) #fill background
+        color_text = COLOR_GRAY
+        if not self.color_progress:
             #calculate progress color background bar
             color = COLOR_LIGHT_GRAY
-            if progress<=0.25:
+            if self.progress<=0.25:
                 color = COLOR_RED
-            elif progress<=0.5:
+            elif self.progress<=0.5:
                 color = COLOR_LIGHT_GRAY
-            elif progress<=0.75:
+            elif self.progress<=0.75:
                 color = COLOR_BLUE
-            elif progress<1:
+            elif self.progress<1:
                 color = COLOR_GREEN
             else:
                 color = COLOR_WHITE
+        else:
+            color = (255-int(255*self.progress),int(255*self.progress),0)
+            color_text = (int(255*self.progress),255-int(255*self.progress),128)
 
-            width = (self.width-self.margin-self.border) * progress
-            height = self.height-self.border
-            pygame.draw.rect(self.surface, color, (self.x+self.margin+(self.border/2), self.y+self.margin+(self.border/2), width, height))
+        width = (self.width-self.margin-self.border) * self.progress
+        height = self.height-self.border
+        pygame.draw.rect(self.surface, color, (self.x+self.margin+(self.border/2), self.y+self.margin+(self.border/2), width, height))
 
-            text = "Downloading... %s %%"%str(round(progress, 2)*100)
-            txt = self.font.render(text, True, COLOR_GRAY)
+        text = "Downloading... %s %%"%str(self.progress*100)
+        txt = self.font.render(text, True, color_text)
 
-            if self.centeredText:
-                x = self.width/2-(self.font.size(text)[0]/2)
-                y = height/2-(self.font.size(text)[1]/2)
-                self.surface.blit(txt, (self.x+self.margin+x, self.y+self.margin+y))
-            else:
-                x = self.x+(width/2)-(self.font.size(text)[0]/2)+(self.margin/2)
-                y = self.y+height/2-(self.font.size(text)[1]/2)
-                self.surface.blit(txt, (x, self.margin+y))
+        if self.centeredText:
+            x = self.width/2-(self.font.size(text)[0]/2)
+            y = height/2-(self.font.size(text)[1]/2)
+            self.surface.blit(txt, (self.x+self.margin+x, self.y+self.margin+y))
+        else:
+            x = self.x+(width/2)-(self.font.size(text)[0]/2)+(self.margin/2)
+            y = self.y+height/2-(self.font.size(text)[1]/2)
+            self.surface.blit(txt, (x, self.margin+y))
 
-            progress = self.updateProgress()
+        progress = self.updateProgress()
 
-            #draw bar
-            pygame.draw.rect(self.surface, COLOR_GRAY, self.button_rect, self.border)
+        #draw bar
+        pygame.draw.rect(self.surface, COLOR_GRAY, self.button_rect, self.border)
 
-            exit = self.manageEvents()
+        exit = self.manageEvents()
 
-            pygame.display.flip()
+        pygame.display.flip()
 
     def manageEvents(self):
         exit = False
@@ -88,5 +94,4 @@ class ProgressBar():
 
     def updateProgress(self):
         #simulate downloading... TODO download real metadata
-        self.progress += 0.001
         return self.progress
