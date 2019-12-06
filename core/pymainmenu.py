@@ -10,8 +10,14 @@ import random
 import os
 import sys
 import subprocess
-import logging
 import urllib2
+try:
+    from urllib2 import urlopen # Python2
+except ImportError:
+    from urllib.request import urlopen # Python3 but... it's not necessary at this moment, for the furute
+
+import io
+import logging
 logging.basicConfig()
 logger = logging.getLogger(__name__)
 from colors import *
@@ -198,17 +204,35 @@ class PyMainMenu():
         self.main_menu.reset(1)
 
         #first download metadata
-        #https://gitlab.gameboyzero.es/pygames/repository/raw/master/pool.json
         margin = 50
         self.progressbar = ProgressBar(width=WINDOW_SIZE[0]-margin,height=30,surface=self.surface,x=0, y=50,margin=margin,centeredText=True)
-        #repository = "https://gitlab.gameboyzero.es/pygames/repository/raw/master/pool.json"
-        repository = "https://speed.hetzner.de/100MB.bin"
+        repository = "https://gitlab.gameboyzero.es/pygames/repository/raw/master/pool.json"
+        #repository = "https://speed.hetzner.de/100MB.bin"
         response = urllib2.urlopen(repository)
         self.progressbar.updateProgressBar() #first frame
         self.lastFramed = 0
-        self.chunk_read(response, report_hook=self.chunk_report)
+        content = self.chunk_read(response, report_hook=self.chunk_report)
         self.progressbar.updateProgressBar() #last frame
+        print(content)
+        self.main_background()
+        #now show metadata content
+        self.drawRemoteRepository(json.loads(content))
 
+    def drawRemoteRepository(self,content):
+        self.drawSections(content)
+        self.drawList(content)
+
+    def drawSections(self,data):
+        pass
+
+    def drawList(self,data):
+        self.main_background()
+        selected = 0
+        #display selected element
+        circleA,circleB = self.drawSelectedElement(element=data["games"][selected],path=None,aTxt="Install from repository",bTxt="Back to previous menu")
+        up,down = self.drawNavigationBar(selected,len(data["games"]))
+
+        pygame.display.update()
 
 
     def chunk_report(self, bytes_so_far, chunk_size, total_size):
@@ -228,9 +252,10 @@ class PyMainMenu():
         total_size = response.info().getheader('Content-Length').strip()
         total_size = int(total_size)
         bytes_so_far = 0
-
+        total = ''
         while 1:
             chunk = response.read(chunk_size)
+            total+=chunk
             bytes_so_far += len(chunk)
 
             if not chunk:
@@ -239,9 +264,7 @@ class PyMainMenu():
             if report_hook:
                 report_hook(bytes_so_far, chunk_size, total_size)
 
-        return bytes_so_far
-
-
+        return total #bytes_so_far
 
     def tests(self):
         #hide main menu
@@ -253,15 +276,6 @@ class PyMainMenu():
         #clear
         self.main_background()
 
-        self.drawComponents()
-
-        ProgressBar(width=200,height=30,surface=self.surface,x=800, y=100,margin=0,centeredText=True).progressbar()
-
-        #show main menu
-        #self.main_menu.enable()
-        #self.main_menu.reset(1)
-
-        #show slider with downloaded data
         self.drawKeyboard()
 
     def consumer(self,text):
@@ -379,7 +393,7 @@ class PyMainMenu():
 
         return up,down
 
-    def manageEvents(self):
+    def manageLocalEvents(self):
 
         data = {}
 
@@ -477,9 +491,8 @@ class PyMainMenu():
 
             self.main_background()
 
-            self.drawComponents()
             #display selected element
-            circleA,circleB = self.drawSelectedElement(data["games"][selected],path)
+            circleA,circleB = self.drawSelectedElement(data["games"][selected],path,"Enter inside program","Back to previous menu")
             up,down = self.drawNavigationBar(selected,len(data["games"]))
 
             pygame.display.update()
@@ -487,7 +500,7 @@ class PyMainMenu():
     def createLocalRepo(self):
         self.main_menu.disable()
 
-        self.manageEvents()
+        self.manageLocalEvents()
 
         #show main menu when terminates and returns the control
         self.main_menu.enable()
@@ -504,14 +517,9 @@ class PyMainMenu():
         #pid = int(proc.stdout)+1
         os.system(cmd)
 
-    def drawSelectedElement(self,element,path):
+    def drawSelectedElement(self,element,path,aTxt,bTxt):
         fontSize = 30
         font = pygame.font.Font(None, fontSize)
-
-        #draw card
-        #card = pygame.Rect(MARGIN, MARGIN, (WINDOW_SIZE[0]-(MARGIN*2)), (WINDOW_SIZE[1]-(MARGIN*2)))
-        #pygame.draw.rect(self.surface, COLOR_BLUE, card, 0)
-        #pygame.draw.rect(self.surface, pygame.Color(0,0,255,255), card, 0)
 
         #draw card with transparency
         card = pygame.Surface((WINDOW_SIZE[0]-(MARGIN*2), WINDOW_SIZE[1]-(MARGIN*2)), pygame.SRCALPHA)
@@ -520,14 +528,26 @@ class PyMainMenu():
         pygame.draw.rect(card, color_with_alpha, (0,0, WINDOW_SIZE[0]-(MARGIN*2),WINDOW_SIZE[1]-(MARGIN*2)))
         self.surface.blit(card,(MARGIN,MARGIN))
 
-        txt = font.render(str(element["title"]), True, COLOR_GREEN)
+        title = "unknown"
+        if "name" in element:
+            title = element["name"]
+        elif "title" in element:
+            title = element["title"]
+
+        txt = font.render(str(title), True, COLOR_GREEN)
         self.surface.blit(txt, (MARGIN*2, WINDOW_SIZE[1]-(MARGIN*2)-(fontSize*2)))
 
-        txt2 = font.render(str(element["launcher"]), True, COLOR_LIGHT_GRAY)
-        self.surface.blit(txt2, (MARGIN*2, WINDOW_SIZE[1]-(MARGIN)-(fontSize*2)))
+        if "launcher" in element:
+            txt2 = font.render(str(element["launcher"]), True, COLOR_LIGHT_GRAY)
+            self.surface.blit(txt2, (MARGIN*2, WINDOW_SIZE[1]-(MARGIN)-(fontSize*2)))
 
         #now draw image if exists
-        filename = os.path.join(path,element["source"],element["thumbnail"])
+        if path!=None and "http" not in path:
+            filename = os.path.join(path,element["source"],element["thumbnail"])
+        elif "://" in element["thumbnail"]:
+            filename = element["thumbnail"]
+            image_str = urlopen(filename).read()
+            filename = io.BytesIO(image_str) #overwrite
 
         picture = pygame.image.load(filename)
         pic = pygame.transform.scale(picture, (THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT))
@@ -539,7 +559,7 @@ class PyMainMenu():
         pygame.draw.circle(self.surface, COLOR_GREEN, circleA, BUTTON_RADIO, 0)
         txt3 = font.render("A", True, COLOR_WHITE)
         self.surface.blit(txt3, (circleA[0]-8, circleA[1]-10))
-        txt33 = font.render("Enter inside program", True, COLOR_WHITE)
+        txt33 = font.render(aTxt, True, COLOR_WHITE)
         self.surface.blit(txt33, (circleA[0]+BUTTON_RADIO*2,circleA[1]-10))
 
         #button B
@@ -547,7 +567,7 @@ class PyMainMenu():
         pygame.draw.circle(self.surface, COLOR_RED, circleB , BUTTON_RADIO, 0)
         txt4 = font.render("B", True, COLOR_WHITE)
         self.surface.blit(txt4, (circleB[0]-8,circleB[1]-10))
-        txt4 = font.render("Back to previous menu", True, COLOR_WHITE)
+        txt4 = font.render(bTxt, True, COLOR_WHITE)
         self.surface.blit(txt4, (circleB[0]+BUTTON_RADIO*2,circleB[1]-10))
 
         return circleA,circleB
