@@ -25,6 +25,7 @@ from colors import *
 from pygame_vkeyboard import *
 from core.components.upbar import UpBar
 from core.components.progressbar import ProgressBar
+from core.components.listbox import ListBox
 
 WINDOW_SIZE = (1366, 768)
 
@@ -132,7 +133,7 @@ class PyMainMenu():
         on = False
         file = None
         file = None
-        with open('config/configuration.json', 'r') as json_file:
+        with open(os.path.join(os.getcwd(),'config/configuration.json'), 'r') as json_file:
             data = json.load(json_file)
             file = data["wallpaper-file"]
             on = data["wallpaper"]
@@ -196,8 +197,145 @@ class PyMainMenu():
         self.main_menu.add_option('Repositorio', self.navigateRepository)
         self.main_menu.add_option('Local', self.createLocalRepo)
         self.main_menu.add_option('Tutorial', self.about_menu)
-        self.main_menu.add_option('Configuracion', self.settings_menu)
+        self.main_menu.add_option('Configuracion', self.settings)
         self.main_menu.add_option('Salir', pygameMenu.events.EXIT)
+
+
+    def settings(self):
+        #hide main menu
+        self.main_menu.disable()
+        self.main_menu.reset(1)
+
+        self.main_background()
+
+        #Sample options inspired on pokemon menu
+        list = [
+            {
+                "title" : "Velocidad del texto",
+                "choice" : [
+                    "Lenta",
+                    "Media",
+                    "Rapida"
+                ]
+            },
+            {
+                "title" : "Animaciones en combate",
+                "choice" : [
+                    "Ver",
+                    "No ver"
+                ]
+            },
+            {
+                "title" : "Tipo de combate",
+                "choice" : [
+                    "Con cambios",
+                    "Fijo"
+                ]
+            },
+            {
+                "title" : "Equipo / Caja",
+                "choice" : [
+                    "Manual",
+                    "Automatico"
+                ]
+            },
+            {
+                "title" : "Poner motes",
+                "choice" : [
+                    "Si",
+                    "No"
+                ]
+            },{
+                "title" : "Giroscopio",
+                "choice" : [
+                    "Si",
+                    "No"
+                ]
+            },{
+                "title" : "Eje vertical de la camara",
+                "choice" : [
+                    "Normal",
+                    "Invertido"
+                ]
+            },{
+                "title" : "Eje horizontal de la camara",
+                "choice" : [
+                    "Normal",
+                    "Invertido"
+                ]
+            },
+            {
+                "title" : "Velocidad del texto",
+                "choice" : [
+                    "Lenta",
+                    "Media",
+                    "Rapida"
+                ]
+            },
+            {
+                "title" : "Animaciones en combate",
+                "choice" : [
+                    "Ver",
+                    "No ver"
+                ]
+            },
+            {
+                "title" : "Tipo de combate",
+                "choice" : [
+                    "Con cambios",
+                    "Fijo"
+                ]
+            },
+            {
+                "title" : "Equipo / Caja",
+                "choice" : [
+                    "Manual",
+                    "Automatico"
+                ]
+            },
+            {
+                "title" : "Poner motes",
+                "choice" : [
+                    "Si",
+                    "No"
+                ]
+            },{
+                "title" : "Giroscopio",
+                "choice" : [
+                    "Si",
+                    "No"
+                ]
+            },{
+                "title" : "Eje vertical de la camara",
+                "choice" : [
+                    "Normal",
+                    "Invertido"
+                ]
+            },{
+                "title" : "Eje horizontal de la camara",
+                "choice" : [
+                    "Normal",
+                    "Invertido"
+                ]
+            }
+        ]
+        x=0
+        y=0
+        margin = 100
+        self.listbox = ListBox(
+            width=int(WINDOW_SIZE[0]),
+            height=int(WINDOW_SIZE[1]),
+            x=x,
+            y=y,
+            margin=margin,
+            visibleOptions=7,
+            padding=20,
+            surface=self.surface,
+            centered = True,
+            list=list)
+
+        self.listbox.show()
+
 
     def navigateRepository(self):
         #hide main menu
@@ -208,7 +346,6 @@ class PyMainMenu():
         margin = 50
         self.progressbar = ProgressBar(width=WINDOW_SIZE[0]-margin,height=30,surface=self.surface,x=0, y=50,margin=margin,centeredText=True)
         repository = "https://gitlab.gameboyzero.es/pygames/repository/raw/master/pool.json"
-        #repository = "https://speed.hetzner.de/100MB.bin"
         response = urllib2.urlopen(repository)
         self.progressbar.updateProgressBar() #first frame
         self.lastFramed = 0
@@ -218,6 +355,11 @@ class PyMainMenu():
         self.main_background()
         #now show metadata content
         self.drawRemoteRepository(json.loads(content))
+
+        #show main menu when terminates and returns the control
+        #self.main_menu.mainloop()
+        self.main_menu.enable()
+        self.main_menu.reset(1)
 
     def drawRemoteRepository(self,content):
         self.drawSections(content)
