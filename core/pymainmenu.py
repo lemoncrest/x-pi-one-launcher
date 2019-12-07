@@ -71,16 +71,13 @@ class PyMainMenu():
     def start(self):
         #limit fps
         self.main_menu.set_fps(FPS)
-        #main loop
-        self.main_menu.mainloop()
 
-        #next main loop (when exits from self.main_menu it returns the control to pymenu main)
-        self.mainloop()
+        #next main loop
+        self.main_menu.mainloop()
 
         self.main_menu.enable()
         self.main_menu.reset(1)
-        #quit()
-        #going back - baby
+
         self.start()
 
     def main(self):
@@ -465,33 +462,6 @@ class PyMainMenu():
         layout = VKeyboardLayout(VKeyboardLayout.QWERTY)
         self.keyboard = VKeyboard(self.surface, self.consumer, layout)
         self.keyboard.enable()
-
-
-    def mainloop(self):
-        exit = False
-        while not exit:
-            #colored background
-            self.main_background()
-            #get events and configure
-            events = pygame.event.get()
-            logger.debug("main loop %s"%str(events))
-            for event in events:
-                try:
-                    self.keyboard.on_event(event) #keyboard library
-                except:
-                    logger.debug("no keyboard")
-                    pass
-                #normal events
-                if event.type == pygame.QUIT:
-                    exit = True
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        exit = True
-                elif event.type == pygame.JOYBUTTONDOWN:
-                    if event.button == 1: #button A - enter
-                        pass
-                    elif event.button == 2: #button B - back
-                        exit = True
 
 
     def saveSettings(self):
