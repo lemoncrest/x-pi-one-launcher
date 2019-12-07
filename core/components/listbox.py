@@ -39,7 +39,10 @@ class ListBox():
         exit = False
 
         selected = 0
-        choice = 0
+        choices = []
+        #TODO put selected index from configuration in each choices[i]
+        for i in range(0,len(self.list)):
+            choices.append(0)
 
         while not exit:
 
@@ -64,18 +67,24 @@ class ListBox():
                     elif event.key == pygame.K_DOWN:
                         if selected < len(self.list)-1:
                             selected+=1
+                    elif event.key == pygame.K_LEFT:
+                        if choices[selected] > 0:
+                            choices[selected]-=1
+                    elif event.key == pygame.K_RIGHT:
+                        if choices[selected] < len(self.list[selected]["choice"])-1:
+                            choices[selected]+=1
                     elif event.key == pygame.K_b:
                         exit = True
                     elif event.key == pygame.K_a or event.key == pygame.K_RETURN:
-                        exit = True #TODO install script
+                        exit = True #TODO save script
                 elif event.type == pygame.JOYBUTTONDOWN:
                     if event.button == 1: #button A - enter
-                        exit = True #TODO install script
+                        exit = True #TODO save
                     elif event.button == 2: #button B - back
-                        exit = True
+                        exit = True #back
 
             #display all options
-            self.displayOptions(sizeX,sizeY,selected,choice)
+            self.displayOptions(sizeX,sizeY,selected,choices)
 
             #display lateral bar
             self.displayBar(sizeX,sizeY,selected)
@@ -96,26 +105,27 @@ class ListBox():
         button_rect = pygame.Rect(x, y+(selected*sizeSelectedY), sizeX, sizeSelectedY)
         pygame.draw.rect(self.surface, COLOR_LIGHT_GRAY, button_rect, 0)
 
-    def displayOptions(self,sizeX,sizeY,selected,choice):
-        first = 0
-        last = self.visibleOptions
+    def displayOptions(self,sizeX,sizeY,selected,choices):
+
+        first = selected-int(self.visibleOptions/2)
+        if first<0:
+            first = 0
+        elif first+self.visibleOptions>len(self.list):
+            first = len(self.list)-self.visibleOptions
+        last = first+self.visibleOptions
+
         for i in range(first,last):
-            selected_choice = 0
             if self.centered:
                 x = ((WINDOW_SIZE[0])/2) - (sizeX/2)
             else:
                 x = self.x
-
-            y = self.y + self.margin + ((i+1)*self.padding) + ((i)*sizeY)
-            if i==selected:
-                selected_choice = 1
-            self.displayOption(element=self.list[i], x=x, y=y, sizeX=sizeX, sizeY=sizeY,selected_field=bool(i==selected),selected_choice=selected_choice)
+            choice = choices[i]
+            y = self.y + self.margin + ((i+1-first)*self.padding) + ((i-first)*sizeY)
+            self.displayOption(element=self.list[i], x=x, y=y, sizeX=sizeX, sizeY=sizeY,selected_field=bool(i==selected),selected_choice=choice)
 
 
     def displayOption(self,element,x,y,sizeX,sizeY,selected_field=False,selected_choice=0,selected_margin=15):
 
-        text = element["title"]
-        list = element["choice"]
         #fill title
         button_rect = pygame.Rect(x, y, (sizeX/3)-self.padding, sizeY)
         pygame.draw.rect(self.surface, COLOR_BLACK, button_rect, 0)
@@ -126,8 +136,8 @@ class ListBox():
             pygame.draw.rect(self.surface, COLOR_BLUE, button_rect_background, 0)
 
         xT = x+self.padding
-        yT = y+sizeY/2-(self.font.size(text)[1]/2)
-        txt = self.font.render(text, True, COLOR_WHITE)
+        yT = y+sizeY/2-(self.font.size(element["title"])[1]/2)
+        txt = self.font.render(element["title"], True, COLOR_WHITE)
         self.surface.blit(txt, (xT, yT))
 
         #fill options
@@ -142,8 +152,10 @@ class ListBox():
         right_rect = pygame.Rect(firstX+lastX-(self.padding*2), y+self.padding, barHeight, sizeY-(self.padding*2))
         pygame.draw.rect(self.surface, COLOR_GRAY, right_rect, 0)
 
-        text = list[selected_choice]
+        text = element["choice"][selected_choice]
         xT = x + (sizeX*2/3)-(self.font.size(text)[0]/2)
         yT = y+sizeY/2-(self.font.size(text)[1]/2)
         txt = self.font.render(text, True, COLOR_WHITE)
         self.surface.blit(txt, (xT, yT))
+
+        
