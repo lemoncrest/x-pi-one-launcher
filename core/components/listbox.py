@@ -26,7 +26,7 @@ class ListBox():
         self.padding = padding
         self.surface = surface
         self.barWidth = 20 # TODO
-        self.fontSize = 20 # TODO
+        self.fontSize = 25 # TODO
         self.font = pygame.font.Font(None, self.fontSize)
         self.centered = centered
 
@@ -53,7 +53,11 @@ class ListBox():
 
 
     def displayBar(self,sizeX,sizeY):
-        button_rect = pygame.Rect(sizeX+self.x+self.margin+self.padding, self.y + self.margin + self.padding, self.barWidth, self.height-(self.padding*2))
+        x = sizeX+self.x+self.margin+self.padding
+        y = self.y + self.margin + self.padding
+        sizeX = self.barWidth
+        sizeY = self.height-(self.padding*2)-(self.margin*2)
+        button_rect = pygame.Rect(x, y, sizeX, sizeY)
         pygame.draw.rect(self.surface, COLOR_GRAY, button_rect, 0)
 
 
