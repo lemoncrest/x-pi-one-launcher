@@ -321,7 +321,7 @@ class PyMainMenu():
         ]
         x=0
         y=0
-        margin = 100
+        margin = 0
         self.listbox = ListBox(
             width=int(WINDOW_SIZE[0]),
             height=int(WINDOW_SIZE[1]),
