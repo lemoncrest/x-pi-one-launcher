@@ -209,6 +209,7 @@ class PyMainMenu():
         list = [
             {
                 "title" : "Velocidad del texto",
+                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
                 "choice" : [
                     "Lenta",
                     "Media",
@@ -217,6 +218,7 @@ class PyMainMenu():
             },
             {
                 "title" : "Animaciones en combate",
+                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
                 "choice" : [
                     "Ver",
                     "No ver"
@@ -224,6 +226,7 @@ class PyMainMenu():
             },
             {
                 "title" : "Tipo de combate",
+                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
                 "choice" : [
                     "Con cambios",
                     "Fijo"
@@ -231,6 +234,7 @@ class PyMainMenu():
             },
             {
                 "title" : "Equipo / Caja",
+                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
                 "choice" : [
                     "Manual",
                     "Automatico"
@@ -238,24 +242,28 @@ class PyMainMenu():
             },
             {
                 "title" : "Poner motes",
+                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
                 "choice" : [
                     "Si",
                     "No"
                 ]
             },{
                 "title" : "Giroscopio",
+                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
                 "choice" : [
                     "Si",
                     "No"
                 ]
             },{
                 "title" : "Eje vertical de la camara",
+                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
                 "choice" : [
                     "Normal",
                     "Invertido"
                 ]
             },{
                 "title" : "Eje horizontal de la camara",
+                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
                 "choice" : [
                     "Normal",
                     "Invertido"
@@ -263,6 +271,7 @@ class PyMainMenu():
             },
             {
                 "title" : "Velocidad del texto",
+                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
                 "choice" : [
                     "Lenta",
                     "Media",
@@ -271,6 +280,7 @@ class PyMainMenu():
             },
             {
                 "title" : "Animaciones en combate",
+                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
                 "choice" : [
                     "Ver",
                     "No ver"
@@ -278,6 +288,7 @@ class PyMainMenu():
             },
             {
                 "title" : "Tipo de combate",
+                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
                 "choice" : [
                     "Con cambios",
                     "Fijo"
@@ -285,6 +296,7 @@ class PyMainMenu():
             },
             {
                 "title" : "Equipo / Caja",
+                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
                 "choice" : [
                     "Manual",
                     "Automatico"
@@ -292,24 +304,28 @@ class PyMainMenu():
             },
             {
                 "title" : "Poner motes",
+                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
                 "choice" : [
                     "Si",
                     "No"
                 ]
             },{
                 "title" : "Giroscopio",
+                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
                 "choice" : [
                     "Si",
                     "No"
                 ]
             },{
                 "title" : "Eje vertical de la camara",
+                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
                 "choice" : [
                     "Normal",
                     "Invertido"
                 ]
             },{
                 "title" : "Eje horizontal de la camara",
+                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
                 "choice" : [
                     "Normal",
                     "Invertido"
@@ -329,6 +345,7 @@ class PyMainMenu():
             padding=20,
             surface=self.surface,
             centered = True,
+            aid = True,
             list=list)
 
         self.listbox.show()

@@ -13,7 +13,7 @@ WINDOW_SIZE = (1366, 768)
 
 class ListBox():
 
-    def __init__(self,width,height,x,y,margin,visibleOptions,padding,surface,list,centered=True):
+    def __init__(self,width,height,x,y,margin,visibleOptions,padding,surface,list,centered=True,aid = False):
         self.width = width
         self.height = height
         self.x = x
@@ -29,12 +29,16 @@ class ListBox():
         self.fontSize = 25 # TODO
         self.font = pygame.font.Font(None, self.fontSize)
         self.centered = centered
+        self.aid = aid
 
     def show(self):
         #TODO display navigation bar with margins
         #display options
         sizeX = self.width - (self.margin*2) - (self.padding*2) - self.barWidth
-        sizeY = (self.height-(self.padding*(self.visibleOptions+1)) - (self.margin*2)) / self.visibleOptions
+        figure = self.visibleOptions
+        if self.aid:
+            figure += 1
+        sizeY = (self.height-(self.padding*(self.visibleOptions+1)) - (self.margin*2)) / figure
 
         exit = False
 
@@ -89,8 +93,16 @@ class ListBox():
             #display lateral bar
             self.displayBar(sizeX,sizeY,selected)
 
+            if self.aid:
+                self.displayAid(selected)
+
             pygame.display.flip() #update
-        #display description of selected element in a black box at botton of the list
+
+
+
+    #TODO display description of selected element in a black box at botton of the list
+    def displayAid(self,selected):
+        pass
 
 
     def displayBar(self,sizeX,sizeY,selected):
@@ -98,6 +110,10 @@ class ListBox():
         y = self.y + self.margin + self.padding
         sizeX = self.barWidth
         sizeY = self.height-(self.padding*2)-(self.margin*2)
+        if self.aid:
+            #at this moment the same space like an option
+            sizeY -= (self.height-(self.padding*(self.visibleOptions+1)) - (self.margin*2)) / (self.visibleOptions+1)
+
         button_rect = pygame.Rect(x, y, sizeX, sizeY)
         pygame.draw.rect(self.surface, COLOR_GRAY, button_rect, 0)
 
@@ -157,5 +173,3 @@ class ListBox():
         yT = y+sizeY/2-(self.font.size(text)[1]/2)
         txt = self.font.render(text, True, COLOR_WHITE)
         self.surface.blit(txt, (xT, yT))
-
-        
