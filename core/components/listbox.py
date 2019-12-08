@@ -94,15 +94,30 @@ class ListBox():
             self.displayBar(sizeX,sizeY,selected)
 
             if self.aid:
-                self.displayAid(selected)
+                self.displayAid(selected,sizeX,sizeY)
 
             pygame.display.flip() #update
 
 
 
     #TODO display description of selected element in a black box at botton of the list
-    def displayAid(self,selected):
-        pass
+    def displayAid(self,selected,sizeX,sizeY):
+
+        if self.centered:
+            x = ((WINDOW_SIZE[0])/2) - (sizeX/2)
+        else:
+            x = self.x
+
+        y = self.y + self.margin + ((self.visibleOptions+1)*self.padding) + ((self.visibleOptions)*sizeY)
+
+        button_rect = pygame.Rect(x, y, sizeX, sizeY)
+        pygame.draw.rect(self.surface, COLOR_LIGHT_GRAY, button_rect, 0)
+
+        xT = x+self.padding
+        yT = y+sizeY/2-(self.font.size(self.list[selected]["aid"])[1]/2)
+
+        txt = self.font.render(self.list[selected]["aid"], True, COLOR_BLACK)
+        self.surface.blit(txt, (xT, yT))
 
 
     def displayBar(self,sizeX,sizeY,selected):
