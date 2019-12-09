@@ -58,7 +58,7 @@ class PyMainMenu():
             {"title" : "Remote repository", "image" : "images/cloud.png", "action" : self.navigateRepository},
             {"title" : "Local", "image" : "images/hdd.png", "action" : self.createLocalRepo},
             {"title" : "Settings", "image" : "images/settings.png", "action" : self.settingsMenu},
-            {"title" : "exit", "image" : "images/exit.png", "action" : self.quit}
+            {"title" : "Exit", "image" : "images/exit.png", "action" : self.quit}
         ]
         self.manageMainEvents(menus)
 
@@ -136,7 +136,7 @@ class PyMainMenu():
         if start+visibleOptions > len(menus):
             start = len(menus)-visibleOptions
         end = start+visibleOptions
-        print("%s %s" % (start,end))
+
         i = 0
         for index in range(start,end):
             self.drawMenu(i,menus[index],visibleOptions,selected=(index==selected))
@@ -178,7 +178,10 @@ class PyMainMenu():
         else:
             yT = y + size - ( (font.size(title)[1]) + padding*2 )
 
-        txt = font.render(title, True, COLOR_WHITE)
+        color = COLOR_WHITE
+        if selected:
+            color = COLOR_BLACK
+        txt = font.render(title, True, color)
         self.surface.blit(txt, (xT, yT))
 
 
