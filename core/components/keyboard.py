@@ -1,5 +1,6 @@
+import pygame
 
-import pygame, time, gtk
+from core.colors import *
 from pygame.locals import *
 
 class TextInput(object):
@@ -28,7 +29,7 @@ class TextInput(object):
         color = [0,0,0,200]
         pygame.draw.rect(self.layer, color, (0,0,self.width,self.height), 1)
 
-        text = self.font.render(self.text, 1, (0, 0, 0))
+        text = self.font.render(self.text, 1, COLOR_BLACK)
         self.layer.blit(text,(4,4))
 
         self.screen.blit(self.background,(self.x, self.y))
@@ -89,7 +90,7 @@ class TextInput(object):
         # Calc width of text to this point
         if self.cursorpos > 0:
             mytext = self.text[:self.cursorpos]
-            text = self.font.render(mytext, 1, (0, 0, 0))
+            text = self.font.render(mytext, 1, COLOR_BLACK)
             textpos = text.get_rect()
             x = x + textpos.width + 1
         self.screen.blit(self.cursorlayer,(self.x+x,y))
@@ -109,8 +110,8 @@ class VirtualKey(object):
         self.selected = False
         self.dirty = True
         self.keylayer = pygame.Surface((self.width,self.height)).convert()
-        self.keylayer.fill((0, 0, 0))
-        self.keylayer.set_alpha(160)
+        self.keylayer.fill(COLOR_BLACK)
+        #self.keylayer.set_alpha(160)
         # Pre draw the border and store in my layer
         pygame.draw.rect(self.keylayer, (255,255,255), (0,0,self.width,self.height), 1)
 
@@ -192,8 +193,8 @@ class VirtualKeyboard(object):
 
         # Shade the background surrounding the keys
         self.keylayer = pygame.Surface((width,height))
-        self.keylayer.fill((0, 0, 0))
-        self.keylayer.set_alpha(200)
+        self.keylayer.fill(COLOR_BLACK)
+        #self.keylayer.set_alpha(200)
         self.screen.blit(self.keylayer,(self.x,self.y))
 
         self.keys = []
@@ -214,7 +215,6 @@ class VirtualKeyboard(object):
         # to rewrite this to be more event based.  Personally it works fine for my purposes ;-)
         keyrepeat_counters = {}
         while 1:
-            time.sleep(.05)
             events = pygame.event.get()
             if events <> None:
                 for e in events:
@@ -237,7 +237,7 @@ class VirtualKeyboard(object):
                             if e.key not in keyrepeat_counters:
                                 keyrepeat_counters[e.key] = [0, e.unicode]
                                 #self.input.text+=str(e.unicode)
-                                self.input.addcharatcursor(str(e.unicode))
+                                self.input.addcharatcursor(e.unicode.encode("ascii","ignore"))
 
                     elif (e.type == KEYUP):
                         if e.key in keyrepeat_counters:
@@ -256,10 +256,9 @@ class VirtualKeyboard(object):
                             self.selectatmouse()
 
             counter += 1
-            if counter > 10:
+            if counter > 100000:
                 self.input.flashcursor()
                 counter = 0
-            gtk.main_iteration(block=False)
 
     def unselectall(self, force = False):
         ''' Force all the keys to be unselected
