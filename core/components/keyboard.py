@@ -256,7 +256,7 @@ class VirtualKeyboard(object):
                             self.selectatmouse()
 
             counter += 1
-            if counter > 100000:
+            if counter > 100000: #TODO sleep is better but...
                 self.input.flashcursor()
                 counter = 0
 

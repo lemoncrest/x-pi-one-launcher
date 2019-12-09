@@ -4,7 +4,6 @@
 from __future__ import division
 import gettext
 import pygame
-import pygameMenu
 import json
 import random
 import os
@@ -27,34 +26,18 @@ from core.components.progressbar import ProgressBar
 from core.components.listbox import ListBox
 
 WINDOW_SIZE = (1366, 768)
-
 COLOR_BACKGROUND = (61, 61, 202) # by default if there is no image to load will be shown it
 FPS = 60.0
-MENU_BACKGROUND_COLOR = (153, 153, 255) #transparency color in the main rectangle. TODO put it in a theme file
+MENU_BACKGROUND_COLOR = (153, 153, 255) #TODO put it in a theme file
 MENU_OPTION_MARGIN = 20  # Option margin (px)
 MARGIN = 25
 THUMBNAIL_WIDTH = 300
 THUMBNAIL_HEIGHT = 300
 BUTTON_RADIO = 28
 
-ABOUT = [
-    'using library version {0}'.format(pygameMenu.__version__),
-    'opensource PyMenu to use opensource PyGame',
-    'by: @{0} with love'.format("bit"),
-    pygameMenu.locals.TEXT_NEWLINE,
-    'contact: {0}'.format("bit@gameboyzero.es")
-]
+REMOTE_REPOSITORY = "https://gitlab.gameboyzero.es/pygames/repository/raw/master/pool.json"
 
 class PyMainMenu():
-
-    main_menu = None
-    about_menu = None
-    settings_menu = None
-    surface = None
-    joystick = None
-    joysticks = None
-
-    progress = 0
 
     def __init__(self):
         #init
@@ -64,28 +47,135 @@ class PyMainMenu():
         # Create pygame screen and objects
         self.surface = pygame.display.set_mode(WINDOW_SIZE)
         pygame.display.set_caption('Menu principal')
-
         self.upbar = UpBar(surface=self.surface)
 
-    def start(self):
-        #limit fps
-        self.main_menu.set_fps(FPS)
-
-        #next main loop
-        self.main_menu.mainloop()
-
-        self.main_menu.enable()
-        self.main_menu.reset(1)
-
-        self.start()
-
     def main(self):
-        self.drawComponents() #at this moment bars
-        # Create menus
-        self.createAboutMenu()
-        self.createSettingsMenu()
-        self.createMainMenu() #last, instance because of
-        self.start()
+        self.drawMainMenu()
+        time.sleep(1/FPS)
+
+    def drawMainMenu(self):
+        menus = [
+            {"title" : "Remote repository", "image" : "", "action" : self.navigateRepository},
+            {"title" : "Local", "image" : "", "action" : self.createLocalRepo},
+            {"title" : "Settings", "image" : "", "action" : self.settingsMenu},
+            {"title" : "exit", "image" : "", "action" : self.quit}
+        ]
+
+        self.manageMainEvents(menus)
+
+    def manageMainEvents(self,menus): #TODO
+        exit = False
+        selected = 0
+        while not exit:
+            #colored background
+            self.main_background()
+            #draw components
+            self.drawComponents() #at this moment bars
+            #now draw menus
+            self.drawMenus(menus,selected,3)
+            #get events and configure
+            events = pygame.event.get()
+            logger.debug("drawList event %s"%str(events))
+            for event in events:
+                try:
+                    self.keyboard.on_event(event) #keyboard library
+                except:
+                    logger.debug("no keyboard")
+                    pass
+                #normal events
+                if event.type == pygame.QUIT:
+                    exit = True
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        exit = True
+                    elif event.key == pygame.K_UP:
+                        if selected > 0:
+                            selected-=1
+                    elif event.key == pygame.K_DOWN:
+                        if selected < len(menus)-1:
+                            selected+=1
+                    elif event.key == pygame.K_LEFT:
+                        if selected > 0:
+                            selected-=1
+                    elif event.key == pygame.K_RIGHT:
+                        if selected < len(menus)-1:
+                            selected+=1
+                    elif event.key == pygame.K_b:
+                        exit = True
+                    elif event.key == pygame.K_a or event.key == pygame.K_RETURN:
+                        menus[selected]["action"]()
+                elif event.type == pygame.JOYAXISMOTION:
+                    if event.axis == 1: # up and down
+                        if event.value > 0:
+                            if selected > 0:
+                                selected-=1
+                        elif event.value <0:
+                            if selected < len(menus)-1:
+                                selected+=1
+                    elif event.axis == 0: # left and right
+                        if event.value > 0:
+                            if selected > 0:
+                                selected-=1
+                        elif event.value <0:
+                            if selected < len(menus)-1:
+                                selected+=1
+                elif event.type == pygame.JOYBUTTONDOWN:
+                    if event.button == 1: #button A - enter
+                        menus[selected]["action"]()
+                    elif event.button == 2: #button B - back
+                        exit = True
+
+            pygame.display.update()
+
+
+    def drawMenus(self,menus,selected,visibleOptions):
+        if visibleOptions>len(menus):
+            visibleOptions = len(menus)
+        start = 0
+        if selected > int(visibleOptions/2):
+            start = int(visibleOptions/2)
+        if start+visibleOptions > len(menus):
+            start = len(menus)-visibleOptions
+        end = start+visibleOptions
+        print("%s %s" % (start,end))
+        i = 0
+        for index in range(start,end):
+            self.drawMenu(i,menus[index],visibleOptions,selected=(index==selected))
+            i+=1
+
+    def drawMenu(self,i,menu,visibleOptions=3,selected=False,verticalCenteredText=False):
+        surfaceSize = self.surface.get_size()
+        margin = 50
+        padding = 10
+        font = pygame.font.Font(None, 28)
+
+        #calculate x (all have the same size)
+        size = (surfaceSize[0]/visibleOptions)-margin*2
+        #now calculate y (square)
+        y = ((surfaceSize[1]-size)/2)
+        x = (size*(i)) + (margin*2*i) + margin
+
+        menuRect = pygame.Rect(x, y, size, size)
+        pygame.draw.rect(self.surface, COLOR_GRAY, menuRect, 0)
+        if selected:
+            menuRect = pygame.Rect(x+padding, y+padding, size-padding*2, size-padding*2)
+            pygame.draw.rect(self.surface, COLOR_BLUE, menuRect, 0)
+
+        title = menu["title"]
+
+        xT = x + size/2 - (font.size(title)[0]/2)
+        if verticalCenteredText:
+            yT = y + size/2 - (font.size(title)[1]/2)
+        else:
+            yT = y + size - ( (font.size(title)[1]) + padding*2 )
+
+        txt = font.render(title, True, COLOR_WHITE)
+        self.surface.blit(txt, (xT, yT))
+
+
+    def quit(self):
+        logger.debug("Bye bye!")
+        quit()
 
     def initJoysticks(self):
         pygame.joystick.init()
@@ -144,68 +234,13 @@ class PyMainMenu():
         else:
             self.surface.fill(COLOR_BACKGROUND)
 
-    def createAboutMenu(self):
-        #about menu (sample)
-        self.about_menu = pygameMenu.TextMenu(self.surface,
-            bgfun=self.main_background,
-            color_selected=COLOR_WHITE,
-            font=pygameMenu.font.FONT_COMIC_NEUE,
-            font_color=COLOR_BLACK,
-            font_size_title=30,
-            font_title=pygameMenu.font.FONT_8BIT,
-            menu_color=MENU_BACKGROUND_COLOR,
-            menu_color_title=COLOR_WHITE,
-            menu_height=int(WINDOW_SIZE[1] * 0.6),
-            menu_width=int(WINDOW_SIZE[0] * 0.6),
-            onclose=pygameMenu.events.DISABLE_CLOSE,
-            option_shadow=False,
-            text_color=COLOR_BLACK,
-            text_fontsize=20,
-            title='About',
-            window_height=WINDOW_SIZE[1],
-            window_width=WINDOW_SIZE[0]
-        )
-        for m in ABOUT:
-            self.about_menu.add_line(m)
-        self.about_menu.add_line(pygameMenu.locals.TEXT_NEWLINE)
-        self.about_menu.add_option('Return to menu', pygameMenu.events.BACK)
 
-    def createMainMenu(self):
-        #main menu
-        self.main_menu = pygameMenu.Menu(self.surface,
-            bgfun=self.main_background,
-            color_selected=COLOR_BLUE,
-            font=pygameMenu.font.FONT_8BIT,
-            font_color=COLOR_LIGHT_GREEN,
-            font_size=30,
-            menu_alpha=70,
-            menu_color=MENU_BACKGROUND_COLOR,
-            menu_height=int(WINDOW_SIZE[1] * 0.85),
-            menu_width=int(WINDOW_SIZE[0] * 0.9),
-            onclose=pygameMenu.events.DISABLE_CLOSE,
-            option_shadow=False,
-            title='Menu principal',
-            widget_alignment=pygameMenu.locals.ALIGN_LEFT,
-            option_margin=MENU_OPTION_MARGIN,
-            window_height=WINDOW_SIZE[1],
-            window_width=WINDOW_SIZE[0]
-        )
-        self.main_menu.add_option('Repositorio', self.navigateRepository)
-        self.main_menu.add_option('Local', self.createLocalRepo)
-        self.main_menu.add_option('Tutorial', self.about_menu)
-        self.main_menu.add_option('Configuracion', self.settings)
-        self.main_menu.add_option('Salir', pygameMenu.events.EXIT)
-
-
-    def settings(self):
-        #hide main menu
-        self.main_menu.disable()
-        self.main_menu.reset(1)
+    def settingsMenu(self):
 
         self.main_background()
 
         #Sample options inspired on pokemon menu
-        list = [
+        settings = [
             {
                 "title" : "Username",
                 "aid" : "Configure con un teclado virtual su nombre de usuario",
@@ -217,121 +252,6 @@ class PyMainMenu():
                     "Lenta",
                     "Media",
                     "Rapida"
-                ]
-            },
-            {
-                "title" : "Animaciones en combate",
-                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
-                "choice" : [
-                    "Ver",
-                    "No ver"
-                ]
-            },
-            {
-                "title" : "Tipo de combate",
-                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
-                "choice" : [
-                    "Con cambios",
-                    "Fijo"
-                ]
-            },
-            {
-                "title" : "Equipo / Caja",
-                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
-                "choice" : [
-                    "Manual",
-                    "Automatico"
-                ]
-            },
-            {
-                "title" : "Poner motes",
-                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
-                "choice" : [
-                    "Si",
-                    "No"
-                ]
-            },{
-                "title" : "Giroscopio",
-                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
-                "choice" : [
-                    "Si",
-                    "No"
-                ]
-            },{
-                "title" : "Eje vertical de la camara",
-                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
-                "choice" : [
-                    "Normal",
-                    "Invertido"
-                ]
-            },{
-                "title" : "Eje horizontal de la camara",
-                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
-                "choice" : [
-                    "Normal",
-                    "Invertido"
-                ]
-            },
-            {
-                "title" : "Velocidad del texto",
-                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
-                "choice" : [
-                    "Lenta",
-                    "Media",
-                    "Rapida"
-                ]
-            },
-            {
-                "title" : "Animaciones en combate",
-                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
-                "choice" : [
-                    "Ver",
-                    "No ver"
-                ]
-            },
-            {
-                "title" : "Tipo de combate",
-                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
-                "choice" : [
-                    "Con cambios",
-                    "Fijo"
-                ]
-            },
-            {
-                "title" : "Equipo / Caja",
-                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
-                "choice" : [
-                    "Manual",
-                    "Automatico"
-                ]
-            },
-            {
-                "title" : "Poner motes",
-                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
-                "choice" : [
-                    "Si",
-                    "No"
-                ]
-            },{
-                "title" : "Giroscopio",
-                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
-                "choice" : [
-                    "Si",
-                    "No"
-                ]
-            },{
-                "title" : "Eje vertical de la camara",
-                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
-                "choice" : [
-                    "Normal",
-                    "Invertido"
-                ]
-            },{
-                "title" : "Eje horizontal de la camara",
-                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
-                "choice" : [
-                    "Normal",
-                    "Invertido"
                 ]
             }
         ]
@@ -349,20 +269,19 @@ class PyMainMenu():
             surface=self.surface,
             centered = True,
             aid = True,
-            list=list)
+            list=settings)
 
         self.listbox.show()
 
 
     def navigateRepository(self):
-        #hide main menu
-        self.main_menu.disable()
-        self.main_menu.reset(1)
+        #clear screen
+        self.main_background()
 
         #first download metadata
         margin = 50
         self.progressbar = ProgressBar(width=WINDOW_SIZE[0]-margin,height=30,surface=self.surface,x=0, y=50,margin=margin,centeredText=True)
-        repository = "https://gitlab.gameboyzero.es/pygames/repository/raw/master/pool.json"
+        repository = REMOTE_REPOSITORY
         response = urllib2.urlopen(repository)
         self.progressbar.updateProgressBar() #first frame
         self.lastFramed = 0
@@ -373,17 +292,10 @@ class PyMainMenu():
         #now show metadata content
         self.drawRemoteRepository(json.loads(content))
 
-        #show main menu when terminates and returns the control
-        #self.main_menu.mainloop()
-        self.main_menu.enable()
-        self.main_menu.reset(1)
+        #TODO show main menu when terminates and returns the control
 
     def drawRemoteRepository(self,content):
-        self.drawSections(content)
         self.drawList(content)
-
-    def drawSections(self,data):
-        pass
 
     def drawList(self,data):
         selected = 0
@@ -461,51 +373,13 @@ class PyMainMenu():
 
         return total #bytes_so_far
 
-    def tests(self):
-        #hide main menu
-        self.main_menu.disable()
-        self.main_menu.reset(1)
-
-        #self.progress = 0
-
-        #clear
-        self.main_background()
-
-        self.drawKeyboard()
-
-    def consumer(self,text):
-        #TODO self.keyboard.disable() when press enter and use pynput to write all content stored in "text"
-        logger.debug('Current text : %s' % text)
-
-    def drawKeyboard(self):
-        # Initializes and activates vkeyboard
-        layout = VKeyboardLayout(VKeyboardLayout.QWERTY)
-        self.keyboard = VKeyboard(self.surface, self.consumer, layout)
-        self.keyboard.enable()
-
-
     def saveSettings(self):
 
         data = {}
 
         with open('config/configuration.json', 'r') as json_file:
             data = json.load(json_file)
-            for key,value in self.settings_menu.get_input_data().items():
-                logger.debug("saving -> key: %s, value: %s - type %s" % (key,value,type(value)))
-                if isinstance(value, str):
-                    logger.debug("saving str")
-                    data[key]=value
-                elif isinstance(value, tuple):
-                    logger.debug("saving tuple..")
-                    value2 = value[0]
-                    if value2 in ["On","Off"]:
-                        value2 = bool(value[1])
-                    data[key] = value2
-                elif isinstance(value,bool):
-                    logger.debug("saving bool")
-                    data[key]=value
-                else:
-                    logger.debug("no saving nothing!")
+            #TODO get all possible options and store activated option or text
 
         with open('config/configuration.json', 'w+') as json_file:
             json.dump(data, json_file, indent=4)
@@ -589,7 +463,7 @@ class PyMainMenu():
                     quit()
                 elif e.type == pygame.KEYDOWN:
                     if e.key == pygame.K_ESCAPE:
-                        if self.main_menu.is_disabled() and proc == None:
+                        if proc == None:
                             exit = True
                         else:
                             #TODO, kill with scape
@@ -666,13 +540,9 @@ class PyMainMenu():
             pygame.display.update()
 
     def createLocalRepo(self):
-        self.main_menu.disable()
-
         self.manageLocalEvents()
+        #TODO next actions
 
-        #show main menu when terminates and returns the control
-        self.main_menu.enable()
-        self.main_menu.reset(1)
 
     def launch(self,path,data,selected):
         #close and launch program
@@ -739,69 +609,6 @@ class PyMainMenu():
         self.surface.blit(txt4, (circleB[0]+BUTTON_RADIO*2,circleB[1]-10))
 
         return circleA,circleB
-
-
-    def createSettingsMenu(self):
-        self.settings_menu = pygameMenu.Menu(self.surface,
-            bgfun=self.main_background,
-            color_selected=COLOR_BLUE,
-            font=pygameMenu.font.FONT_COMIC_NEUE,
-            font_color=COLOR_BLACK,
-            font_size=20,
-            menu_alpha=70,
-            menu_color=MENU_BACKGROUND_COLOR,
-            menu_height=int(WINDOW_SIZE[1] * 0.85),
-            menu_width=int(WINDOW_SIZE[0] * 0.9),
-            onclose=pygameMenu.events.DISABLE_CLOSE,
-            option_shadow=False,
-            title='Configuraciones',
-            widget_alignment=pygameMenu.locals.ALIGN_LEFT,
-            option_margin=MENU_OPTION_MARGIN,
-            window_height=WINDOW_SIZE[1],
-            window_width=WINDOW_SIZE[0]
-        )
-        #load settings
-        with open('config/configuration.json') as json_file:
-            data = json.load(json_file)
-
-            self.settings_menu.add_text_input(title='Name: ',textinput_id="name", default=str(data["name"]),onfocus=self.drawKeyboard)
-            self.settings_menu.add_text_input(title='Surname: ',textinput_id="surname", default=str(data["surname"]))
-
-            vals = []
-            # r=root, d=directories, f = files
-            for r, d, f in os.walk(os.path.join(os.getcwd(),"assert/wallpapers")):
-                for file in f:
-                    vals.append((file,file)) #key - value
-
-            self.settings_menu.add_selector(
-                selector_id = "wallpaper-file",
-                default=0,
-                title = 'Wallpapers',
-                values = vals
-            )
-
-            vals2 = []
-            # r=root, d=directories, f = files
-            for r, d, f in os.walk(os.path.join(os.getcwd(),"assert/music")):
-                for file in f:
-                    vals2.append((file,file)) #key - value
-
-            self.settings_menu.add_selector(
-                selector_id = "music",
-                default=0,
-                title = 'Enable music',
-                values = [("Off",0),("On",1)]
-            )
-
-            self.settings_menu.add_selector(
-                selector_id = "music-file",
-                default=0,
-                title = 'Music track',
-                values = vals2
-            )
-
-            self.settings_menu.add_option('Apply - Save', self.applySettings)
-            self.settings_menu.add_option('Back', pygameMenu.events.BACK)
 
     def applySettings(self):
         self.saveSettings()

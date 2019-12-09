@@ -18,8 +18,6 @@ class Button():
         self.callback = callback
 
     def draw(self,surface=None):
-        print(str(surface))
-        print(str(self.surface))
         targetSurface = self.surface
 
         if self.surface is None:
