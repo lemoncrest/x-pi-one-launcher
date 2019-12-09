@@ -4,12 +4,12 @@ from pygame.locals import *
 
 class TextInput(object):
     ''' Handles the text input box and manages the cursor '''
-    def __init__(self, background, screen, text, x, y):
+    def __init__(self, background, screen, text, x, y, width, height):
         self.x = x
         self.y = y
         self.text = text
-        self.width = 800
-        self.height = 60
+        self.width = width
+        self.height = height
         self.font = pygame.font.Font(None, 50)
         self.cursorpos = len(text)
         self.rect = Rect(self.x,self.y,self.width,self.height)
@@ -24,7 +24,7 @@ class TextInput(object):
 
     def draw(self):
         ''' Draw the text input box '''
-        self.layer.fill([255, 255, 255, 140])
+        self.layer.fill([255, 255, 255, 255])
         color = [0,0,0,200]
         pygame.draw.rect(self.layer, color, (0,0,self.width,self.height), 1)
 
@@ -85,14 +85,14 @@ class TextInput(object):
     def drawcursor(self):
         ''' Draw the cursor '''
         x = 4
-        y = 5 + self.y
+        y = self.y+5
         # Calc width of text to this point
         if self.cursorpos > 0:
             mytext = self.text[:self.cursorpos]
             text = self.font.render(mytext, 1, (0, 0, 0))
             textpos = text.get_rect()
             x = x + textpos.width + 1
-        self.screen.blit(self.cursorlayer,(x,y))
+        self.screen.blit(self.cursorlayer,(self.x+x,y))
 
 
 class VirtualKey(object):
@@ -174,31 +174,37 @@ class VirtualKeyboard(object):
 
     def __init__(self):
         self.state = 0
+        self.x = 0 #TODO
+        self.y = 0
 
     ''' Implement a basic full screen virtual keyboard for touchscreens '''
-    def run(self, screen, text=''):
+    def run(self, screen, text='',width=800,height=480):
         # First, make a backup of the screen
         self.screen = screen
-        self.background = pygame.Surface((800,480))
+        self.background = pygame.Surface((width,height))
+
+        parentSize = screen.get_size()
+        self.x = (parentSize[0] - width) / 2
+        self.y = (parentSize[1] - height) / 2
 
         # Copy original screen to self.background
         self.background.blit(screen,(0,0))
 
         # Shade the background surrounding the keys
-        self.keylayer = pygame.Surface((800,480))
+        self.keylayer = pygame.Surface((width,height))
         self.keylayer.fill((0, 0, 0))
-        self.keylayer.set_alpha(100)
-        self.screen.blit(self.keylayer,(0,0))
+        self.keylayer.set_alpha(200)
+        self.screen.blit(self.keylayer,(self.x,self.y))
 
         self.keys = []
-        self.textbox = pygame.Surface((800,30))
+        self.textbox = pygame.Surface((width,30))
         self.text = text
         self.caps = False
 
         pygame.font.init() # Just in case
         self.font = pygame.font.Font(None, 40)
 
-        self.input = TextInput(self.background,self.screen,self.text,0,30)
+        self.input = TextInput(self.background,self.screen,self.text,self.x,self.y+30,width,60)
 
         self.addkeys()
 
@@ -330,12 +336,12 @@ class VirtualKeyboard(object):
 
         row = ['1','2','3','4','5','6','7','8','9','0']
         for item in row:
-            onekey = VirtualKey(item,x,y)
+            onekey = VirtualKey(item,self.x+x,self.y+y)
             onekey.font = self.font
             self.keys.append(onekey)
             x += 70
 
-        onekey = VirtualKey('<-',x,y)
+        onekey = VirtualKey('<-',self.x+x,self.y+y)
         onekey.font = self.font
         onekey.bskey = True
         self.keys.append(onekey)
@@ -345,7 +351,7 @@ class VirtualKeyboard(object):
 
         row = ['q','w','e','r','t','y','u','i','o','p']
         for item in row:
-            onekey = VirtualKey(item,x,y)
+            onekey = VirtualKey(item,self.x+x,self.y+y)
             onekey.font = self.font
             self.keys.append(onekey)
             x += 70
@@ -353,30 +359,30 @@ class VirtualKeyboard(object):
         x = 10
         row = ['a','s','d','f','g','h','j','k','l']
         for item in row:
-            onekey = VirtualKey(item,x,y)
+            onekey = VirtualKey(item,self.x+x,self.y+y)
             onekey.font = self.font
             self.keys.append(onekey)
             x += 70
 
-        onekey = VirtualKey('ENTER',x,y,138)
+        onekey = VirtualKey('ENTER',self.x+x,self.y+y,138)
         onekey.font = self.font
         onekey.enter = True
         self.keys.append(onekey)
 
         x = 10
         y += 70
-        onekey = VirtualKey('SPACE',x,y,138)
+        onekey = VirtualKey('SPACE',self.x+x,self.y+y,138)
         onekey.font = self.font
         self.keys.append(onekey)
         x += 140
 
         row = ['z','x','c','v','b','n','m']
         for item in row:
-            onekey = VirtualKey(item,x,y)
+            onekey = VirtualKey(item,self.x+x,self.y+y)
             onekey.font = self.font
             self.keys.append(onekey)
             x += 70
-        onekey = VirtualKey('SHIFT',x,y,138)
+        onekey = VirtualKey('SHIFT',self.x+x,self.y+y,138)
         onekey.font = self.font
         self.keys.append(onekey)
 
