@@ -1,11 +1,49 @@
-{
-    "wallpaper-file": "wallpaper.jpg", 
-    "surname": "surname", 
-    "name": "name", 
-    "wallpaper": true, 
-    "music": false, 
-    "sounds": true, 
-    "accountHashId": "c0357e4daa3e83048eec7d1f2f3d6a5418e2b005f7a8e1b2e31fb9bb47151990", 
-    "music-file": "5-Free-Background-Music.mp3", 
-    "accountId": "00000001"
-}
+[
+  {
+		"id": "surname",
+		"title": "Nombre de usuario",
+		"aid": "Nombre de usuario de la plataforma",
+		"txt": "bitstuffing",
+		"visible": true
+	},
+	{
+		"id": "wallpaper",
+		"title": "Activar fondo de pantalla",
+		"aid": "Desactiva o activa el fondo de pantalla customizado",
+		"choices": [
+			"Yes",
+			"No"
+		],
+    "selected": 0,
+		"visible": true
+	},
+	{
+		"id": "wallpaper-file",
+		"title": "Fondo de pantalla",
+		"aid": "Fondo de pantalla que se muestra en el launcher",
+		"choices": ["wallpaper.jpg"],
+    "selected": 0,
+		"folder": "wallpapers",
+		"visible": true
+	},
+	{
+		"id": "music",
+		"title": "Activar musica de fondo",
+		"aid": "Desactiva o activa la musica de fondo",
+		"choices": [
+			"Yes",
+			"No"
+		],
+    "selected": 0,
+		"visible": true
+	},
+	{
+		"id": "music-file",
+		"title": "Activar fondo de pantalla",
+		"aid": "Desactiva o activa el fondo de pantalla customizado",
+		"choices": ["1-Free-Background-Music.mp3"],
+    "selected": 0,
+		"folder": "music",
+		"visible": true
+	}
+]
