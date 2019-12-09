@@ -36,7 +36,6 @@ class ListBox():
         self.keyboard = VirtualKeyboard()
 
     def show(self):
-        #TODO display navigation bar with margins
         #display options
         sizeX = self.width - (self.margin*2) - (self.padding*2) - self.barWidth
         figure = self.visibleOptions
@@ -48,12 +47,11 @@ class ListBox():
 
         selected = 0
         choices = []
-        #TODO put selected index from configuration in each choices[i]
         for i in range(0,len(self.list)):
-            selected = 0
+            index = 0
             if "selected" in self.list[i]:
-                selected = self.list[i]["selected"]
-            choices.append(selected)
+                index = self.list[i]["selected"]
+            choices.append(index)
 
         while not exit:
 
@@ -72,7 +70,7 @@ class ListBox():
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         if self.keyboard.state == 1:
-                            self.keyboard.disable() #self.keyboard.state = 0
+                            self.keyboard.state = 0
                         else: #no keyboard -> exit
                             exit = True
                     elif event.key == pygame.K_UP:
@@ -95,13 +93,30 @@ class ListBox():
                             self.list[selected]["txt"] = text
                 elif event.type == pygame.JOYBUTTONDOWN:
                     if event.button == 1: #button A - enter
-                        if "txt" in self.list[selected] and "visible" in self.list[selected] and self.list[selected]["visible"]:
-                            self.keyboard.enable()
+                        if "txt" in self.list[selected] :
+                            text = self.keyboard.run(self.surface, self.list[selected]["txt"])
+                            self.list[selected]["txt"] = text
                     elif event.button == 2: #button B - back
                         if self.keyboard.state == 1:
-                            self.keyboard.disable() #self.keyboard.state = 0
+                            self.keyboard.state = 0
                         else: #no keyboard -> exit
                             exit = True
+                elif event.type == pygame.JOYAXISMOTION:
+                    if event.axis == 1: # up and down
+                        if event.value > 0:
+                            if selected < len(self.list)-1:
+                                selected+=1
+                        elif event.value <0:
+                            if selected > 0:
+                                selected-=1
+                    elif event.axis == 0: # left and right
+                        if event.value > 0:
+                            if "choices" in self.list[selected] :
+                                if choices[selected] < len(self.list[selected]["choices"])-1:
+                                    choices[selected]+=1
+                        elif event.value <0:
+                            if choices[selected] > 0:
+                                choices[selected]-=1
 
             if self.keyboard.state == 0:
 
@@ -121,8 +136,6 @@ class ListBox():
         for i in range(0,len(choices)):
             if "selected" in self.list[i]:
                 self.list[i]["selected"] = choices[i]
-                print("%s %s" % (i,self.list[i]["selected"]))
-
 
         return self.list #items updated to be saved
 

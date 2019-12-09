@@ -106,18 +106,19 @@ class PyMainMenu():
                 elif event.type == pygame.JOYAXISMOTION:
                     if event.axis == 1: # up and down
                         if event.value > 0:
-                            if selected > 0:
-                                selected-=1
-                        elif event.value <0:
                             if selected < len(menus)-1:
                                 selected+=1
+                        elif event.value <0:
+                            if selected > 0:
+                                selected-=1
                     elif event.axis == 0: # left and right
                         if event.value > 0:
-                            if selected > 0:
-                                selected-=1
-                        elif event.value <0:
                             if selected < len(menus)-1:
                                 selected+=1
+                        elif event.value <0:
+                            if selected > 0:
+                                selected-=1
+
                 elif event.type == pygame.JOYBUTTONDOWN:
                     if event.button == 1: #button A - enter
                         menus[selected]["action"]()
@@ -280,7 +281,6 @@ class PyMainMenu():
             elif element["id"] == "music-file":
                 musicFile = element["choices"][element["selected"]]
 
-
         x=0
         y=0
         margin = 50
@@ -305,8 +305,7 @@ class PyMainMenu():
                 newMusic = newSetting["choices"][newSetting["selected"]] == "Yes"
             elif newSetting["id"] == "music-file":
                 newMusicFile = newSetting["choices"][newSetting["selected"]]
-        print("old: %s %s" %(music,musicFile))
-        print("new: %s %s" %(newMusic,newMusicFile))
+
         if music <> newMusic or newMusicFile <> musicFile:
             self.playMusicFromSettings()
 
@@ -372,6 +371,17 @@ class PyMainMenu():
                         exit = True #TODO install script
                     elif event.button == 2: #button B - back
                         exit = True
+                elif event.type == pygame.JOYAXISMOTION:
+                    if event.axis == 1: # up and down
+                        #get value -1 is up and 1 is down
+                        if event.value > 0:
+                            if selected < len(data["games"])-1:
+                                selected+=1
+                        elif event.value <0:
+                            if selected > 0:
+                                selected-=1
+                    elif event.axis == 0: # left and right
+                        pass
 
             #display selected element
             circleA,circleB = self.drawSelectedElement(element=data["games"][selected],path=None,aTxt="Install from repository",bTxt="Back to previous menu")
@@ -557,11 +567,12 @@ class PyMainMenu():
                     if e.axis == 1: # up and down
                         #get value -1 is up and 1 is down
                         if e.value > 0:
-                            if selected > 0:
-                                selected-=1
-                        elif e.value <0:
                             if selected < len(data["games"])-1:
                                 selected+=1
+                        elif e.value <0:
+                            if selected > 0:
+                                selected-=1
+
                     elif e.axis == 0: # left and right
                         pass
 
@@ -646,8 +657,3 @@ class PyMainMenu():
         self.surface.blit(txt4, (circleB[0]+BUTTON_RADIO*2,circleB[1]-10))
 
         return circleA,circleB
-
-    def applySettings(self):
-        self.saveSettings()
-        #wallpapers are reloaded when you save because background image is painted all time, but needs music configuration because it's controlled at the first execution time
-        self.playMusicFromSettings()
