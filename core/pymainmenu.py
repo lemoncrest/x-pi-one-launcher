@@ -62,7 +62,7 @@ class PyMainMenu():
         ]
         self.manageMainEvents(menus)
 
-    def manageMainEvents(self,menus): #TODO
+    def manageMainEvents(self,menus,visibleOptions=3): #TODO
         exit = False
         selected = 0
         while not exit:
@@ -71,16 +71,11 @@ class PyMainMenu():
             #draw components
             self.drawComponents() #at this moment bars
             #now draw menus
-            self.drawMenus(menus,selected,3)
+            rectangles = self.drawMenus(menus,selected,visibleOptions)
             #get events and configure
             events = pygame.event.get()
             logger.debug("drawList event %s"%str(events))
             for event in events:
-                try:
-                    self.keyboard.on_event(event) #keyboard library
-                except:
-                    logger.debug("no keyboard")
-                    pass
                 #normal events
                 if event.type == pygame.QUIT:
                     exit = True
@@ -125,6 +120,43 @@ class PyMainMenu():
                     elif event.button == 2: #button B - back
                         exit = True
 
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    i = 0
+                    for rectangle in rectangles:
+                        if rectangle.collidepoint(event.pos):
+                            if visibleOptions>len(menus):
+                                visibleOptions = len(menus)
+                            start = 0
+                            if selected > int(visibleOptions/2):
+                                start = int(visibleOptions/2)
+                            if start+visibleOptions > len(menus):
+                                start = len(menus)-visibleOptions
+                            end = start+visibleOptions
+                            logger.debug("start %s end %s" % (start,end))
+                            logger.debug("I deduced position %s" % (start+i))
+                            selected = (start+i)
+                        i+=1
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    i = 0
+                    for rectangle in rectangles:
+                        if rectangle.collidepoint(event.pos):
+                            if visibleOptions>len(menus):
+                                visibleOptions = len(menus)
+                            start = 0
+                            if selected > int(visibleOptions/2):
+                                start = int(visibleOptions/2)
+                            if start+visibleOptions > len(menus):
+                                start = len(menus)-visibleOptions
+                            end = start+visibleOptions
+                            logger.debug("start %s end %s" % (start,end))
+                            logger.debug("I will launch and select position %s" % (start+i))
+                            launch = selected == (start+i)
+                            selected = (start+i)
+                            if launch:
+                                menus[selected]["action"]()
+                        i+=1
+
+
             pygame.display.update()
 
 
@@ -139,9 +171,13 @@ class PyMainMenu():
         end = start+visibleOptions
 
         i = 0
+        rectangles = []
         for index in range(start,end):
-            self.drawMenu(i,menus[index],visibleOptions,selected=(index==selected))
+            rect = self.drawMenu(i,menus[index],visibleOptions,selected=(index==selected))
+            rectangles.append(rect)
             i+=1
+
+        return rectangles
 
     def drawMenu(self,i,menu,visibleOptions=3,selected=False,verticalCenteredText=False):
         surfaceSize = self.surface.get_size()
@@ -184,6 +220,8 @@ class PyMainMenu():
             color = COLOR_BLACK
         txt = font.render(title, True, color)
         self.surface.blit(txt, (xT, yT))
+
+        return menuRect
 
 
     def quit(self):
@@ -345,11 +383,6 @@ class PyMainMenu():
             events = pygame.event.get()
             logger.debug("drawList event %s"%str(events))
             for event in events:
-                try:
-                    self.keyboard.on_event(event) #keyboard library
-                except:
-                    logger.debug("no keyboard")
-                    pass
                 #normal events
                 if event.type == pygame.QUIT:
                     exit = True
