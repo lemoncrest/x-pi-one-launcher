@@ -55,12 +55,11 @@ class PyMainMenu():
 
     def drawMainMenu(self):
         menus = [
-            {"title" : "Remote repository", "image" : "", "action" : self.navigateRepository},
-            {"title" : "Local", "image" : "", "action" : self.createLocalRepo},
-            {"title" : "Settings", "image" : "", "action" : self.settingsMenu},
-            {"title" : "exit", "image" : "", "action" : self.quit}
+            {"title" : "Remote repository", "image" : "images/cloud.png", "action" : self.navigateRepository},
+            {"title" : "Local", "image" : "images/hdd.png", "action" : self.createLocalRepo},
+            {"title" : "Settings", "image" : "images/settings.png", "action" : self.settingsMenu},
+            {"title" : "exit", "image" : "images/exit.png", "action" : self.quit}
         ]
-
         self.manageMainEvents(menus)
 
     def manageMainEvents(self,menus): #TODO
@@ -149,18 +148,28 @@ class PyMainMenu():
         padding = 10
         font = pygame.font.Font(None, 28)
 
+        #draw main square
         #calculate x (all have the same size)
         size = (surfaceSize[0]/visibleOptions)-margin*2
-        #now calculate y (square)
+        #calculate y (square)
         y = ((surfaceSize[1]-size)/2)
         x = (size*(i)) + (margin*2*i) + margin
 
         menuRect = pygame.Rect(x, y, size, size)
         pygame.draw.rect(self.surface, COLOR_GRAY, menuRect, 0)
+
         if selected:
             menuRect = pygame.Rect(x+padding, y+padding, size-padding*2, size-padding*2)
-            pygame.draw.rect(self.surface, COLOR_BLUE, menuRect, 0)
+            pygame.draw.rect(self.surface, COLOR_WHITE, menuRect, 0)
 
+        #draw image
+        #filename = os.path.join(os.getcwd(),"assert",menu["image"])
+        filename = os.path.join(os.getcwd(),"assert",menu["image"])
+        picture = pygame.image.load(filename)
+        pic = pygame.transform.scale(picture, (int(size-padding*2), int(size-padding*2)))
+        self.surface.blit(pic, (x+padding, y+padding))
+
+        #draw title
         title = menu["title"]
 
         xT = x + size/2 - (font.size(title)[0]/2)
