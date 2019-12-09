@@ -206,7 +206,7 @@ class VirtualKeyboard(object):
         counter = 0
         # My main event loop (hog all processes since we're on top, but someone might want
         # to rewrite this to be more event based.  Personally it works fine for my purposes ;-)
-        buttons = None
+        keyrepeat_counters = {}
         while 1:
             time.sleep(.05)
             events = pygame.event.get()
@@ -225,36 +225,17 @@ class VirtualKeyboard(object):
                         elif e.key == K_RIGHT:
                             self.input.inccursor()
                             pygame.display.flip()
+                        elif e.key == K_BACKSPACE:
+                            self.input.backspace()
                         else:
-                            keys = pygame.key.get_pressed()
-                            buttons = [pygame.key.name(k) for k,v in enumerate(keys) if v]
-                            print(str(buttons))
+                            if e.key not in keyrepeat_counters:
+                                keyrepeat_counters[e.key] = [0, e.unicode]
+                                #self.input.text+=str(e.unicode)
+                                self.input.addcharatcursor(str(e.unicode))
 
-                    elif (e.type == KEYUP) and buttons is not None:
-                        pressed = pygame.key.get_pressed()
-                        buttons2 = [pygame.key.name(k) for k,v in enumerate(pressed) if v]
-                        for button in buttons2:
-                            if button in buttons:
-                                print("removing %s" % button)
-                                buttons.remove(button)
-                        print(buttons)
-                        if len(buttons)>0:
-                            lastIndex = len(self.input.text)-1
-                            if lastIndex>=0:
-                                lastKey = self.input.text[lastIndex]
-                                text = ""
-                                for key in buttons:
-                                    if lastKey != key:
-                                        text = key
-                                if 'backspace' in buttons:
-                                    self.input.backspace()
-                                elif 'space' in buttons:
-                                    self.input.addcharatcursor(" ")
-                                if 'numlock' in buttons:
-                                    buttons.remove('numlock')
-                                if len(text)==1:
-                                    self.input.addcharatcursor(text)
-                        buttons = None
+                    elif (e.type == KEYUP):
+                        if e.key in keyrepeat_counters:
+                            del keyrepeat_counters[e.key]
 
                     if (e.type == MOUSEBUTTONDOWN):
                         self.selectatmouse()
