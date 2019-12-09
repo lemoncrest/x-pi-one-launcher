@@ -82,15 +82,15 @@ class ListBox():
                         if choices[selected] > 0:
                             choices[selected]-=1
                     elif event.key == pygame.K_RIGHT:
-                        if "choice" in self.list[selected] :
-                            if choices[selected] < len(self.list[selected]["choice"])-1:
+                        if "choices" in self.list[selected] :
+                            if choices[selected] < len(self.list[selected]["choices"])-1:
                                 choices[selected]+=1
                     elif event.key == pygame.K_RETURN:
                         if "txt" in self.list[selected] :
-                            self.keyboard.run(self.surface, "none")
+                            self.keyboard.run(self.surface, self.list[selected]["choices"][self.list[selected]["selected"]])
                 elif event.type == pygame.JOYBUTTONDOWN:
                     if event.button == 1: #button A - enter
-                        if "txt" in self.list[selected] :
+                        if "txt" in self.list[selected] and "visible" in self.list[selected] and self.list[selected]["visible"]:
                             self.keyboard.enable()
                     elif event.button == 2: #button B - back
                         if self.keyboard.state == 1:
@@ -109,10 +109,6 @@ class ListBox():
                 if self.aid:
                     self.displayAid(selected,sizeX,sizeY)
 
-            else:
-                #TODO draw textbox with keyboard buffer
-                #print("keyboard content %s" % self.keyboard.buffer)
-                pass
 
             pygame.display.flip() #update
 
@@ -198,15 +194,15 @@ class ListBox():
         pygame.draw.rect(self.surface, COLOR_DARK_GRAY, button_rect, 0)
 
         #check if is a list or not, if not is a txt field so needs a keyboard
-        if "choice" in element:
+        if "choices" in element:
             barHeight = 20 #TODO
             left_rect = pygame.Rect(firstX+self.padding, y+self.padding, barHeight, sizeY-(self.padding*2))
             pygame.draw.rect(self.surface, COLOR_GRAY, left_rect, 0)
             right_rect = pygame.Rect(firstX+lastX-(self.padding*2), y+self.padding, barHeight, sizeY-(self.padding*2))
             pygame.draw.rect(self.surface, COLOR_GRAY, right_rect, 0)
 
-            text = element["choice"][selected_choice]
-        else: #txt
+            text = element["choices"][selected_choice]
+        elif "txt" in element: #txt
             text = element["txt"]
 
         xT = x + (sizeX*2/3)-(self.font.size(text)[0]/2)

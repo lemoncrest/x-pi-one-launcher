@@ -213,11 +213,16 @@ class PyMainMenu():
     def playMusicFromSettings(self):
         on = False
         file = None
-        file = None
+        data = []
         with open('config/configuration.json', 'r') as json_file:
             data = json.load(json_file)
-            file = data["music-file"]
-            on = data["music"]
+
+        for setting in data:
+            if "id" in setting and "selected" in setting and "choices" in setting:
+                if setting["id"] == "music-file":
+                    file = setting["choices"][setting["selected"]]
+                elif setting["id"] == "music":
+                    on = setting["choices"][setting["selected"]] == "Yes"
         pygame.mixer.init()
         pygame.mixer.music.stop()
         if on and file is not None: # play background music
@@ -230,11 +235,15 @@ class PyMainMenu():
     def main_background(self):
         on = False
         file = None
-        file = None
         with open(os.path.join(os.getcwd(),'config/configuration.json'), 'r') as json_file:
             data = json.load(json_file)
-            file = data["wallpaper-file"]
-            on = data["wallpaper"]
+        for setting in data:
+            if "id" in setting and "selected" in setting and "choices" in setting:
+                if setting["id"] == "wallpaper-file":
+                    selected = setting["selected"]
+                    file = setting["choices"][selected]
+                elif setting["id"] == "wallpaper":
+                    on = setting["choices"][setting["selected"]] == "Yes"
         if on and file is not None: # play background music
             #now draw image if exists
             filename = os.path.join(os.getcwd(),"assert/wallpapers",file)
@@ -252,21 +261,19 @@ class PyMainMenu():
         self.main_background()
 
         #Sample options inspired on pokemon menu
-        settings = [
-            {
-                "title" : "Username",
-                "aid" : "Configure con un teclado virtual su nombre de usuario",
-                "txt" : "Empty0001298347"
-            },{
-                "title" : "Velocidad del texto",
-                "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
-                "choice" : [
-                    "Lenta",
-                    "Media",
-                    "Rapida"
-                ]
-            }
-        ]
+        with open(os.path.join(os.getcwd(),'config/configuration.json'), 'r') as json_file:
+            settings = json.load(json_file)
+        #now fills settings choices with folder files
+        for element in settings:
+            if "folder" in element:
+                choices = []
+                folder = element["folder"]
+                for r, d, f in os.walk(os.path.join(os.getcwd(),"assert",folder)):
+                    element["choices"] = f
+                    #for file in f:
+                    #    choices.append(file)
+                    #element["choices"] = choices
+
         x=0
         y=0
         margin = 50
@@ -299,11 +306,10 @@ class PyMainMenu():
         self.lastFramed = 0
         content = self.chunk_read(response, report_hook=self.chunk_report)
         self.progressbar.updateProgressBar() #last frame
-        print(content)
+        #print(content)
         self.main_background()
         #now show metadata content
         self.drawRemoteRepository(json.loads(content))
-
         #TODO show main menu when terminates and returns the control
 
     def drawRemoteRepository(self,content):
