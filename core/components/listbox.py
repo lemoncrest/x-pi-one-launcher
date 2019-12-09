@@ -5,6 +5,9 @@ from __future__ import division
 
 import pygame
 from core.colors import *
+
+from core.components.keyboard import *
+
 import logging
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -30,6 +33,7 @@ class ListBox():
         self.font = pygame.font.Font(None, self.fontSize)
         self.centered = centered
         self.aid = aid
+        self.keyboard = VirtualKeyboard()
 
     def show(self):
         #TODO display navigation bar with margins
@@ -64,7 +68,10 @@ class ListBox():
                     exit = True
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                        exit = True
+                        if self.keyboard.state == 1:
+                            self.keyboard.disable() #self.keyboard.state = 0
+                        else: #no keyboard -> exit
+                            exit = True
                     elif event.key == pygame.K_UP:
                         if selected > 0:
                             selected-=1
@@ -75,29 +82,42 @@ class ListBox():
                         if choices[selected] > 0:
                             choices[selected]-=1
                     elif event.key == pygame.K_RIGHT:
-                        if choices[selected] < len(self.list[selected]["choice"])-1:
-                            choices[selected]+=1
-                    elif event.key == pygame.K_b:
-                        exit = True
-                    elif event.key == pygame.K_a or event.key == pygame.K_RETURN:
-                        exit = True #TODO save script
+                        if "choice" in self.list[selected] :
+                            if choices[selected] < len(self.list[selected]["choice"])-1:
+                                choices[selected]+=1
+                    elif event.key == pygame.K_RETURN:
+                        if "txt" in self.list[selected] :
+                            self.keyboard.run(self.surface, "none")
                 elif event.type == pygame.JOYBUTTONDOWN:
                     if event.button == 1: #button A - enter
-                        exit = True #TODO save
+                        if "txt" in self.list[selected] :
+                            self.keyboard.enable()
                     elif event.button == 2: #button B - back
-                        exit = True #back
+                        if self.keyboard.state == 1:
+                            self.keyboard.disable() #self.keyboard.state = 0
+                        else: #no keyboard -> exit
+                            exit = True
 
-            #display all options
-            self.displayOptions(sizeX,sizeY,selected,choices)
+            if self.keyboard.state == 0:
 
-            #display lateral bar
-            self.displayBar(sizeX,sizeY,selected)
+                #display all options
+                self.displayOptions(sizeX,sizeY,selected,choices)
 
-            if self.aid:
-                self.displayAid(selected,sizeX,sizeY)
+                #display lateral bar
+                self.displayBar(sizeX,sizeY,selected)
+
+                if self.aid:
+                    self.displayAid(selected,sizeX,sizeY)
+
+            else:
+                #TODO draw textbox with keyboard buffer
+                #print("keyboard content %s" % self.keyboard.buffer)
+                pass
 
             pygame.display.flip() #update
 
+    def consumer(self,text):
+        logger.debug('Current text : %s' % text)
 
 
     #TODO display description of selected element in a black box at botton of the list
@@ -177,13 +197,18 @@ class ListBox():
         button_rect = pygame.Rect(firstX, y, lastX, sizeY)
         pygame.draw.rect(self.surface, COLOR_DARK_GRAY, button_rect, 0)
 
-        barHeight = 20 #TODO
-        left_rect = pygame.Rect(firstX+self.padding, y+self.padding, barHeight, sizeY-(self.padding*2))
-        pygame.draw.rect(self.surface, COLOR_GRAY, left_rect, 0)
-        right_rect = pygame.Rect(firstX+lastX-(self.padding*2), y+self.padding, barHeight, sizeY-(self.padding*2))
-        pygame.draw.rect(self.surface, COLOR_GRAY, right_rect, 0)
+        #check if is a list or not, if not is a txt field so needs a keyboard
+        if "choice" in element:
+            barHeight = 20 #TODO
+            left_rect = pygame.Rect(firstX+self.padding, y+self.padding, barHeight, sizeY-(self.padding*2))
+            pygame.draw.rect(self.surface, COLOR_GRAY, left_rect, 0)
+            right_rect = pygame.Rect(firstX+lastX-(self.padding*2), y+self.padding, barHeight, sizeY-(self.padding*2))
+            pygame.draw.rect(self.surface, COLOR_GRAY, right_rect, 0)
 
-        text = element["choice"][selected_choice]
+            text = element["choice"][selected_choice]
+        else: #txt
+            text = element["txt"]
+
         xT = x + (sizeX*2/3)-(self.font.size(text)[0]/2)
         yT = y+sizeY/2-(self.font.size(text)[1]/2)
         txt = self.font.render(text, True, COLOR_WHITE)

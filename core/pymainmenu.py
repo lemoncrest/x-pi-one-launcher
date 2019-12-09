@@ -22,7 +22,6 @@ import logging
 logging.basicConfig()
 logger = logging.getLogger(__name__)
 from colors import *
-from pygame_vkeyboard import *
 from core.components.upbar import UpBar
 from core.components.progressbar import ProgressBar
 from core.components.listbox import ListBox
@@ -208,6 +207,10 @@ class PyMainMenu():
         #Sample options inspired on pokemon menu
         list = [
             {
+                "title" : "Username",
+                "aid" : "Configure con un teclado virtual su nombre de usuario",
+                "txt" : "Empty0001298347"
+            },{
                 "title" : "Velocidad del texto",
                 "aid" : "Texto de ayuda que se muestra en un cuadro debajo",
                 "choice" : [
