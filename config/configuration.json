@@ -1,49 +1,66 @@
 [
-  {
-		"id": "surname",
-		"title": "Nombre de usuario",
-		"aid": "Nombre de usuario de la plataforma",
-		"txt": "bitstuffing",
-		"visible": true
-	},
-	{
-		"id": "wallpaper",
-		"title": "Activar fondo de pantalla",
-		"aid": "Desactiva o activa el fondo de pantalla customizado",
-		"choices": [
-			"Yes",
-			"No"
-		],
-    "selected": 0,
-		"visible": true
-	},
-	{
-		"id": "wallpaper-file",
-		"title": "Fondo de pantalla",
-		"aid": "Fondo de pantalla que se muestra en el launcher",
-		"choices": ["wallpaper.jpg"],
-    "selected": 0,
-		"folder": "wallpapers",
-		"visible": true
-	},
-	{
-		"id": "music",
-		"title": "Activar musica de fondo",
-		"aid": "Desactiva o activa la musica de fondo",
-		"choices": [
-			"Yes",
-			"No"
-		],
-    "selected": 0,
-		"visible": true
-	},
-	{
-		"id": "music-file",
-		"title": "Activar fondo de pantalla",
-		"aid": "Desactiva o activa el fondo de pantalla customizado",
-		"choices": ["1-Free-Background-Music.mp3"],
-    "selected": 0,
-		"folder": "music",
-		"visible": true
-	}
+    {
+        "aid": "Nombre de usuario de la plataforma", 
+        "txt": "bitstuffing", 
+        "visible": true, 
+        "id": "surname", 
+        "title": "Nombre de usuario"
+    }, 
+    {
+        "title": "Activar fondo de pantalla", 
+        "selected": 0, 
+        "choices": [
+            "Yes", 
+            "No"
+        ], 
+        "visible": true, 
+        "aid": "Desactiva o activa el fondo de pantalla customizado", 
+        "id": "wallpaper"
+    }, 
+    {
+        "title": "Fondo de pantalla", 
+        "selected": 0, 
+        "choices": [
+            "arm.jpg", 
+            "wallpaper.jpg"
+        ], 
+        "visible": true, 
+        "aid": "Fondo de pantalla que se muestra en el launcher", 
+        "folder": "wallpapers", 
+        "id": "wallpaper-file"
+    }, 
+    {
+        "title": "Activar musica de fondo", 
+        "selected": 0, 
+        "choices": [
+            "Yes", 
+            "No"
+        ], 
+        "visible": true, 
+        "aid": "Desactiva o activa la musica de fondo", 
+        "id": "music"
+    }, 
+    {
+        "title": "Archivo de sonido de fondo", 
+        "selected": 1, 
+        "choices": [
+            "5-Free-Background-Music.mp3", 
+            "1-Free-Background-Music.mp3", 
+            "Oh-Wonder-Body-Gold-Louis-The-Child-Remix.mp3", 
+            "4_In_1_Fun_Pack_Theme.mid", 
+            "10-Best-Free-Background-Music.mp3", 
+            "7-Best-Free-Background-Music.mp3", 
+            "Free_Intro_Music_for_your_Video.mp3", 
+            "2-Free-Background-Music.mp3", 
+            "Best-Free-Background-Music.mp3", 
+            "9-Best-Free-Background-Music.mp3", 
+            "8-Best-Free-Background-Music.mp3", 
+            "7-Best-Free-Background-Music-1.mp3", 
+            "3-Free-Background-Music.mp3"
+        ], 
+        "visible": true, 
+        "aid": "Selecciona un fondo musical que desees escuchar mientras te encuentras en el launcher", 
+        "folder": "music", 
+        "id": "music-file"
+    }
 ]

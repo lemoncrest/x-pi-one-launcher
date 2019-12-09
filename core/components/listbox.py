@@ -50,7 +50,10 @@ class ListBox():
         choices = []
         #TODO put selected index from configuration in each choices[i]
         for i in range(0,len(self.list)):
-            choices.append(0)
+            selected = 0
+            if "selected" in self.list[i]:
+                selected = self.list[i]["selected"]
+            choices.append(selected)
 
         while not exit:
 
@@ -85,9 +88,11 @@ class ListBox():
                         if "choices" in self.list[selected] :
                             if choices[selected] < len(self.list[selected]["choices"])-1:
                                 choices[selected]+=1
+
                     elif event.key == pygame.K_RETURN:
                         if "txt" in self.list[selected] :
-                            self.keyboard.run(self.surface, self.list[selected]["choices"][self.list[selected]["selected"]])
+                            text = self.keyboard.run(self.surface, self.list[selected]["txt"])
+                            self.list[selected]["txt"] = text
                 elif event.type == pygame.JOYBUTTONDOWN:
                     if event.button == 1: #button A - enter
                         if "txt" in self.list[selected] and "visible" in self.list[selected] and self.list[selected]["visible"]:
@@ -111,6 +116,15 @@ class ListBox():
 
 
             pygame.display.flip() #update
+
+
+        for i in range(0,len(choices)):
+            if "selected" in self.list[i]:
+                self.list[i]["selected"] = choices[i]
+                print("%s %s" % (i,self.list[i]["selected"]))
+
+
+        return self.list #items updated to be saved
 
     def consumer(self,text):
         logger.debug('Current text : %s' % text)

@@ -264,6 +264,8 @@ class PyMainMenu():
         with open(os.path.join(os.getcwd(),'config/configuration.json'), 'r') as json_file:
             settings = json.load(json_file)
         #now fills settings choices with folder files
+        music = None
+        musicFile = ""
         for element in settings:
             if "folder" in element:
                 choices = []
@@ -273,6 +275,11 @@ class PyMainMenu():
                     #for file in f:
                     #    choices.append(file)
                     #element["choices"] = choices
+            if element["id"] == "music":
+                music = element["choices"][element["selected"]] == "Yes"
+            elif element["id"] == "music-file":
+                musicFile = element["choices"][element["selected"]]
+
 
         x=0
         y=0
@@ -290,7 +297,19 @@ class PyMainMenu():
             aid = True,
             list=settings)
 
-        self.listbox.show()
+        newSettings = self.listbox.show()
+        with open(os.path.join(os.getcwd(),'config/configuration.json'), 'w') as json_file:
+            json.dump(newSettings, json_file, indent=4)
+        for newSetting in newSettings:
+            if newSetting["id"] == "music":
+                newMusic = newSetting["choices"][newSetting["selected"]] == "Yes"
+            elif newSetting["id"] == "music-file":
+                newMusicFile = newSetting["choices"][newSetting["selected"]]
+        print("old: %s %s" %(music,musicFile))
+        print("new: %s %s" %(newMusic,newMusicFile))
+        if music <> newMusic or newMusicFile <> musicFile:
+            self.playMusicFromSettings()
+
 
 
     def navigateRepository(self):
