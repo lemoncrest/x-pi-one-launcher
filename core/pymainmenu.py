@@ -9,7 +9,6 @@ import random
 import os
 import sys
 import subprocess
-import urllib2
 import time
 from datetime import datetime, timedelta
 import requests
@@ -17,6 +16,7 @@ try:
     from urllib2 import urlopen # Python2
 except ImportError:
     from urllib.request import urlopen # Python3 but... it's not necessary at this moment, for the furute
+    pass
 
 import io
 import logging
@@ -104,7 +104,7 @@ class PyMainMenu():
         self.progressbar = ProgressBar(width=WINDOW_SIZE[0]-margin,height=30,surface=self.surface,x=0, y=50,margin=margin,centeredText=True,textMessage=textMessage)
 
         while not exit:
-            self.clock.tick(FPS)
+            self.clock.tick()
 
             self.main_background()
 
@@ -145,7 +145,7 @@ class PyMainMenu():
         exit = False
         selected = 0
         while not exit:
-            self.clock.tick(FPS)
+            self.clock.tick()
             #colored background
             self.main_background()
             #draw components
@@ -424,7 +424,7 @@ class PyMainMenu():
             elif newSetting["id"] == "music-file":
                 newMusicFile = newSetting["choices"][newSetting["selected"]]
 
-        if music <> newMusic or newMusicFile <> musicFile:
+        if music != newMusic or newMusicFile != musicFile:
             self.playMusicFromSettings()
 
 
@@ -437,7 +437,7 @@ class PyMainMenu():
         margin = 50
         self.progressbar = ProgressBar(width=WINDOW_SIZE[0]-margin,height=30,surface=self.surface,x=0, y=50,margin=margin,centeredText=True)
         repository = REMOTE_REPOSITORY
-        response = urllib2.urlopen(repository)
+        response = urlopen(repository)
         self.progressbar.updateProgressBar() #first frame
         self.lastFramed = 0
         content = self.chunk_read(response, report_hook=self.chunk_report)

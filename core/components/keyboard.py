@@ -216,9 +216,9 @@ class VirtualKeyboard(object):
         # to rewrite this to be more event based.  Personally it works fine for my purposes ;-)
         keyrepeat_counters = {}
         while 1:
-            self.clock.tick(1)
+            self.clock.tick()
             events = pygame.event.get()
-            if events <> None:
+            if events != None:
                 for e in events:
                     if (e.type == KEYDOWN):
                         if e.key == K_ESCAPE:
