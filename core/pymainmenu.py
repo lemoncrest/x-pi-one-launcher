@@ -31,7 +31,7 @@ from core.partner.gog import GOG
 
 WINDOW_SIZE = (1024, 600)
 COLOR_BACKGROUND = (61, 61, 202) # by default if there is no image to load will be shown it
-FPS = 60
+
 MENU_BACKGROUND_COLOR = (153, 153, 255) #TODO put it in a theme file
 MENU_OPTION_MARGIN = 20  # Option margin (px)
 MARGIN = 25
@@ -42,6 +42,8 @@ BUTTON_RADIO = 28
 REMOTE_REPOSITORY = "https://gitlab.gameboyzero.es/pygames/repository/raw/master/pool.json"
 
 class PyMainMenu():
+
+    FPS = 60
 
     def __init__(self):
         #init
@@ -127,7 +129,7 @@ class PyMainMenu():
         self.progressbar = ProgressBar(width=WINDOW_SIZE[0]-margin,height=30,surface=self.surface,x=0, y=50,margin=margin,centeredText=True,textMessage=textMessage)
 
         while not exit:
-            self.clock.tick(FPS)
+            self.clock.tick(self.FPS)
 
             self.main_background()
 
@@ -169,7 +171,7 @@ class PyMainMenu():
         selected = 0
         changes = True
         while not exit:
-            self.clock.tick(FPS)
+            self.clock.tick(self.FPS)
             if changes:
                 #colored background
                 self.main_background()
@@ -424,7 +426,9 @@ class PyMainMenu():
             surface=self.surface,
             centered = True,
             aid = True,
-            list=settings)
+            list=settings,
+            parent=self
+        )
 
         #reload settings in memory (for background)
         self.loadSettings()

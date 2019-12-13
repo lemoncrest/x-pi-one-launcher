@@ -58,7 +58,7 @@ class TextInput(object):
             self.cursorpos += 1
             self.draw()
             return
-        self.text += letter
+        self.text += str(letter,"utf-8")
         self.cursorpos += 1
         self.draw()
 

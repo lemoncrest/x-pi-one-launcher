@@ -16,7 +16,7 @@ WINDOW_SIZE = (1024, 600)
 
 class ListBox():
 
-    def __init__(self,width,height,x,y,margin,visibleOptions,padding,surface,list,centered=True,aid = False):
+    def __init__(self,width,height,x,y,margin,visibleOptions,padding,surface,list,centered=True,aid = False,parent=None):
         self.width = width
         self.height = height
         self.x = x
@@ -34,6 +34,7 @@ class ListBox():
         self.centered = centered
         self.aid = aid
         self.keyboard = VirtualKeyboard()
+        self.parent = parent
 
     def show(self):
         #display options
@@ -54,6 +55,7 @@ class ListBox():
             choices.append(index)
 
         while not exit:
+            self.parent.clock.tick(self.parent.FPS)
 
             events = pygame.event.get()
             logger.debug("drawList event %s"%str(events))
@@ -88,14 +90,16 @@ class ListBox():
                                 choices[selected]+=1
 
                     elif event.key == pygame.K_RETURN:
-                        if "txt" in self.list[selected] :
+                        if "txt" in self.list[selected]:
                             text = self.keyboard.run(self.surface, self.list[selected]["txt"])
                             self.list[selected]["txt"] = text
+                            self.parent.main_background()
                 elif event.type == pygame.JOYBUTTONDOWN:
                     if event.button == 1: #button A - enter
-                        if "txt" in self.list[selected] :
+                        if "txt" in self.list[selected]:
                             text = self.keyboard.run(self.surface, self.list[selected]["txt"])
                             self.list[selected]["txt"] = text
+                            self.parent.main_background()
                     elif event.button == 2: #button B - back
                         if self.keyboard.state == 1:
                             self.keyboard.state = 0
