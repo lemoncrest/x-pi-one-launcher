@@ -266,7 +266,7 @@ class PyMainMenu():
                         i+=1
 
 
-            pygame.display.update()
+            pygame.display.flip()
 
 
     def drawMenus(self,menus,selected,visibleOptions):
@@ -522,7 +522,7 @@ class PyMainMenu():
             #display selected element
             circleA,circleB = self.drawSelectedElement(element=data["games"][selected],path=None,aTxt="Install from repository",bTxt="Back to previous menu")
             up,down = self.drawNavigationBar(selected,len(data["games"]))
-            pygame.display.update()
+            pygame.display.flip()
 
 
     def chunk_report(self, bytes_so_far, chunk_size, total_size):
@@ -539,13 +539,19 @@ class PyMainMenu():
 
 
     def chunk_read(self, response, chunk_size=8192, report_hook=None):
-        total_size = response.info().getheader('Content-Length').strip()
+        try:
+            total_size = response.info().getheader('Content-Length').strip()
+        except:
+            total_size = response.headers['Content-Length']
+            pass
         total_size = int(total_size)
         bytes_so_far = 0
-        total = ''
+        total = bytearray()
         while 1:
             chunk = response.read(chunk_size)
+
             total+=chunk
+
             bytes_so_far += len(chunk)
 
             if not chunk:
@@ -710,7 +716,7 @@ class PyMainMenu():
             circleA,circleB = self.drawSelectedElement(data["games"][selected],path,"Enter inside program","Back to previous menu")
             up,down = self.drawNavigationBar(selected,len(data["games"]))
 
-            pygame.display.update()
+            pygame.display.flip()
 
     def createLocalRepo(self):
         self.manageLocalEvents()
