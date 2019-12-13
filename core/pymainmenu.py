@@ -22,7 +22,7 @@ import io
 import logging
 logging.basicConfig(filename="log.txt",level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-from colors import *
+from core.colors import *
 from core.components.upbar import UpBar
 from core.components.progressbar import ProgressBar
 from core.components.listbox import ListBox
@@ -47,6 +47,7 @@ class PyMainMenu():
         #init
         pygame.init()
         self.initJoysticks()
+        self.loadSettings()
         self.playMusicFromSettings()
         # Create pygame screen and objects
         self.surface = pygame.display.set_mode(WINDOW_SIZE,pygame.FULLSCREEN)
@@ -54,9 +55,28 @@ class PyMainMenu():
         pygame.display.set_caption('Menu principal')
         self.upbar = UpBar(surface=self.surface)
 
+
     def main(self):
         self.drawMainMenu()
 
+    def loadSettings(self):
+        self.on = False
+        self.file = None
+        with open(os.path.join(os.getcwd(),'config/configuration.json'), 'r') as json_file:
+            self.data = json.load(json_file)
+        for setting in self.data:
+            if "id" in setting and "selected" in setting and "choices" in setting:
+                if setting["id"] == "wallpaper-file":
+                    selected = setting["selected"]
+                    self.file = setting["choices"][selected]
+                elif setting["id"] == "wallpaper":
+                    self.on = setting["choices"][setting["selected"]] == "Yes"
+        if self.on and self.file is not None: # play background music
+            #now draw image if exists
+            filename = os.path.join(os.getcwd(),"assert/wallpapers",self.file)
+
+            picture = pygame.image.load(filename)
+            self.pic = pygame.transform.scale(picture, WINDOW_SIZE)
 
     def navigateGOG(self):
         self.main_background()
@@ -356,25 +376,9 @@ class PyMainMenu():
         self.upbar.draw()
 
     def main_background(self):
-        on = False
-        file = None
-        with open(os.path.join(os.getcwd(),'config/configuration.json'), 'r') as json_file:
-            data = json.load(json_file)
-        for setting in data:
-            if "id" in setting and "selected" in setting and "choices" in setting:
-                if setting["id"] == "wallpaper-file":
-                    selected = setting["selected"]
-                    file = setting["choices"][selected]
-                elif setting["id"] == "wallpaper":
-                    on = setting["choices"][setting["selected"]] == "Yes"
-        if on and file is not None: # play background music
-            #now draw image if exists
-            filename = os.path.join(os.getcwd(),"assert/wallpapers",file)
 
-            picture = pygame.image.load(filename)
-            pic = pygame.transform.scale(picture, WINDOW_SIZE)
-
-            self.surface.blit(pic,(0,0))
+        if self.on and self.file is not None: # play background music
+            self.surface.blit(self.pic,(0,0))
         else:
             self.surface.fill(COLOR_BACKGROUND)
 
@@ -419,6 +423,10 @@ class PyMainMenu():
             aid = True,
             list=settings)
 
+        #reload settings in memory (for background)
+        self.loadSettings()
+        #refresh music if needed
+
         newSettings = self.listbox.show()
         with open(os.path.join(os.getcwd(),'config/configuration.json'), 'w') as json_file:
             json.dump(newSettings, json_file, indent=4)
@@ -430,6 +438,8 @@ class PyMainMenu():
 
         if music != newMusic or newMusicFile != musicFile:
             self.playMusicFromSettings()
+
+        self.main_background()
 
 
 
@@ -538,17 +548,6 @@ class PyMainMenu():
                 report_hook(bytes_so_far, chunk_size, total_size)
 
         return total #bytes_so_far
-
-    def saveSettings(self):
-
-        data = {}
-
-        with open('config/configuration.json', 'r') as json_file:
-            data = json.load(json_file)
-            #TODO get all possible options and store activated option or text
-
-        with open('config/configuration.json', 'w+') as json_file:
-            json.dump(data, json_file, indent=4)
 
     def drawNavigationBar(self,selection,total):
 
