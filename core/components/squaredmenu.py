@@ -11,12 +11,11 @@ class SquaredMenu():
         if visibleOptions>len(menus):
             visibleOptions = len(menus)
         start = 0
-        if selected > int(visibleOptions/2):
-            start = int(visibleOptions/2)
+        if selected >= int(visibleOptions/2):
+            start = selected
         if start+visibleOptions > len(menus):
             start = len(menus)-visibleOptions
         end = start+visibleOptions
-
         i = 0
         rectangles = []
         for index in range(start,end):
@@ -28,7 +27,7 @@ class SquaredMenu():
 
     def drawSquaredMenu(self, i, menu, visibleOptions=3, selected=False, verticalCenteredText=False):
         surfaceSize = self.surface.get_size()
-        margin = 50
+        margin = 100 - (18*visibleOptions)
         padding = 10
         font = pygame.font.Font(None, 28)
 
