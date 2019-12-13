@@ -128,10 +128,10 @@ class PyMainMenu():
         margin=50
         self.progressbar = ProgressBar(width=WINDOW_SIZE[0]-margin,height=30,surface=self.surface,x=0, y=50,margin=margin,centeredText=True,textMessage=textMessage)
 
+        self.main_background() #take into account it should be inside instead out of the while, but at this moment is a better performance
+
         while not exit:
             self.clock.tick(self.FPS)
-
-            self.main_background()
 
             self.progressbar.textMessage = self.gog.message
             state = self.gog.state
