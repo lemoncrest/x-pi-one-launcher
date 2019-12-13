@@ -29,7 +29,7 @@ from core.components.listbox import ListBox
 
 from core.partner.gog import GOG
 
-WINDOW_SIZE = (1366, 768)
+WINDOW_SIZE = (1024, 600)
 COLOR_BACKGROUND = (61, 61, 202) # by default if there is no image to load will be shown it
 FPS = 6.0
 MENU_BACKGROUND_COLOR = (153, 153, 255) #TODO put it in a theme file
@@ -49,7 +49,7 @@ class PyMainMenu():
         self.initJoysticks()
         self.playMusicFromSettings()
         # Create pygame screen and objects
-        self.surface = pygame.display.set_mode(WINDOW_SIZE)
+        self.surface = pygame.display.set_mode(WINDOW_SIZE,pygame.FULLSCREEN)
         self.clock = pygame.time.Clock()
         pygame.display.set_caption('Menu principal')
         self.upbar = UpBar(surface=self.surface)

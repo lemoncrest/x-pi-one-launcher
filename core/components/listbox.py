@@ -12,7 +12,7 @@ import logging
 logging.basicConfig()
 logger = logging.getLogger(__name__)
 
-WINDOW_SIZE = (1366, 768)
+WINDOW_SIZE = (1024, 600)
 
 class ListBox():
 
