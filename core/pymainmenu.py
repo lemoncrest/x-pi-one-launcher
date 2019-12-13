@@ -31,7 +31,7 @@ from core.partner.gog import GOG
 
 WINDOW_SIZE = (1024, 600)
 COLOR_BACKGROUND = (61, 61, 202) # by default if there is no image to load will be shown it
-FPS = 6.0
+FPS = 60
 MENU_BACKGROUND_COLOR = (153, 153, 255) #TODO put it in a theme file
 MENU_OPTION_MARGIN = 20  # Option margin (px)
 MARGIN = 25
@@ -104,7 +104,7 @@ class PyMainMenu():
         self.progressbar = ProgressBar(width=WINDOW_SIZE[0]-margin,height=30,surface=self.surface,x=0, y=50,margin=margin,centeredText=True,textMessage=textMessage)
 
         while not exit:
-            self.clock.tick()
+            self.clock.tick(FPS)
 
             self.main_background()
 
@@ -144,19 +144,23 @@ class PyMainMenu():
     def manageMainEvents(self,menus,visibleOptions=4): #TODO
         exit = False
         selected = 0
+        changes = True
         while not exit:
-            self.clock.tick()
-            #colored background
-            self.main_background()
-            #draw components
-            self.drawComponents() #at this moment bars
-            #now draw menus
-            rectangles = self.drawMenus(menus,selected,visibleOptions)
+            self.clock.tick(FPS)
+            if changes:
+                #colored background
+                self.main_background()
+                #draw components
+                self.drawComponents() #at this moment bars
+                #now draw menus
+                rectangles = self.drawMenus(menus,selected,visibleOptions)
+                changes = False
             #get events and configure
             events = pygame.event.get()
             logger.debug("drawList event %s"%str(events))
             for event in events:
                 #normal events
+                changes = True
                 if event.type == pygame.QUIT:
                     exit = True
                 elif event.type == pygame.KEYDOWN:
