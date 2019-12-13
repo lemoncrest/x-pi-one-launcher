@@ -53,7 +53,7 @@ class PyMainMenu():
         self.loadSettings()
         self.playMusicFromSettings()
         # Create pygame screen and objects
-        self.surface = pygame.display.set_mode(WINDOW_SIZE)
+        self.surface = pygame.display.set_mode(WINDOW_SIZE,pygame.FULLSCREEN)
         self.clock = pygame.time.Clock()
         pygame.display.set_caption('Menu principal')
         self.upbar = UpBar(surface=self.surface)
