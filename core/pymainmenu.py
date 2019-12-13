@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 from core.colors import *
 from core.components.upbar import UpBar
 from core.components.progressbar import ProgressBar
-from core.components.listbox import ListBox
+from core.components.boxlist import BoxList
 from core.components.squaredmenu import SquaredMenu
 from core.components.simplemenu import SimpleMenu
 from core.components.downloadprogressbar import DownloadProgressBar
@@ -338,14 +338,14 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
         x = 0
         y = 0
         margin = 50
-        self.listbox = ListBox(
+        self.listbox = BoxList(
             width=int(WINDOW_SIZE[0]),
             height=int(WINDOW_SIZE[1]),
             x=x,
             y=y,
             margin=margin,
             visibleOptions=7,
-            padding=20,
+            padding=15,
             surface=self.surface,
             centered=True,
             aid=True,
