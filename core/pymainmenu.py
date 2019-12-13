@@ -20,7 +20,7 @@ except ImportError:
 
 import io
 import logging
-logging.basicConfig()
+logging.basicConfig(filename="log.txt",level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 from colors import *
 from core.components.upbar import UpBar
@@ -50,6 +50,7 @@ class PyMainMenu():
         self.playMusicFromSettings()
         # Create pygame screen and objects
         self.surface = pygame.display.set_mode(WINDOW_SIZE)
+        self.clock = pygame.time.Clock()
         pygame.display.set_caption('Menu principal')
         self.upbar = UpBar(surface=self.surface)
 
@@ -103,7 +104,7 @@ class PyMainMenu():
         self.progressbar = ProgressBar(width=WINDOW_SIZE[0]-margin,height=30,surface=self.surface,x=0, y=50,margin=margin,centeredText=True,textMessage=textMessage)
 
         while not exit:
-            time.sleep(1/FPS)
+            self.clock.tick(FPS)
 
             self.main_background()
 
@@ -115,7 +116,7 @@ class PyMainMenu():
                 self.progressbar.progress = 1
             else:
                 self.progressbar.progress = state/errorCode
-                logger.debug(str(self.progressbar.progress))
+                #logger.debug(str(self.progressbar.progress))
 
             events = pygame.event.get()
             for event in events:
@@ -144,7 +145,7 @@ class PyMainMenu():
         exit = False
         selected = 0
         while not exit:
-            time.sleep(1/FPS)
+            self.clock.tick(FPS)
             #colored background
             self.main_background()
             #draw components

@@ -177,6 +177,7 @@ class VirtualKeyboard(object):
         self.state = 0
         self.x = 0 #TODO
         self.y = 0
+        self.clock = pygame.time.Clock()
 
     ''' Implement a basic full screen virtual keyboard for touchscreens '''
     def run(self, screen, text='',width=800,height=480):
@@ -215,6 +216,7 @@ class VirtualKeyboard(object):
         # to rewrite this to be more event based.  Personally it works fine for my purposes ;-)
         keyrepeat_counters = {}
         while 1:
+            self.clock.tick(1)
             events = pygame.event.get()
             if events <> None:
                 for e in events:

@@ -66,11 +66,8 @@ cookiejar.MozillaCookieJar.magic_re = r'.*'  # bypass the hardcoded "Netscape HT
 
 # configure logging
 logFormatter = logging.Formatter("%(asctime)s | %(message)s", datefmt='%H:%M:%S')
-rootLogger = logging.getLogger('ws')
+rootLogger = logging.getLogger(__name__)
 rootLogger.setLevel(logging.DEBUG)
-consoleHandler = logging.StreamHandler(sys.stdout)
-consoleHandler.setFormatter(logFormatter)
-rootLogger.addHandler(consoleHandler)
 
 # logging aliases
 info = rootLogger.info
