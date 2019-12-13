@@ -128,7 +128,7 @@ class PyMainMenu():
                         exit = True
 
             self.progressbar.updateProgressBar(parentEvents=True)
-            #pygame.display.flip()
+            pygame.display.flip()
 
 
     def drawMainMenu(self):
@@ -439,9 +439,11 @@ class PyMainMenu():
         repository = REMOTE_REPOSITORY
         response = urlopen(repository)
         self.progressbar.updateProgressBar() #first frame
+        pygame.display.flip()
         self.lastFramed = 0
         content = self.chunk_read(response, report_hook=self.chunk_report)
         self.progressbar.updateProgressBar() #last frame
+        pygame.display.flip()
         #print(content)
         self.main_background()
         #now show metadata content
@@ -510,7 +512,7 @@ class PyMainMenu():
         if float(self.lastFramed + 0.0015) < progress/100 or progress>=100:
             self.lastFramed = self.progressbar.progress
             self.progressbar.updateProgressBar()
-
+            pygame.display.flip()
         #less frames, better times, it's not necessary refresh all time, CPU is gold for interpreter
         self.progressbar.progress = progress/100
 

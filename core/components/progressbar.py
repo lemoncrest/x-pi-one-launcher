@@ -80,7 +80,6 @@ class ProgressBar():
         if not parentEvents:
             exit = self.manageEvents()
 
-        pygame.display.flip()
 
     def manageEvents(self):
         exit = False
