@@ -31,7 +31,7 @@ from core.partner.gog import GOG
 
 WINDOW_SIZE = (1366, 768)
 COLOR_BACKGROUND = (61, 61, 202) # by default if there is no image to load will be shown it
-FPS = 60.0
+FPS = 6.0
 MENU_BACKGROUND_COLOR = (153, 153, 255) #TODO put it in a theme file
 MENU_OPTION_MARGIN = 20  # Option margin (px)
 MARGIN = 25
@@ -64,6 +64,7 @@ class PyMainMenu():
         manifestFile = os.path.join(os.getcwd(),"configuration",GOG.MANIFEST_FILENAME)
         #check if cookies exists or is invalid dated
         login = (not os.path.exists(cookiesFile)) or (os.path.getctime(cookiesFile)< (datetime.now()-timedelta(days=endDays)))
+        logger.debug("login process %s" % str(login))
         if login:
             with open('config/configuration.json', 'r') as json_file:
                 data = json.load(json_file)
@@ -72,14 +73,61 @@ class PyMainMenu():
                         username = element["txt"]
                     elif element["id"] == 'gog_password':
                         password = element["txt"]
-                gog = GOG(username,password)
-            gog.login()
+                    elif element["id"] == 'gog_tmp':
+                        dir = element["txt"]
+                self.gog = GOG(username,password,dir)
+            self.gog.login()
+            self.manageGOGLoginEvents()
 
         update = (not os.path.exists(manifestFile)) or (os.path.getctime(manifestFile)< (datetime.now()-timedelta(days=endDays)))
+        logger.debug("update process %s" % str(update))
         if update:
-            gog.update() #all your games
+            self.gog.update() #all your games
+            self.manageGOGUpdateEvents()
             #gog.update(id='wasteland_2_kickstarter')
-        gog.download()
+        self.gog.download()
+        self.manageGOGDownloadEvents()
+
+    def manageGOGDownloadEvents(self):
+        self.manageGOGEvent(errorCode=100,textMessage='Downloading...')
+
+    def manageGOGUpdateEvents(self):
+        self.manageGOGEvent(errorCode=9,textMessage='Updating...')
+
+    def manageGOGLoginEvents(self):
+        self.manageGOGEvent(errorCode=5,textMessage='Login...')
+
+    def manageGOGEvent(self,errorCode,textMessage='Starting...'):
+        exit = False
+        margin=50
+        self.progressbar = ProgressBar(width=WINDOW_SIZE[0]-margin,height=30,surface=self.surface,x=0, y=50,margin=margin,centeredText=True,textMessage=textMessage)
+
+        while not exit:
+            time.sleep(1/FPS)
+
+            self.main_background()
+
+            self.progressbar.textMessage = self.gog.message
+            state = self.gog.state
+
+            if state>=errorCode:
+                exit=True
+                self.progressbar.progress = 1
+            else:
+                self.progressbar.progress = state/errorCode
+                logger.debug(str(self.progressbar.progress))
+
+            events = pygame.event.get()
+            for event in events:
+                #normal events
+                if event.type == pygame.QUIT:
+                    exit = True
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        exit = True
+
+            self.progressbar.updateProgressBar(parentEvents=True)
+            #pygame.display.flip()
 
 
     def drawMainMenu(self):

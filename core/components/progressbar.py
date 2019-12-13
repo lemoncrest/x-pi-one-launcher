@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 class ProgressBar():
 
-    def __init__(self, x, y, width, height, surface, margin=0, fontSize=20, border=2, centeredText = True ,progress = 0,color_progress=True):
+    def __init__(self, x, y, width, height, surface, margin=0, fontSize=20, border=2, centeredText = True ,progress = 0,color_progress=True,textMessage = "Downloading..."):
         self.centeredText = centeredText
         self.height = height
         self.margin = margin
@@ -25,8 +25,9 @@ class ProgressBar():
         self.surface = surface
         self.progress = progress
         self.color_progress = color_progress
+        self.textMessage = textMessage
 
-    def updateProgressBar(self):
+    def updateProgressBar(self,parentEvents=False):
 
         #print("OK (%.2f%%)" % self.progress)
 
@@ -58,7 +59,7 @@ class ProgressBar():
         height = self.height-self.border
         pygame.draw.rect(self.surface, color, (self.x+self.margin+(self.border/2), self.y+self.margin+(self.border/2), width, height))
 
-        text = "Downloading... %s %%"%str(self.progress*100)
+        text = "%s %s %%"% (self.textMessage,str(self.progress*100))
         txt = self.font.render(text, True, color_text)
 
         if self.centeredText:
@@ -75,7 +76,9 @@ class ProgressBar():
         #draw bar
         pygame.draw.rect(self.surface, COLOR_GRAY, self.button_rect, self.border)
 
-        exit = self.manageEvents()
+        exit = parentEvents #exit is not used, no while or for
+        if not parentEvents:
+            exit = self.manageEvents()
 
         pygame.display.flip()
 
@@ -83,7 +86,6 @@ class ProgressBar():
         exit = False
         # Application events
         events = pygame.event.get()
-        logger.debug("event %s"%str(events))
         for e in events:
             if e.type == pygame.QUIT:
                 exit = True

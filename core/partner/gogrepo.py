@@ -384,7 +384,7 @@ def filter_downloads(out_list, downloads_list, lang_list, os_list):
         valid_langs.append(LANG_TABLE[lang])
 
     info(str(valid_langs))
-    
+
     # check if lang/os combo passes the specified filter
     for lang in downloads_dict:
         info("checking %s language" % str(lang))
@@ -522,7 +522,7 @@ def process_argv(argv):
 # --------
 # Commands
 # --------
-def cmd_login(user, passwd):
+def cmd_login(user, passwd,parent=None):
     """Attempts to log into GOG and saves the resulting cookiejar to disk.
     """
     login_data = {'user': user,
@@ -545,9 +545,18 @@ def cmd_login(user, passwd):
 
     info("attempting gog login as '{}' ...".format(login_data['user']))
 
+    if parent is not None:
+        parent.state = 1
+        parent.message = "attempting gog login..."
+
     # fetch the auth url
     with request(GOG_HOME_URL, delay=0) as page:
         etree = html5lib.parse(page, namespaceHTMLElements=False)
+
+        if parent is not None:
+            parent.state = 2
+            parent.message = "retrieved main page..."
+
         for elm in etree.findall('.//script'):
             if elm.text is not None and 'GalaxyAccounts' in elm.text:
                 login_data['auth_url'] = elm.text.split("'")[3]
@@ -555,10 +564,18 @@ def cmd_login(user, passwd):
 
     # fetch the login token
     with request(login_data['auth_url'], delay=0) as page:
+
+        if parent is not None:
+            parent.state = 3
+            parent.message = "launching gog login..."
+
         etree = html5lib.parse(page, namespaceHTMLElements=False)
         # Bail if we find a request for a reCAPTCHA
         if len(etree.findall('.//div[@class="g-recaptcha form__recaptcha"]')) > 0:
             error("cannot continue, gog is asking for a reCAPTCHA :(  try again in a few minutes.")
+            if parent is not None:
+                parent.state = 7
+                parent.message = "Cannot continue, gog is asking for a reCAPTCHA. Wait or reboot your router to get other ip."
             return
         for elm in etree.findall('.//input'):
             if elm.attrib['id'] == 'login__token':
@@ -571,6 +588,9 @@ def cmd_login(user, passwd):
                                                'login[password]': login_data['passwd'],
                                                'login[login]': '',
                                                'login[_token]': login_data['login_token']}) as page:
+        if parent is not None:
+            parent.state = 4
+            parent.message = "login sent"
         etree = html5lib.parse(page, namespaceHTMLElements=False)
         if 'two_step' in page.geturl():
             login_data['two_step_url'] = page.geturl()
@@ -581,11 +601,16 @@ def cmd_login(user, passwd):
         elif 'on_login_success' in page.geturl():
             #print(str(page.geturl()))
             login_data['login_success'] = True
+            if parent is not None:
+                parent.state = 5
+                parent.message = "login success"
 
     # perform two-step if needed
     if login_data['two_step_url'] is not None:
         login_data['two_step_security_code'] = input("enter two-step security code: ")
-
+        if parent is not None:
+            parent.state = 6
+            parent.message = "need two autentication steps, please disable in your settings"
         # Send the security code back to GOG
         with request(login_data['two_step_url'], delay=0,
                      args={'second_step_authentication[token][letter_1]': login_data['two_step_security_code'][0],
@@ -606,15 +631,21 @@ def cmd_login(user, passwd):
     return login_data["login_success"]
 
 
-def cmd_update(os_list, lang_list, skipknown, updateonly, id):
+def cmd_update(os_list, lang_list, skipknown, updateonly, id, parent=None):
     media_type = GOG_MEDIA_TYPE_GAME
     items = []
     known_ids = []
     i = 0
-
+    if parent is not None:
+        parent.state = 1
+        parent.message = "loading gog session..."
     load_cookies()
 
     gamesdb = load_manifest()
+
+    if parent is not None:
+        parent.state = 2
+        parent.message = "loading current content..."
 
     api_url  = GOG_ACCOUNT_URL
     api_url += "/getFilteredProducts"
@@ -639,12 +670,18 @@ def cmd_update(os_list, lang_list, skipknown, updateonly, id):
 
         with request(url, delay=0) as data_request:
             info(data_request)
+            if parent is not None:
+                parent.state = 3
+                parent.message = "obtaining data..."
             reader = codecs.getreader("utf-8")
             try:
                 json_data = json.load(reader(data_request))
                 info(json.dumps(json_data))
             except ValueError:
                 error('failed to load product data (are you still logged in?)')
+                if parent is not None:
+                    parent.state = 10
+                    parent.message = "error, are you logged in?"
                 raise SystemExit(1)
 
             # Parse out the interesting fields and add to items dict
@@ -667,6 +704,9 @@ def cmd_update(os_list, lang_list, skipknown, updateonly, id):
                 if id:
                     if item.title == id or str(item.id) == id:  # support by game title or gog id
                         info('found "{}" in product data!'.format(item.title))
+                        if parent is not None:
+                            parent.state = 4
+                            parent.message = "found %s " % str(item.title)
                         items.append(item)
                         done = True
                 elif updateonly:
@@ -683,6 +723,9 @@ def cmd_update(os_list, lang_list, skipknown, updateonly, id):
 
     # bail if there's nothing to do
     if len(items) == 0:
+        if parent is not None:
+            parent.state = 5
+            parent.message = "finishing update process for %s games" % (len(items))
         if id:
             warn('game id "{}" was not found in your product data'.format(id))
         elif updateonly:
@@ -721,6 +764,10 @@ def cmd_update(os_list, lang_list, skipknown, updateonly, id):
                 item.downloads = []
                 item.extras = []
 
+                if parent is not None:
+                    parent.state = 6
+                    parent.message = "updating %s game" % (item.serial)
+
                 # parse json data for downloads/extras/dlcs
                 info(item_json_data['downloads'])
                 filter_downloads(item.downloads, item_json_data['downloads'], lang_list, os_list)
@@ -731,15 +778,28 @@ def cmd_update(os_list, lang_list, skipknown, updateonly, id):
                 item_idx = item_checkdb(item.id, gamesdb)
                 if item_idx is not None:
                     handle_game_updates(gamesdb[item_idx], item)
+                    if parent is not None:
+                        parent.state = 7
+                        parent.message = "updating %s game updates" % (item.serial)
                     gamesdb[item_idx] = item
                 else:
                     gamesdb.append(item)
 
         except Exception:
             log_exception('error')
+            if parent is not None:
+                parent.state = 11
+                parent.message = "updating %s game" % (item.serial)
 
+    if parent is not None:
+        parent.state = 8
+        parent.message = "storing to local container..."
     # save the manifest to disk
     save_manifest(gamesdb)
+
+    if parent is not None:
+        parent.state = 9
+        parent.message = "store to local container done!"
 
 
 def cmd_import(src_dir, dest_dir):
@@ -784,7 +844,7 @@ def cmd_import(src_dir, dest_dir):
             shutil.copy(f, dest_file)
 
 
-def cmd_download(savedir, skipextras, skipgames, skipids, dryrun, id):
+def cmd_download(savedir, skipextras, skipgames, skipids, dryrun, id, parent=None):
     sizes, rates, errors = {}, {}, {}
     work = Queue()  # build a list of work items
 
@@ -801,6 +861,12 @@ def cmd_download(savedir, skipextras, skipgames, skipids, dryrun, id):
 
     if id:
         id_found = False
+
+        message = "Seeking %s" % id
+        if parent is not None:
+            parent.state = 100/7
+            parent.message = message
+
         for item in items:
             if item.title == id:
                 items = [item]
@@ -808,7 +874,16 @@ def cmd_download(savedir, skipextras, skipgames, skipids, dryrun, id):
                 break
         if not id_found:
             error('no game with id "{}" was found.'.format(id))
+            message = "Not found %s" % id
+            if parent is not None:
+                parent.state = 111
+                parent.message = message
             exit(1)
+        else:
+            message = "Found %s" % id
+            if parent is not None:
+                parent.state = 2*100/7
+                parent.message = message
 
     if skipids:
         info("skipping games with id[s]: {%s}" % skipids)
@@ -818,6 +893,12 @@ def cmd_download(savedir, skipextras, skipgames, skipids, dryrun, id):
     # Find all items to be downloaded and push into work queue
     for item in sorted(items, key=lambda g: g.title):
         info("{%s}" % item.title)
+
+        message = "Obtaining sizes for %s" % item.title
+        if parent is not None:
+            parent.state = 3*100/7
+            parent.message = message
+
         item_homedir = os.path.join(savedir, item.title)
         if not dryrun:
             if not os.path.isdir(item_homedir):
@@ -831,6 +912,10 @@ def cmd_download(savedir, skipextras, skipgames, skipids, dryrun, id):
 
         # Generate and save a game info text file
         if not dryrun:
+            message = "Saving info of %s" % item.title
+            if parent is not None:
+                parent.state = 4*100/7
+                parent.message = message
             with ConditionalWriter(os.path.join(item_homedir, INFO_FILENAME)) as fd_info:
                 fd_info.write(u'{0}-- {1} --{0}{0}'.format(os.linesep, item.long_title))
                 fd_info.write(u'title.......... {}{}'.format(item.title, os.linesep))
@@ -863,6 +948,10 @@ def cmd_download(savedir, skipextras, skipgames, skipids, dryrun, id):
         # Generate and save a game serial text file
         if not dryrun:
             if item.serial != '':
+                message = "Saving serial of %s" % item.title
+                if parent is not None:
+                    parent.state = 5*100/7
+                    parent.message = message
                 with ConditionalWriter(os.path.join(item_homedir, SERIAL_FILENAME)) as fd_serial:
                     item.serial = item.serial.replace(u'<span>', '')
                     item.serial = item.serial.replace(u'</span>', os.linesep)
@@ -871,6 +960,10 @@ def cmd_download(savedir, skipextras, skipgames, skipids, dryrun, id):
         # Populate queue with all files to be downloaded
         for game_item in item.downloads + item.extras:
             if game_item.name is None:
+                message = "Waring for %s" % item.title
+                if parent is not None:
+                    parent.state = 112
+                    parent.message = message
                 continue  # no game name, usually due to 404 during file fetch
             dest_file = os.path.join(item_homedir, game_item.name)
 
@@ -884,16 +977,28 @@ def cmd_download(savedir, skipextras, skipgames, skipids, dryrun, id):
                     info('     pass       %s' % game_item.name)
                     continue  # move on to next game item
 
+            message = "Download start for %s with size %s" % (item.title,game_item.size)
+            if parent is not None:
+                parent.state = 6*100/7
+                parent.message = message
             info('     download   %s' % game_item.name)
             sizes[dest_file] = game_item.size
 
             work_dict[dest_file] = (game_item.href, game_item.size, 0, game_item.size-1, dest_file)
 
     for work_item in work_dict:
+        message = "Putting working for item %s - %s" % (item.title,str(work_item))
+        if parent is not None:
+            parent.state = 7*99/7
+            parent.message = message
         work.put(work_dict[work_item])
 
     if dryrun:
-        info("{} left to download".format(gigs(sum(sizes.values()))))
+        message = "%s left to download" % (gigs(sum(sizes.values())))
+        info(message)
+        if parent is not None:
+            parent.state = 1
+            parent.message = message
         return  # bail, as below just kicks off the actual downloading
 
     info('-'*60)
@@ -956,11 +1061,21 @@ def cmd_download(savedir, skipextras, skipgames, skipids, dryrun, id):
                     szs, ts = flows.get(tid, (0, 0))
                     flows[tid] = sz + szs, t + ts
                 bps = sum(szs/ts for szs, ts in list(flows.values()) if ts > 0)
+                speed = float(bps / 1024.0**2)
+                rest = megs(sizes[path])
                 info('%10s %8.1fMB/s %2dx  %s' % \
-                    (megs(sizes[path]), bps / 1024.0**2, len(flows), "%s/%s" % (os.path.basename(os.path.split(path)[0]), os.path.split(path)[1])))
+                    (rest, speed, len(flows), "%s/%s" % (os.path.basename(os.path.split(path)[0]), os.path.split(path)[1])))
+
+                percentage = (game_item.size-left)/game_item.size
+                #speed = "{0:.2f}" % round(speed,2) #TODO error -> TypeError: not all arguments converted during string formatting
+                message = "Downloading %s MB/s - rem. %s" % ( speed , rest )
+                if parent is not None:
+                    parent.state = (percentage*100)
+                    parent.message = message
             if len(rates) != 0:  # only update if there's change
                 info('%s remaining' % gigs(left))
             rates.clear()
+
 
     # process work items with a thread pool
     lock = threading.Lock()
