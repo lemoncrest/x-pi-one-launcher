@@ -20,7 +20,7 @@ except ImportError:
 
 import io
 import logging
-logging.basicConfig(filename="log.txt",level=logging.DEBUG)
+logging.basicConfig(filename=os.path.join(os.getcwd(),"log.txt"),level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 from core.colors import *
 from core.components.upbar import UpBar
@@ -560,7 +560,7 @@ class PyMainMenu():
             if report_hook:
                 report_hook(bytes_so_far, chunk_size, total_size)
 
-        return total #bytes_so_far
+        return total.decode("utf-8") #bytes_so_far
 
     def drawNavigationBar(self,selection,total):
 

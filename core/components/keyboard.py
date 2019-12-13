@@ -58,7 +58,11 @@ class TextInput(object):
             self.cursorpos += 1
             self.draw()
             return
-        self.text += str(letter,"utf-8")
+        try: #python3
+            self.text += str(letter,"utf-8")
+        except: #python2
+            self.text+= letter
+            pass
         self.cursorpos += 1
         self.draw()
 
