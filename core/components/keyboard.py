@@ -113,7 +113,7 @@ class VirtualKey(object):
         self.keylayer.fill(COLOR_BLACK)
         #self.keylayer.set_alpha(160)
         # Pre draw the border and store in my layer
-        pygame.draw.rect(self.keylayer, (255,255,255), (0,0,self.width,self.height), 1)
+        self.rect = pygame.draw.rect(self.keylayer, (255,255,255), (0,0,self.width,self.height), 1)
 
     def draw(self, screen, background, shifted=False, forcedraw=False):
         '''  Draw one key if it needs redrawing '''
@@ -243,17 +243,19 @@ class VirtualKeyboard(object):
                         if e.key in keyrepeat_counters:
                             del keyrepeat_counters[e.key]
 
-                    if (e.type == MOUSEBUTTONDOWN):
+                    elif (e.type == MOUSEBUTTONDOWN):
                         self.selectatmouse()
-                    if (e.type == MOUSEBUTTONUP):
+                    elif (e.type == MOUSEBUTTONUP):
                         if self.clickatmouse():
                             # user clicked enter if returns True
                             self.clear()
                             return self.input.text # Return what the user entered
-                    if (e.type == MOUSEMOTION):
+                    elif (e.type == MOUSEMOTION):
                         if e.buttons[0] == 1:
                             # user click-dragged to a different key?
                             self.selectatmouse()
+                    elif e.type == JOYAXISMOTION:
+                        pass
 
             counter += 1
             if counter > 100000: #TODO sleep is better but...

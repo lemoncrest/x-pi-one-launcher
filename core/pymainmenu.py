@@ -11,6 +11,8 @@ import sys
 import subprocess
 import urllib2
 import time
+from datetime import datetime, timedelta
+import requests
 try:
     from urllib2 import urlopen # Python2
 except ImportError:
@@ -24,6 +26,8 @@ from colors import *
 from core.components.upbar import UpBar
 from core.components.progressbar import ProgressBar
 from core.components.listbox import ListBox
+
+from core.partner.gog import GOG
 
 WINDOW_SIZE = (1366, 768)
 COLOR_BACKGROUND = (61, 61, 202) # by default if there is no image to load will be shown it
@@ -51,10 +55,36 @@ class PyMainMenu():
 
     def main(self):
         self.drawMainMenu()
-        time.sleep(1/FPS)
+
+
+    def navigateGOG(self):
+        self.main_background()
+        endDays = 1
+        cookiesFile = os.path.join(os.getcwd(),"configuration",GOG.COOKIES_FILENAME)
+        manifestFile = os.path.join(os.getcwd(),"configuration",GOG.MANIFEST_FILENAME)
+        #check if cookies exists or is invalid dated
+        login = (not os.path.exists(cookiesFile)) or (os.path.getctime(cookiesFile)< (datetime.now()-timedelta(days=endDays)))
+        if login:
+            with open('config/configuration.json', 'r') as json_file:
+                data = json.load(json_file)
+                for element in data:
+                    if element["id"] == 'gog_user':
+                        username = element["txt"]
+                    elif element["id"] == 'gog_password':
+                        password = element["txt"]
+                gog = GOG(username,password)
+            gog.login()
+
+        update = (not os.path.exists(manifestFile)) or (os.path.getctime(manifestFile)< (datetime.now()-timedelta(days=endDays)))
+        if update:
+            gog.update() #all your games
+            #gog.update(id='wasteland_2_kickstarter')
+        gog.download()
+
 
     def drawMainMenu(self):
         menus = [
+            {"title" : "GOG (alpha)", "image" : "images/GOG.png", "action" : self.navigateGOG},
             {"title" : "Remote repository", "image" : "images/cloud.png", "action" : self.navigateRepository},
             {"title" : "Local", "image" : "images/hdd.png", "action" : self.createLocalRepo},
             {"title" : "Settings", "image" : "images/settings.png", "action" : self.settingsMenu},
@@ -62,10 +92,11 @@ class PyMainMenu():
         ]
         self.manageMainEvents(menus)
 
-    def manageMainEvents(self,menus,visibleOptions=3): #TODO
+    def manageMainEvents(self,menus,visibleOptions=4): #TODO
         exit = False
         selected = 0
         while not exit:
+            time.sleep(1/FPS)
             #colored background
             self.main_background()
             #draw components

@@ -31,7 +31,7 @@
     }, 
     {
         "title": "Activar musica de fondo", 
-        "selected": 0, 
+        "selected": 1, 
         "choices": [
             "Yes", 
             "No"
@@ -42,7 +42,7 @@
     }, 
     {
         "title": "Archivo de sonido de fondo", 
-        "selected": 1, 
+        "selected": 10, 
         "choices": [
             "5-Free-Background-Music.mp3", 
             "1-Free-Background-Music.mp3", 
@@ -62,5 +62,20 @@
         "aid": "Selecciona un fondo musical que desees escuchar mientras te encuentras en el launcher", 
         "folder": "music", 
         "id": "music-file"
+    }, 
+    {
+        "aid": "Nombre de usuario de la plataforma GOG", 
+        "txt": "", 
+        "visible": true, 
+        "id": "gog_user", 
+        "title": "GOG user"
+    }, 
+    {
+        "txt": "", 
+        "title": "GOG pass", 
+        "visible": true, 
+        "aid": "Introduzca su GOG password", 
+        "password": true, 
+        "id": "gog_password"
     }
 ]

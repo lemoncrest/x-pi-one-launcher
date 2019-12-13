@@ -230,7 +230,12 @@ class ListBox():
 
             text = element["choices"][selected_choice]
         elif "txt" in element: #txt
-            text = element["txt"]
+            if "password" in element and bool(element["password"]):
+                text = ''
+                for char in element["txt"]:
+                    text += '*'
+            else:
+                text = element["txt"]
 
         xT = x + (sizeX*2/3)-(self.font.size(text)[0]/2)
         yT = y+sizeY/2-(self.font.size(text)[1]/2)
