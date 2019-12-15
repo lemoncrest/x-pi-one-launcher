@@ -54,14 +54,14 @@ class Card():
 
         #TODO return main and each clickable element to be checked in main loop with events
 
-    def drawText(self,text,x,y,sizeX,sizeY,grid,column,field,centered=False,right=True,selected_margin=5):
+    def drawText(self,text,x,y,sizeX,sizeY,grid,column,field,centered=False,right=False,selected_margin=5):
         if centered:
             x += ((sizeX/grid[0])/2) - ( (self.font.size(text)[0]) / 2) #- ((selected_margin/2)*(column)) #+ (self.padding/2)
         else:
             if right:
-                x += self.padding
+                x += (sizeX/grid[0]) - self.font.size(text)[0] - self.padding / 2
             else:
-                x += self.padding
+                x += self.padding / 2
 
         xT = x + (column * sizeX / grid[0])
 
