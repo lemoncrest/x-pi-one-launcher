@@ -1065,6 +1065,8 @@ def cmd_download(savedir, skipextras, skipgames, skipids, dryrun, id, parent=Non
 
                 percentage = (game_item.size-left)/game_item.size
                 #speed = "{0:.2f}" % round(speed,2) #TODO error -> TypeError: not all arguments converted during string formatting
+                speed = str(speed)
+                speed = speed[0:speed.find(".")+3]
                 message = "Downloading %s MB/s - rem. %s" % ( speed , rest )
                 if parent is not None:
                     parent.state = (percentage*100)
