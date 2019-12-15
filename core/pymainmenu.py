@@ -117,26 +117,31 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
                 if game_item.md5 is not None:
                     element = {}
                     element["title"] = game.title
-                    element["size"] = game_item.name
-                    #game_item.md5 TODO
+                    element["file"] = game_item.name
+                    element["os"] = game_item.os_type
+                    element["size"] = game_item.size
+                    element["version"] = game_item.version
+                    element["desc"] = game_item.desc
+                    element["genre"] = game.genre
+                    element["background"] = game.bg_url
+                    element["image"] = game.image_url
+                    element["md5"] = game_item.md5 #TODO
                     elements.append(element)
 
         logger.debug("ok, data obtained, now display")
 
-        x = 0
-        y = 0
-        margin = 50
         self.cardmenu = CardMenu(
             width=int(WINDOW_SIZE[0]),
             height=int(WINDOW_SIZE[1]),
-            x=x,
-            y=y,
-            margin=margin,
-            visibleOptions=7,
-            padding=15,
+            x=0,
+            y=0,
+            margin=25,
+            visibleOptions=4,
+            padding=20,
             surface=self.surface,
             centered=True,
             list=elements,
+            selected_margin=10,
             parent=self
         )
         self.cardmenu.show()

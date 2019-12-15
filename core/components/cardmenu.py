@@ -14,7 +14,7 @@ WINDOW_SIZE = (1024, 600)
 
 class CardMenu():
 
-    def __init__(self, width, height, x, y, margin, visibleOptions, padding, surface, list, centered=True, parent=None):
+    def __init__(self, width, height, x, y, margin, visibleOptions, padding, surface, list, centered=True, parent=None, selected_margin=10):
         self.width = width
         self.height = height
         self.x = x
@@ -27,14 +27,15 @@ class CardMenu():
         self.padding = padding
         self.surface = surface
         self.barWidth = 20  # TODO
-        self.fontSize = 25  # TODO
+        self.fontSize = 20  # TODO
         self.font = pygame.font.Font(None, self.fontSize)
         self.centered = centered
         self.parent = parent
+        self.selected_margin = selected_margin
 
     def show(self):
         # display options
-        sizeX = self.width - (self.margin * 2) - (self.padding * 2) - self.barWidth
+        sizeX = self.width - (self.margin * 2) - (self.padding*3) - self.barWidth
         figure = self.visibleOptions
         sizeY = (self.height - (self.padding * (self.visibleOptions + 1)) - (self.margin * 2)) / figure
 
@@ -115,7 +116,7 @@ class CardMenu():
 
 
     def displayBar(self, sizeX, sizeY, selected):
-        x = sizeX + self.x + self.margin + self.padding
+        x = sizeX + self.x + self.margin + self.padding*2
         y = self.y + self.margin + self.padding
         sizeX = self.barWidth
         sizeY = self.height - (self.padding * 2) - (self.margin * 2)
@@ -138,13 +139,12 @@ class CardMenu():
 
         for i in range(first, last):
             if self.centered:
-                x = ((WINDOW_SIZE[0]) / 2) - (sizeX / 2)
+                x = ((WINDOW_SIZE[0]) / 2) - ((self.width - (self.margin * 2) - (self.padding*2) - self.barWidth)/2) #(sizeX / 2) + ((self.padding*2 + self.barWidth) / 2) #- ( self.margin*2 )#self.x + self.margin
             else:
-                x = self.x
+                x = self.x + self.margin
             choice = choices[i]
             y = self.y + self.margin + ((i + 1 - first) * self.padding) + ((i - first) * sizeY)
-            #TODO store in a list to be checked in main loop for events
+            #TODO store in a list (big rectangle) to be checked in main loop for events
             card = Card(surface=self.surface,padding=self.padding,font=self.font)
-            card.displayCard(element=self.list[i], x=x, y=y, sizeX=sizeX, sizeY=sizeY,
-                               selected_field=bool(i == selected), selected_choice=choice)
+            card.displayCard(element=self.list[i], x=x, y=y, sizeX=sizeX, sizeY=sizeY,selected_field=bool(i == selected),selected_choice=0,selected_margin=self.selected_margin)
 
