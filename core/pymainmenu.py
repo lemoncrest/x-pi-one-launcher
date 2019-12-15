@@ -7,11 +7,12 @@ import pygame
 import json
 import random
 import os
+import codecs
 import sys
 import subprocess
 import time
 from datetime import datetime, timedelta
-
+from core.partner.gogrepo import AttrDict #issues related to read data with coded
 import logging
 
 logging.basicConfig(filename=os.path.join(os.getcwd(), "log.txt"), level=logging.DEBUG)
@@ -23,6 +24,7 @@ from core.components.boxlist import BoxList
 from core.components.squaredmenu import SquaredMenu
 from core.components.simplemenu import SimpleMenu
 from core.components.downloadprogressbar import DownloadProgressBar
+from core.components.cardmenu import CardMenu
 from core.partner.gog import GOG
 
 WINDOW_SIZE = (1024, 600)
@@ -74,11 +76,12 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
     def navigateGOG(self):
         self.main_background()
         endDays = 1
-        cookiesFile = os.path.join(os.getcwd(), "configuration", GOG.COOKIES_FILENAME)
-        manifestFile = os.path.join(os.getcwd(), "configuration", GOG.MANIFEST_FILENAME)
+        cookiesFile = os.path.join(os.getcwd(), "config", GOG.COOKIES_FILENAME)
+        manifestFile = os.path.join(os.getcwd(), "config", GOG.MANIFEST_FILENAME)
         # check if cookies exists or is invalid dated
-        login = (not os.path.exists(cookiesFile)) or (
-                    os.path.getctime(cookiesFile) < (datetime.now() - timedelta(days=endDays)))
+        login = False #TODO python3 issues
+        update = False #TODO python3 issues
+        #login = (not os.path.exists(cookiesFile)) or (os.path.getctime(cookiesFile) < (datetime.now() - timedelta(days=endDays)))
         logger.debug("login process %s" % str(login))
         if login:
             with open('config/configuration.json', 'r') as json_file:
@@ -94,15 +97,52 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
             self.gog.login()
             self.manageGOGLoginEvents()
 
-        update = (not os.path.exists(manifestFile)) or (
-                    os.path.getctime(manifestFile) < (datetime.now() - timedelta(days=endDays)))
+        #update = (not os.path.exists(manifestFile)) or (os.path.getctime(manifestFile) < (datetime.now() - timedelta(days=endDays)))
         logger.debug("update process %s" % str(update))
         if update:
             self.gog.update()  # all your games
             self.manageGOGUpdateEvents()
             # gog.update(id='wasteland_2_kickstarter')
-        self.gog.download()
-        self.manageGOGDownloadEvents()
+        #get elements from gog-manifest.dat
+        elements = []
+        #with open(manifestFile, 'r') as manifest:
+        with codecs.open(manifestFile, 'rU', 'utf-8') as r:
+            data = r.read().replace('{', 'AttrDict(**{').replace('}', '})')
+            data = eval(data)
+        logger.debug("ok, data loaded, now loop")
+        elements = []  # holds tuples of (title, filename) with md5 as key
+
+        for game in data:
+            for game_item in game.downloads:
+                if game_item.md5 is not None:
+                    element = {}
+                    element["title"] = game.title
+                    element["size"] = game_item.name
+                    #game_item.md5 TODO
+                    elements.append(element)
+
+        logger.debug("ok, data obtained, now display")
+
+        x = 0
+        y = 0
+        margin = 50
+        self.cardmenu = CardMenu(
+            width=int(WINDOW_SIZE[0]),
+            height=int(WINDOW_SIZE[1]),
+            x=x,
+            y=y,
+            margin=margin,
+            visibleOptions=7,
+            padding=15,
+            surface=self.surface,
+            centered=True,
+            list=elements,
+            parent=self
+        )
+        self.cardmenu.show()
+
+        #self.gog.download()
+        #self.manageGOGDownloadEvents()
 
     def manageGOGDownloadEvents(self):
         self.manageGOGEvent(errorCode=100, textMessage='Downloading...')
