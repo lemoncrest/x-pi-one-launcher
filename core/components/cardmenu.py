@@ -50,8 +50,14 @@ class CardMenu():
             #TODO here the up comment, by the way, with 0 is great
             choices.append(index)
 
+
         while not exit:
             self.parent.clock.tick(self.parent.FPS)
+
+            #check if there is some downloading process in background
+            for i in range(0, len(self.list)):
+                if self.list[i]["md5"] == self.parent.gog.md5:
+                    self.list[i]["downloading"] = True
 
             events = pygame.event.get()
             logger.debug("drawList event %s" % str(events))

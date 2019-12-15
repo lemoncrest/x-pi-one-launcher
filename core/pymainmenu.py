@@ -51,6 +51,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
         self.clock = pygame.time.Clock()
         pygame.display.set_caption('Menu principal')
         self.upbar = UpBar(surface=self.surface)
+        self.gog = None #TODO check if it could be serialized, stored, restored and synchronized with background process
 
     def main(self):
         self.drawMainMenu()
@@ -84,20 +85,21 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
         update = False #TODO python3 issues
         #login = (not os.path.exists(cookiesFile)) or (os.path.getctime(cookiesFile) < (datetime.now() - timedelta(days=endDays)))
         logger.debug("login process %s" % str(login))
-        username = ""
-        password = ""
-        dir = ""
-        with open(os.path.join(os.getcwd(), "config", 'configuration.json'), 'r') as json_file:
-            data = json.load(json_file)
-            for element in data:
-                if element["id"] == 'gog_user':
-                    username = element["txt"]
-                elif element["id"] == 'gog_password':
-                    password = element["txt"]
-                elif element["id"] == 'gog_tmp':
-                    dir = element["txt"]
+        if self.gog is None:
+            username = ""
+            password = ""
+            dir = ""
+            with open(os.path.join(os.getcwd(), "config", 'configuration.json'), 'r') as json_file:
+                data = json.load(json_file)
+                for element in data:
+                    if element["id"] == 'gog_user':
+                        username = element["txt"]
+                    elif element["id"] == 'gog_password':
+                        password = element["txt"]
+                    elif element["id"] == 'gog_tmp':
+                        dir = element["txt"]
 
-        self.gog = GOG(username, password, dir)
+            self.gog = GOG(username, password, dir)
 
         if login:
             self.gog.login()
