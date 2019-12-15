@@ -14,7 +14,7 @@ WINDOW_SIZE = (1024, 600)
 
 class CardMenu():
 
-    def __init__(self, width, height, x, y, margin, visibleOptions, padding, surface, list, centered=True, parent=None, selected_margin=10):
+    def __init__(self, width, height, x, y, margin, visibleOptions, padding, surface, list, centered=True, parent=None, selected_margin=10, onEventEnter=None):
         self.width = width
         self.height = height
         self.x = x
@@ -32,6 +32,7 @@ class CardMenu():
         self.centered = centered
         self.parent = parent
         self.selected_margin = selected_margin
+        self.onEventEnter = onEventEnter
 
     def show(self):
         # display options
@@ -77,7 +78,9 @@ class CardMenu():
                                 choices[selected] += 1
 
                     elif event.key == pygame.K_RETURN:
-                        pass #TODO action
+                        target = self.list[selected]["title"]
+                        self.list[selected]["downloading"] = True
+                        self.onEventEnter(target)
                 elif event.type == pygame.JOYBUTTONDOWN:
                     if event.button == 1:  # button A - enter
                         pass #TODO action
@@ -107,10 +110,6 @@ class CardMenu():
             self.displayBar(sizeX, sizeY, selected)
 
             pygame.display.flip()  # update
-
-        for i in range(0, len(choices)):
-            if "selected" in self.list[i]:
-                self.list[i]["selected"] = choices[i]
 
         return self.list  # items updated to be saved
 
@@ -145,6 +144,6 @@ class CardMenu():
             choice = choices[i]
             y = self.y + self.margin + ((i + 1 - first) * self.padding) + ((i - first) * sizeY)
             #TODO store in a list (big rectangle) to be checked in main loop for events
-            card = Card(surface=self.surface,padding=self.padding,font=self.font)
-            card.displayCard(element=self.list[i], x=x, y=y, sizeX=sizeX, sizeY=sizeY,selected_field=bool(i == selected),selected_choice=0,selected_margin=self.selected_margin)
+            card = Card(surface=self.surface, padding=self.padding, font=self.font, element=self.list[i],parent=self.parent)
+            card.displayCard(x=x, y=y, sizeX=sizeX, sizeY=sizeY,selected_field=bool(i == selected),selected_choice=0,selected_margin=self.selected_margin)
 

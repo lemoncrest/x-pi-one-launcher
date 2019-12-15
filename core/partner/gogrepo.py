@@ -1069,6 +1069,7 @@ def cmd_download(savedir, skipextras, skipgames, skipids, dryrun, id, parent=Non
                 if parent is not None:
                     parent.state = (percentage*100)
                     parent.message = message
+                    parent.md5 = game_item.md5
             if len(rates) != 0:  # only update if there's change
                 info('%s remaining' % gigs(left))
             rates.clear()

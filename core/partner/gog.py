@@ -18,7 +18,7 @@ class GOG():
         self.targetDir = downloadDir
         self.state = 0
         self.message = "waiting..."
-        self.targetId = 'wasteland_2_kickstarter'
+        self.md5 = ""
 
     def login(self):
         self.state = 0
@@ -42,7 +42,8 @@ class GOG():
     def update_worker(self,id=None):
         cmd_update(os_list=self.oslist,lang_list=self.langlist,skipknown=False,updateonly=False,id=id,parent=self)
 
-    def download(self):
+    def download(self,targetId):
+        self.targetId = targetId
         self.state = 0
         logger.info("init download launch...")
         t = Thread(target=self.download_worker)

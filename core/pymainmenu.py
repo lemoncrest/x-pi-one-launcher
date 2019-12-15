@@ -46,7 +46,8 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
         self.loadSettings()
         self.playMusicFromSettings()
         # Create pygame screen and objects
-        self.surface = pygame.display.set_mode(WINDOW_SIZE, pygame.FULLSCREEN)
+        #self.surface = pygame.display.set_mode(WINDOW_SIZE, pygame.FULLSCREEN)
+        self.surface = pygame.display.set_mode(WINDOW_SIZE)
         self.clock = pygame.time.Clock()
         pygame.display.set_caption('Menu principal')
         self.upbar = UpBar(surface=self.surface)
@@ -83,17 +84,22 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
         update = False #TODO python3 issues
         #login = (not os.path.exists(cookiesFile)) or (os.path.getctime(cookiesFile) < (datetime.now() - timedelta(days=endDays)))
         logger.debug("login process %s" % str(login))
+        username = ""
+        password = ""
+        dir = ""
+        with open(os.path.join(os.getcwd(), "config", 'configuration.json'), 'r') as json_file:
+            data = json.load(json_file)
+            for element in data:
+                if element["id"] == 'gog_user':
+                    username = element["txt"]
+                elif element["id"] == 'gog_password':
+                    password = element["txt"]
+                elif element["id"] == 'gog_tmp':
+                    dir = element["txt"]
+
+        self.gog = GOG(username, password, dir)
+
         if login:
-            with open('config/configuration.json', 'r') as json_file:
-                data = json.load(json_file)
-                for element in data:
-                    if element["id"] == 'gog_user':
-                        username = element["txt"]
-                    elif element["id"] == 'gog_password':
-                        password = element["txt"]
-                    elif element["id"] == 'gog_tmp':
-                        dir = element["txt"]
-                self.gog = GOG(username, password, dir)
             self.gog.login()
             self.manageGOGLoginEvents()
 
@@ -123,8 +129,8 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
                     element["version"] = game_item.version
                     element["desc"] = game_item.desc
                     element["genre"] = game.genre
-                    element["background"] = game.bg_url
-                    element["image"] = game.image_url
+                    element["background"] = "http"+game.bg_url+".jpg"
+                    element["image"] = "http"+game.image_url+".jpg"
                     element["md5"] = game_item.md5 #TODO
                     elements.append(element)
 
@@ -142,7 +148,8 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
             centered=True,
             list=elements,
             selected_margin=10,
-            parent=self
+            parent=self,
+            onEventEnter=self.gog.download
         )
         self.cardmenu.show()
 

@@ -1,17 +1,21 @@
 import pygame
 
 from core.colors import *
-
+#from core.components.downloadprogressbar import DownloadProgressBar
+from core.components.progressbar import ProgressBar
 
 
 class Card():
 
-    def __init__(self,surface,padding,font):
+    def __init__(self,surface,padding,font,element,parent=None):
         self.surface = surface
         self.padding = padding
         self.font = font
+        self.progressbar = None
+        self.element = element
+        self.parent = parent
 
-    def displayCard(self, element, x, y, sizeX, sizeY, selected_field=False, selected_choice=0, selected_margin=10):
+    def displayCard(self, x, y, sizeX, sizeY, selected_field=False, selected_choice=0, selected_margin=10):
 
         grid = (5,5)
 
@@ -39,24 +43,41 @@ class Card():
             pygame.draw.rect(self.surface, COLOR_BLUE, button_rect_background, 0)
 
         #text columns part
-        self.drawText(text=element["title"], x=x, y=y, sizeX=sizeX, sizeY=sizeY, grid=grid, field=0, column=1, centered=True)
-        self.drawText(element["os"], x, y, sizeX, sizeY, grid, 1,1)
-        self.drawText(str(element["size"]), x, y, sizeX, sizeY, grid, 1,3)
-        self.drawText(element["version"], x, y, sizeX, sizeY, grid, 1,4)
+        self.drawText(text=self.element["genre"], x=x, y=y, sizeX=sizeX, sizeY=sizeY, grid=grid, field=0, column=1, centered=False, right=True)
+        self.drawText(text=self.element["os"], x=x, y=y, sizeX=sizeX, sizeY=sizeY, grid=grid, field=1, column=1, centered=False, right=True)
+        self.drawText(text=str(self.element["size"]), x=x, y=y, sizeX=sizeX, sizeY=sizeY, grid=grid, field=4, column=1, centered=False, right=False)
+        self.drawText(text=self.element["version"], x=x, y=y, sizeX=sizeX, sizeY=sizeY, grid=grid, field=4, column=1, centered=False, right=True)
+        self.drawText(text=self.element["title"], x=x, y=y, sizeX=sizeX, sizeY=sizeY, grid=grid, field=2, column=0, centered=True, right=True)
 
-        # check if is a list or not, if not is a txt field so needs a keyboard
-        text = element["file"]
-        xT = x + (sizeX * 2 / grid[0]) - (self.font.size(text)[0] / 2)
-        yT = y + sizeY / (grid[1]*2) - (self.font.size(text)[1] / 2)
-        txt = self.font.render(text, True, COLOR_WHITE)
-        self.drawText(text=element["title"], x=x, y=y, sizeX=sizeX, sizeY=sizeY, grid=grid, field=2, column=0,
-                      centered=True,right=True,selected_margin=selected_margin)
+        portion = sizeY / grid[1]
+        field = 2 # 0, 1, 2...
+        if self.progressbar is None:
+            self.progressbar = ProgressBar(
+                width=sizeX/grid[0] * 2,
+                height=portion,
+                surface=self.surface,
+                x= x + ((sizeX / grid[0]) * 2) - self.padding,
+                y= y ,
+                margin=self.padding*2,
+                centeredText=True,
+                textMessage="Obtaining...")
+
+        if "downloading" in self.element and self.element["downloading"] and "md5" in self.element:
+            if self.parent is not None and self.parent.gog.md5 == self.element["md5"]:
+                self.element["progress"] = self.parent.gog.state / 100 #0 - 1
+                self.element["message"] = self.parent.gog.message
+            if "progress" in self.element:
+                self.progressbar.progress = self.element["progress"]
+                self.progressbar.textMessage = self.element["message"]
+                self.progressbar.updateProgressBar(parentEvents=True)
+
+
 
         #TODO return main and each clickable element to be checked in main loop with events
 
-    def drawText(self,text,x,y,sizeX,sizeY,grid,column,field,centered=False,right=False,selected_margin=5):
+    def drawText(self,text,x,y,sizeX,sizeY,grid,column,field,centered=False,right=False,font_color=COLOR_WHITE):
         if centered:
-            x += ((sizeX/grid[0])/2) - ( (self.font.size(text)[0]) / 2) #- ((selected_margin/2)*(column)) #+ (self.padding/2)
+            x += ((sizeX/grid[0])/2) - ( (self.font.size(text)[0]) / 2)
         else:
             if right:
                 x += (sizeX/grid[0]) - self.font.size(text)[0] - self.padding / 2
@@ -68,5 +89,5 @@ class Card():
         portion = sizeY / grid[1]
         yT = y + (portion*(field+1)) - (portion/2)
         yT -= (self.font.size(text)[1] / 2) #text center
-        txt = self.font.render(text, True, COLOR_WHITE)
+        txt = self.font.render(text, True, font_color)
         self.surface.blit(txt, (xT, yT))

@@ -59,7 +59,7 @@ class ProgressBar():
         height = self.height-self.border
         pygame.draw.rect(self.surface, color, (self.x+self.margin+(self.border/2), self.y+self.margin+(self.border/2), width, height))
 
-        text = "%s %s %%"% (self.textMessage,str(self.progress*100))
+        text = "%s %s %%" % (self.textMessage,str(self.progress*100))
         txt = self.font.render(text, True, color_text)
 
         if self.centeredText:
