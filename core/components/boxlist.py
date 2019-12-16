@@ -61,7 +61,7 @@ class BoxList():
             self.parent.clock.tick(self.parent.FPS)
 
             events = pygame.event.get()
-            logger.debug("drawList event %s" % str(events))
+            logger.debug("boxlist event %s" % str(events))
 
             for event in events:
                 try:

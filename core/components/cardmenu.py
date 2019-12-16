@@ -60,7 +60,8 @@ class CardMenu():
                     self.list[i]["downloading"] = True
 
             events = pygame.event.get()
-            logger.debug("drawList event %s" % str(events))
+            if len(events) != 0:
+                logger.debug("cardmenu event %s" % str(events))
 
             for event in events:
                 # normal events
@@ -152,4 +153,3 @@ class CardMenu():
             #TODO store in a list (big rectangle) to be checked in main loop for events
             card = Card(surface=self.surface, padding=self.padding, font=self.font, element=self.list[i],parent=self.parent)
             card.displayCard(x=x, y=y, sizeX=sizeX, sizeY=sizeY,selected_field=bool(i == selected),selected_choice=0,selected_margin=self.selected_margin)
-

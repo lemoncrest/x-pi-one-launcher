@@ -77,12 +77,12 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
 
     def navigateGOG(self):
         self.main_background()
-        endDays = 1
-        cookiesFile = os.path.join(os.getcwd(), "config", GOG.COOKIES_FILENAME)
-        manifestFile = os.path.join(os.getcwd(), "config", GOG.MANIFEST_FILENAME)
+        endDays = 90
         # check if cookies exists or is invalid dated
-        login = False #TODO python3 issues
-        update = False #TODO python3 issues
+        cookiesFile = os.path.join(os.getcwd(), "config", GOG.COOKIES_FILENAME)
+        login = not os.path.exists(cookiesFile) #TODO python3 issues related to timesstamp for next days in "endDays"
+        manifestFile = os.path.join(os.getcwd(), "config", GOG.MANIFEST_FILENAME)
+        update = not os.path.exists(manifestFile) #TODO
         #login = (not os.path.exists(cookiesFile)) or (os.path.getctime(cookiesFile) < (datetime.now() - timedelta(days=endDays)))
         logger.debug("login process %s" % str(login))
         if self.gog is None:
@@ -114,49 +114,52 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
         #get elements from gog-manifest.dat
         elements = []
         #with open(manifestFile, 'r') as manifest:
-        with codecs.open(manifestFile, 'rU', 'utf-8') as r:
-            data = r.read().replace('{', 'AttrDict(**{').replace('}', '})')
-            data = eval(data)
-        logger.debug("ok, data loaded, now loop")
-        elements = []  # holds tuples of (title, filename) with md5 as key
+        if os.path.exists(manifestFile):
+            with codecs.open(manifestFile, 'rU', 'utf-8') as r:
+                data = r.read().replace('{', 'AttrDict(**{').replace('}', '})')
+                data = eval(data)
+            logger.debug("ok, data loaded, now loop")
+            elements = []  # holds tuples of (title, filename) with md5 as key
 
-        for game in data:
-            for game_item in game.downloads:
-                if game_item.md5 is not None:
-                    element = {}
-                    element["title"] = game.title
-                    element["file"] = game_item.name
-                    element["os"] = game_item.os_type
-                    element["size"] = game_item.size
-                    element["version"] = game_item.version
-                    element["desc"] = game_item.desc
-                    element["genre"] = game.genre
-                    element["background"] = "http"+game.bg_url+".jpg"
-                    element["image"] = "http"+game.image_url+".jpg"
-                    element["md5"] = game_item.md5 #TODO
-                    elements.append(element)
+            for game in data:
+                for game_item in game.downloads:
+                    if game_item.md5 is not None:
+                        element = {}
+                        element["title"] = game.title
+                        element["file"] = game_item.name
+                        element["os"] = game_item.os_type
+                        element["size"] = game_item.size
+                        element["version"] = game_item.version
+                        element["desc"] = game_item.desc
+                        element["genre"] = game.genre
+                        element["background"] = "http"+game.bg_url+".jpg"
+                        element["image"] = "http"+game.image_url+".jpg"
+                        element["md5"] = game_item.md5 #TODO
+                        elements.append(element)
 
-        logger.debug("ok, data obtained, now display")
+            logger.debug("ok, data obtained, now display")
 
-        self.cardmenu = CardMenu(
-            width=int(WINDOW_SIZE[0]),
-            height=int(WINDOW_SIZE[1]),
-            x=0,
-            y=0,
-            margin=25,
-            visibleOptions=4,
-            padding=20,
-            surface=self.surface,
-            centered=True,
-            list=elements,
-            selected_margin=10,
-            parent=self,
-            onEventEnter=self.gog.download
-        )
-        self.cardmenu.show()
+            self.cardmenu = CardMenu(
+                width=int(WINDOW_SIZE[0]),
+                height=int(WINDOW_SIZE[1]),
+                x=0,
+                y=0,
+                margin=25,
+                visibleOptions=4,
+                padding=20,
+                surface=self.surface,
+                centered=True,
+                list=elements,
+                selected_margin=10,
+                parent=self,
+                onEventEnter=self.gog.download
+            )
+            self.cardmenu.show()
 
-        #self.gog.download()
-        #self.manageGOGDownloadEvents()
+            #self.gog.download()
+            #self.manageGOGDownloadEvents()
+        else:
+            logger.debug("manifest doesn't exists")
 
     def manageGOGDownloadEvents(self):
         self.manageGOGEvent(errorCode=100, textMessage='Downloading...')
@@ -226,7 +229,8 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
                 changes = False
             # get events and configure
             events = pygame.event.get()
-            logger.debug("drawList event %s" % str(events))
+            if len(events) != 0:
+                logger.debug("mainEvent event %s" % str(events))
             for event in events:
                 # normal events
                 changes = True
@@ -450,7 +454,8 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
 
             # get events and configure
             events = pygame.event.get()
-            logger.debug("drawList event %s" % str(events))
+            if events != 0:
+                logger.debug("drawList event %s" % str(events))
             for event in events:
                 # normal events
                 if event.type == pygame.QUIT:
