@@ -255,6 +255,11 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
                         exit = True
                     elif event.key == pygame.K_a or event.key == pygame.K_RETURN:
                         menus[selected]["action"]()
+                    elif event.key == pygame.K_f:
+                        if self.surface.get_flags() & pygame.FULLSCREEN:
+                            pygame.display.set_mode(WINDOW_SIZE)
+                        else:
+                            pygame.display.set_mode(WINDOW_SIZE, pygame.FULLSCREEN)
                 elif event.type == pygame.JOYAXISMOTION:
                     if event.axis == 1:  # up and down
                         if event.value > 0:
