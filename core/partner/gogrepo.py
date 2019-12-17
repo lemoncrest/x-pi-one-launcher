@@ -29,6 +29,7 @@ import datetime
 import shutil
 import socket
 import xml.etree.ElementTree
+import gc
 
 # python 2 / 3 imports
 try:
@@ -859,11 +860,6 @@ def cmd_download(savedir, skipextras, skipgames, skipids, dryrun, id, parent=Non
     if id:
         id_found = False
 
-        message = "Seeking %s" % id
-        if parent is not None:
-            parent.state = 100/7
-            parent.message = message
-
         for item in items:
             if item.title == id:
                 items = [item]
@@ -871,16 +867,9 @@ def cmd_download(savedir, skipextras, skipgames, skipids, dryrun, id, parent=Non
                 break
         if not id_found:
             error('no game with id "{}" was found.'.format(id))
-            message = "Not found %s" % id
-            if parent is not None:
-                parent.state = 111
-                parent.message = message
+
             exit(1)
-        else:
-            message = "Found %s" % id
-            if parent is not None:
-                parent.state = 2*100/7
-                parent.message = message
+
 
     if skipids:
         info("skipping games with id[s]: {%s}" % skipids)
@@ -891,10 +880,6 @@ def cmd_download(savedir, skipextras, skipgames, skipids, dryrun, id, parent=Non
     for item in sorted(items, key=lambda g: g.title):
         info("{%s}" % item.title)
 
-        message = "Obtaining sizes for %s" % item.title
-        if parent is not None:
-            parent.state = 3*100/7
-            parent.message = message
 
         item_homedir = os.path.join(savedir, item.title)
         if not dryrun:
@@ -974,28 +959,21 @@ def cmd_download(savedir, skipextras, skipgames, skipids, dryrun, id, parent=Non
                     info('     pass       %s' % game_item.name)
                     continue  # move on to next game item
 
-            message = "Download start for %s with size %s" % (item.title,game_item.size)
-            if parent is not None:
-                parent.state = 6*100/7
-                parent.message = message
+
             info('     download   %s' % game_item.name)
             sizes[dest_file] = game_item.size
 
             work_dict[dest_file] = (game_item.href, game_item.size, 0, game_item.size-1, dest_file)
 
     for work_item in work_dict:
-        message = "Putting working for item %s - %s" % (item.title,str(work_item))
-        if parent is not None:
-            parent.state = 7*99/7
-            parent.message = message
+
         work.put(work_dict[work_item])
 
     if dryrun:
         message = "%s left to download" % (gigs(sum(sizes.values())))
+        gc.collect()
         info(message)
-        if parent is not None:
-            parent.state = 1
-            parent.message = message
+
         return  # bail, as below just kicks off the actual downloading
 
     info('-'*60)
@@ -1072,6 +1050,7 @@ def cmd_download(savedir, skipextras, skipgames, skipids, dryrun, id, parent=Non
                     parent.state = (percentage*100)
                     parent.message = message
                     parent.md5 = game_item.md5
+                gc.collect()
             if len(rates) != 0:  # only update if there's change
                 info('%s remaining' % gigs(left))
             rates.clear()
