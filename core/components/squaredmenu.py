@@ -2,6 +2,8 @@ import pygame
 import os
 from core.colors import *
 
+PATH = '/opt/pygamemenu/'
+
 class SquaredMenu():
 
     def __init__(self,surface=None):
@@ -46,8 +48,8 @@ class SquaredMenu():
             pygame.draw.rect(self.surface, COLOR_WHITE, menuRect, 0)
 
         #draw image
-        #filename = os.path.join(os.getcwd(),"assert",menu["image"])
-        filename = os.path.join(os.getcwd(),"assert",menu["image"])
+        #filename = os.path.join(PATH,"assert",menu["image"])
+        filename = os.path.join(PATH,"assert",menu["image"])
         picture = pygame.image.load(filename)
         pic = pygame.transform.scale(picture, (int(size-padding*2), int(size-padding*2)))
         self.surface.blit(pic, (x+padding, y+padding))
