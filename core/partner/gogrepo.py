@@ -62,6 +62,8 @@ try:
 except ImportError:
     def html2text(x): return x
 
+PATH = '/opt/pygamemenu/'
+
 # lib mods
 cookiejar.MozillaCookieJar.magic_re = r'.*'  # bypass the hardcoded "Netscape HTTP Cookie File" check
 
@@ -85,7 +87,7 @@ SERIAL_FILENAME = r'!serial.txt'
 INFO_FILENAME = r'!info.txt'
 
 # global web utilities
-global_cookies = cookiejar.LWPCookieJar(os.path.join(os.getcwd(),"config",COOKIES_FILENAME))
+global_cookies = cookiejar.LWPCookieJar(os.path.join(PATH,"config",COOKIES_FILENAME))
 cookieproc = HTTPCookieProcessor(global_cookies)
 opener = build_opener(cookieproc)
 treebuilder = html5lib.treebuilders.getTreeBuilder('etree')
@@ -252,7 +254,7 @@ def load_cookies():
 def load_manifest(filepath=MANIFEST_FILENAME):
     info('loading local manifest...')
     try:
-        with codecs.open(os.path.join(os.getcwd(),"config",MANIFEST_FILENAME), 'rU', 'utf-8') as r:
+        with codecs.open(os.path.join(PATH,"config",MANIFEST_FILENAME), 'rU', 'utf-8') as r:
             ad = r.read().replace('{', 'AttrDict(**{').replace('}', '})')
         return eval(ad)
     except IOError:
@@ -261,7 +263,7 @@ def load_manifest(filepath=MANIFEST_FILENAME):
 
 def save_manifest(items):
     info('saving manifest...')
-    with codecs.open(os.path.join(os.getcwd(),"config",MANIFEST_FILENAME), 'w', 'utf-8') as w:
+    with codecs.open(os.path.join(PATH,"config",MANIFEST_FILENAME), 'w', 'utf-8') as w:
         print('# {} games'.format(len(items)), file=w)
         pprint.pprint(items, width=123, stream=w)
 

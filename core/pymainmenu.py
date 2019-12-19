@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 from core.partner.gogrepo import AttrDict #issues related to read data with coded
 import logging
 
-logging.basicConfig(filename=os.path.join(os.getcwd(), "log.txt"), level=logging.DEBUG)
+logging.basicConfig(filename=os.path.join(PATH, "log.txt"), level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 from core.colors import *
 from core.components.upbar import UpBar
@@ -27,6 +27,10 @@ from core.components.downloadprogressbar import DownloadProgressBar
 from core.components.cardmenu import CardMenu
 from core.partner.gog import GOG
 from core.partner.itch import Itch
+
+os.environ['SDL_VIDEO_CENTERED'] = '1'
+
+PATH = '/opt/pygamemenu/'
 
 WINDOW_SIZE = (1024, 600)
 COLOR_BACKGROUND = (61, 61, 202)  # by default if there is no image to load will be shown it
@@ -61,7 +65,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
     def loadSettings(self):
         self.on = False
         self.file = None
-        with open(os.path.join(os.getcwd(), 'config/configuration.json'), 'r') as json_file:
+        with open(os.path.join(PATH, 'config/configuration.json'), 'r') as json_file:
             self.data = json.load(json_file)
         for setting in self.data:
             if "id" in setting and "selected" in setting and "choices" in setting:
@@ -72,7 +76,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
                     self.on = setting["choices"][setting["selected"]] == "Yes"
         if self.on and self.file is not None:  # play background music
             # now draw image if exists
-            filename = os.path.join(os.getcwd(), "assert/wallpapers", self.file)
+            filename = os.path.join(PATH, "assert/wallpapers", self.file)
 
             picture = pygame.image.load(filename)
             self.pic = pygame.transform.scale(picture, WINDOW_SIZE)
@@ -81,9 +85,9 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
         self.main_background()
         endDays = 90
         # check if cookies exists or is invalid dated
-        cookiesFile = os.path.join(os.getcwd(), "config", GOG.COOKIES_FILENAME)
+        cookiesFile = os.path.join(PATH, "config", GOG.COOKIES_FILENAME)
         login = not os.path.exists(cookiesFile) #TODO python3 issues related to timesstamp for next days in "endDays"
-        manifestFile = os.path.join(os.getcwd(), "config", GOG.MANIFEST_FILENAME)
+        manifestFile = os.path.join(PATH, "config", GOG.MANIFEST_FILENAME)
         update = not os.path.exists(manifestFile) #TODO
         #login = (not os.path.exists(cookiesFile)) or (os.path.getctime(cookiesFile) < (datetime.now() - timedelta(days=endDays)))
         logger.debug("login process %s" % str(login))
@@ -91,7 +95,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
             username = ""
             password = ""
             dir = ""
-            with open(os.path.join(os.getcwd(), "config", 'configuration.json'), 'r') as json_file:
+            with open(os.path.join(PATH, "config", 'configuration.json'), 'r') as json_file:
                 data = json.load(json_file)
                 for element in data:
                     if element["id"] == 'gog_user':
@@ -224,7 +228,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
             username = ""
             password = ""
             dir = ""
-            with open(os.path.join(os.getcwd(), "config", 'configuration.json'), 'r') as json_file:
+            with open(os.path.join(PATH, "config", 'configuration.json'), 'r') as json_file:
                 data = json.load(json_file)
                 for element in data:
                     if element["id"] == 'itch_user':
@@ -403,7 +407,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
         pygame.mixer.init()
         pygame.mixer.music.stop()
         if on and file is not None:  # play background music
-            self.music = pygame.mixer.music.load(os.path.join(os.getcwd(), "assert/music", file))
+            self.music = pygame.mixer.music.load(os.path.join(PATH, "assert/music", file))
             pygame.mixer.music.play(-1)
 
     def drawComponents(self):
@@ -421,7 +425,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
         self.main_background()
 
         # Sample options inspired on pokemon menu
-        with open(os.path.join(os.getcwd(), 'config/configuration.json'), 'r') as json_file:
+        with open(os.path.join(PATH, 'config/configuration.json'), 'r') as json_file:
             settings = json.load(json_file)
         # now fills settings choices with folder files
         music = None
@@ -430,7 +434,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
             if "folder" in element:
                 choices = []
                 folder = element["folder"]
-                for r, d, f in os.walk(os.path.join(os.getcwd(), "assert", folder)):
+                for r, d, f in os.walk(os.path.join(PATH, "assert", folder)):
                     element["choices"] = f
                     # for file in f:
                     #    choices.append(file)
@@ -463,7 +467,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
         # refresh music if needed
 
         newSettings = self.listbox.show()
-        with open(os.path.join(os.getcwd(), 'config/configuration.json'), 'w') as json_file:
+        with open(os.path.join(PATH, 'config/configuration.json'), 'w') as json_file:
             json.dump(newSettings, json_file, indent=4)
         for newSetting in newSettings:
             if newSetting["id"] == "music":
@@ -547,7 +551,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
 
         data = {}
 
-        with open(os.path.join(os.getcwd(), 'config/storage.json'), 'r') as json_file:
+        with open(os.path.join(PATH, 'config/storage.json'), 'r') as json_file:
             data = json.load(json_file)
 
         path = data["repo"]["path"]
