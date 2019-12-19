@@ -15,6 +15,8 @@ from datetime import datetime, timedelta
 from core.partner.gogrepo import AttrDict #issues related to read data with coded
 import logging
 
+PATH = '/opt/pygamemenu/'
+
 logging.basicConfig(filename=os.path.join(PATH, "log.txt"), level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 from core.colors import *
@@ -29,8 +31,6 @@ from core.partner.gog import GOG
 from core.partner.itch import Itch
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
-
-PATH = '/opt/pygamemenu/'
 
 WINDOW_SIZE = (1024, 600)
 COLOR_BACKGROUND = (61, 61, 202)  # by default if there is no image to load will be shown it
