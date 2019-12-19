@@ -10,12 +10,14 @@ ALPHA = 192
 BARSIZE = 60
 FONT_SIZE = 20
 
+PATH = '/opt/pygamemenu/'
+
 class UpBar():
 
     def __init__(self,surface):
         self.surface = surface # main screen
         self.bar = pygame.Surface((WINDOW_SIZE[0], BARSIZE), pygame.SRCALPHA)
-        self.font = pygame.font.Font(os.path.join(os.getcwd(),"assert/fonts","DejaVuSans.ttf"), FONT_SIZE)
+        self.font = pygame.font.Font(os.path.join(PATH,"assert/fonts","DejaVuSans.ttf"), FONT_SIZE)
         self.menu = Menu(title="Menu", first=(0,0) ,parent=(WINDOW_SIZE[0],BARSIZE), font=self.font, surface=self.surface)
 
     def draw(self):
