@@ -26,6 +26,7 @@ from core.components.simplemenu import SimpleMenu
 from core.components.downloadprogressbar import DownloadProgressBar
 from core.components.cardmenu import CardMenu
 from core.partner.gog import GOG
+from core.partner.itch import Itch
 
 WINDOW_SIZE = (1024, 600)
 COLOR_BACKGROUND = (61, 61, 202)  # by default if there is no image to load will be shown it
@@ -52,6 +53,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
         pygame.display.set_caption('Menu principal')
         self.upbar = UpBar(surface=self.surface)
         self.gog = None #TODO check if it could be serialized, stored, restored and synchronized with background process
+        self.itch = None
 
     def main(self):
         self.drawMainMenu()
@@ -205,6 +207,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
 
     def drawMainMenu(self):
         menus = [
+            {"title": "Itch.io (alpha)", "image": "images/itch.png", "action": self.navigateItch},
             {"title": "GOG (alpha)", "image": "images/GOG.png", "action": self.navigateGOG},
             {"title": "Remote repository", "image": "images/cloud.png", "action": self.navigateRepository},
             {"title": "Local", "image": "images/hdd.png", "action": self.createLocalRepo},
@@ -212,6 +215,45 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
             {"title": "Exit", "image": "images/exit.png", "action": self.quit}
         ]
         self.manageMainEvents(menus)
+
+    def navigateItch(self):
+
+        self.main_background()
+
+        if self.itch is None:
+            username = ""
+            password = ""
+            dir = ""
+            with open(os.path.join(os.getcwd(), "config", 'configuration.json'), 'r') as json_file:
+                data = json.load(json_file)
+                for element in data:
+                    if element["id"] == 'itch_user':
+                        username = element["txt"]
+                    elif element["id"] == 'itch_password':
+                        password = element["txt"]
+                    elif element["id"] == 'itch_tmp':
+                        dir = element["txt"]
+            self.itch = Itch(username,password, dir)
+
+        self.itch.login()
+        elements = self.itch.getGames()
+
+        self.cardmenu = CardMenu(
+            width=int(WINDOW_SIZE[0]),
+            height=int(WINDOW_SIZE[1]),
+            x=0,
+            y=0,
+            margin=25,
+            visibleOptions=4,
+            padding=20,
+            surface=self.surface,
+            centered=True,
+            list=elements,
+            selected_margin=10,
+            parent=self,
+            onEventEnter=self.itch.downloadGame
+        )
+        self.cardmenu.show()
 
     def manageMainEvents(self, menus, visibleOptions=4):  # TODO
         exit = False

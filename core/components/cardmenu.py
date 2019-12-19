@@ -56,7 +56,7 @@ class CardMenu():
 
             #check if there is some downloading process in background
             for i in range(0, len(self.list)):
-                if self.list[i]["md5"] == self.parent.gog.md5:
+                if self.parent is not None and self.parent.gog is not None and "md5" in self.list[i] and self.list[i]["md5"] == self.parent.gog.md5:
                     self.list[i]["downloading"] = True
 
             events = pygame.event.get()
@@ -85,7 +85,10 @@ class CardMenu():
                                 choices[selected] += 1
 
                     elif event.key == pygame.K_RETURN:
-                        target = self.list[selected]["title"]
+                        if "genre" in self.list[selected]: #gog
+                            target = self.list[selected]["title"]
+                        elif "link" in self.list[selected]:
+                            target = self.list[selected]["link"]
                         self.list[selected]["downloading"] = True
                         self.onEventEnter(target)
                 elif event.type == pygame.JOYBUTTONDOWN:

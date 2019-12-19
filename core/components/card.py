@@ -43,10 +43,12 @@ class Card():
             pygame.draw.rect(self.surface, COLOR_BLUE, button_rect_background, 0)
 
         #text columns part
-        self.drawText(text=self.element["genre"], x=x, y=y, sizeX=sizeX, sizeY=sizeY, grid=grid, field=0, column=1, centered=False, right=True)
-        self.drawText(text=self.element["os"], x=x, y=y, sizeX=sizeX, sizeY=sizeY, grid=grid, field=1, column=1, centered=False, right=True)
-        self.drawText(text=str(self.element["size"]), x=x, y=y, sizeX=sizeX, sizeY=sizeY, grid=grid, field=4, column=1, centered=False, right=False)
-        self.drawText(text=self.element["version"], x=x, y=y, sizeX=sizeX, sizeY=sizeY, grid=grid, field=4, column=1, centered=False, right=True)
+        if "genre" in self.element: #gog
+            self.drawText(text=self.element["genre"], x=x, y=y, sizeX=sizeX, sizeY=sizeY, grid=grid, field=0, column=1, centered=False, right=True)
+            self.drawText(text=self.element["os"], x=x, y=y, sizeX=sizeX, sizeY=sizeY, grid=grid, field=1, column=1, centered=False, right=True)
+            self.drawText(text=str(self.element["size"]), x=x, y=y, sizeX=sizeX, sizeY=sizeY, grid=grid, field=4, column=1, centered=False, right=False)
+            self.drawText(text=self.element["version"], x=x, y=y, sizeX=sizeX, sizeY=sizeY, grid=grid, field=4, column=1, centered=False, right=True)
+
         self.drawText(text=self.element["title"], x=x, y=y, sizeX=sizeX, sizeY=sizeY, grid=grid, field=2, column=0, centered=True, right=True)
 
         portion = sizeY / grid[1]
@@ -62,7 +64,7 @@ class Card():
                 centeredText=True,
                 textMessage="Obtaining...")
 
-        if "downloading" in self.element and self.element["downloading"] and "md5" in self.element:
+        if "downloading" in self.element and self.element["downloading"] and "md5" in self.element: #gog
             if self.parent is not None and self.parent.gog.md5 == self.element["md5"]:
                 self.element["progress"] = self.parent.gog.state / 100 #0 - 1
                 self.element["message"] = self.parent.gog.message
@@ -70,6 +72,11 @@ class Card():
                 self.progressbar.progress = self.element["progress"]
                 self.progressbar.textMessage = self.element["message"]
                 self.progressbar.updateProgressBar(parentEvents=True)
+        elif "downloading" in self.element and self.element["downloading"]: #itch
+            self.element["progress"] = self.parent.itch.state / 100  # 0 - 1
+            self.progressbar.progress = self.element["progress"]
+            self.progressbar.textMessage = self.parent.itch.message
+            self.progressbar.updateProgressBar(parentEvents=True)
 
 
 

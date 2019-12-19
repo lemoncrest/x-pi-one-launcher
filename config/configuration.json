@@ -21,8 +21,8 @@
         "title": "Fondo de pantalla",
         "selected": 0,
         "choices": [
-            "arm.jpg",
-            "wallpaper.jpg"
+            "wallpaper.jpg",
+            "arm.jpg"
         ],
         "visible": true,
         "aid": "Fondo de pantalla que se muestra en el launcher",
@@ -31,7 +31,7 @@
     },
     {
         "title": "Activar musica de fondo",
-        "selected": 1,
+        "selected": 0,
         "choices": [
             "Yes",
             "No"
@@ -44,19 +44,19 @@
         "title": "Archivo de sonido de fondo",
         "selected": 10,
         "choices": [
-            "5-Free-Background-Music.mp3",
-            "1-Free-Background-Music.mp3",
             "Oh-Wonder-Body-Gold-Louis-The-Child-Remix.mp3",
-            "4_In_1_Fun_Pack_Theme.mid",
-            "10-Best-Free-Background-Music.mp3",
-            "7-Best-Free-Background-Music.mp3",
-            "Free_Intro_Music_for_your_Video.mp3",
-            "2-Free-Background-Music.mp3",
             "Best-Free-Background-Music.mp3",
-            "9-Best-Free-Background-Music.mp3",
+            "4_In_1_Fun_Pack_Theme.mid",
+            "5-Free-Background-Music.mp3",
             "8-Best-Free-Background-Music.mp3",
+            "10-Best-Free-Background-Music.mp3",
             "7-Best-Free-Background-Music-1.mp3",
-            "3-Free-Background-Music.mp3"
+            "1-Free-Background-Music.mp3",
+            "Free_Intro_Music_for_your_Video.mp3",
+            "9-Best-Free-Background-Music.mp3",
+            "3-Free-Background-Music.mp3",
+            "2-Free-Background-Music.mp3",
+            "7-Best-Free-Background-Music.mp3"
         ],
         "visible": true,
         "aid": "Selecciona un fondo musical que desees escuchar mientras te encuentras en el launcher",
@@ -85,5 +85,28 @@
         "aid": "Directorio temporal donde se descarga el contenido de GOG",
         "password": true,
         "id": "gog_tmp"
+    },
+    {
+        "aid": "Nombre de usuario de la plataforma Itch",
+        "txt": "",
+        "visible": true,
+        "id": "itch_user",
+        "title": "Itch.io user"
+    },
+    {
+        "txt": "",
+        "title": "Itch pass",
+        "visible": true,
+        "aid": "Introduzca su Itch password",
+        "password": true,
+        "id": "itch_password"
+    },
+    {
+        "txt": "/tmp/",
+        "title": "ITCH download dir",
+        "visible": true,
+        "aid": "Directorio temporal donde se descarga el contenido de Itch",
+        "password": false,
+        "id": "itch_tmp"
     }
 ]
