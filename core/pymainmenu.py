@@ -395,7 +395,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
         on = False
         file = None
         data = []
-        with open('config/configuration.json', 'r') as json_file:
+        with open(os.path.join(PATH,'config/configuration.json'), 'r') as json_file:
             data = json.load(json_file)
 
         for setting in data:
