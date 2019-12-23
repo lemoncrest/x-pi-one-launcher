@@ -168,16 +168,20 @@ class Itch():
             size = r.headers.get('content-length')
             local_filename = os.path.join(self.dir,filename)
             downloaded = 0
+            i=0
             with open(local_filename, 'wb') as f:
                 for chunk in r.iter_content(chunk_size=8192):
                     if chunk:  # filter out keep-alive new chunks
                         downloaded+=len(chunk)
                         f.write(chunk)
-                        f.flush()
                     if downloaded % (1024*1024) == 0:
                         self.state = (downloaded / int(size))*100
                         self.message = "F. %s . D: %s %s %s" % (local_filename,downloaded,self.state,size)
+                        i+=1
                         logger.info(self.message)
+                    if i%50==0:
+                        f.flush() #flush
+                        os.fsync(f.fileno()) #force clean memory (os flush)
         self.state = 1
         return local_filename
 

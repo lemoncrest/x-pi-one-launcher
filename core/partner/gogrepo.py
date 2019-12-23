@@ -29,7 +29,6 @@ import datetime
 import shutil
 import socket
 import xml.etree.ElementTree
-import gc
 
 # python 2 / 3 imports
 try:
@@ -973,7 +972,6 @@ def cmd_download(savedir, skipextras, skipgames, skipids, dryrun, id, parent=Non
 
     if dryrun:
         message = "%s left to download" % (gigs(sum(sizes.values())))
-        gc.collect()
         info(message)
 
         return  # bail, as below just kicks off the actual downloading
@@ -983,6 +981,7 @@ def cmd_download(savedir, skipextras, skipgames, skipids, dryrun, id, parent=Non
     # work item I/O loop
     def ioloop(tid, path, page, out):
         sz, t0 = True, time.time()
+        i = 0
         while sz:
             buf = page.read(4*1024)
             t = time.time()
@@ -991,6 +990,9 @@ def cmd_download(savedir, skipextras, skipgames, skipids, dryrun, id, parent=Non
             with lock:
                 sizes[path] -= sz
                 rates.setdefault(path, []).append((tid, (sz, dt)))
+            if i%1000==0:
+                os.fsync(out.fileno())
+            i+=1
 
     # downloader worker thread main loop
     def worker():
@@ -1052,7 +1054,6 @@ def cmd_download(savedir, skipextras, skipgames, skipids, dryrun, id, parent=Non
                     parent.state = (percentage*100)
                     parent.message = message
                     parent.md5 = game_item.md5
-                gc.collect()
             if len(rates) != 0:  # only update if there's change
                 info('%s remaining' % gigs(left))
             rates.clear()

@@ -241,14 +241,14 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
 
         self.itch.login()
         elements = self.itch.getGames()
-
+        logger.debug(str(elements))
         self.cardmenu = CardMenu(
             width=int(WINDOW_SIZE[0]),
             height=int(WINDOW_SIZE[1]),
             x=0,
             y=0,
             margin=25,
-            visibleOptions=4,
+            visibleOptions=7,
             padding=20,
             surface=self.surface,
             centered=True,
