@@ -30,6 +30,8 @@ from core.components.cardmenu import CardMenu
 from core.partner.gog import GOG
 from core.partner.itch import Itch
 
+from core.components.simplenotification import SimpleNotification
+
 
 class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
 
@@ -52,6 +54,8 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
         self.itch = None
 
     def main(self):
+        notification = SimpleNotification(surface=self.surface,clock=self.clock)
+        notification.showNotification(text='Welcome')
         self.drawMainMenu()
 
     def loadSettings(self):
