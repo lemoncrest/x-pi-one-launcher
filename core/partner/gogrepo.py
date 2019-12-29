@@ -4,11 +4,6 @@ from __future__ import print_function
 from __future__ import division
 from __future__ import unicode_literals
 
-__appname__ = 'gogrepo.py'
-__author__ = 'eddie3'
-__version__ = '0.3a'
-__url__ = 'https://github.com/eddie3/gogrepo'
-
 # imports
 import os
 import sys
@@ -30,6 +25,7 @@ import shutil
 import socket
 import xml.etree.ElementTree
 import gc
+from core.constants import *
 
 # python 2 / 3 imports
 try:
@@ -61,8 +57,6 @@ try:
     from html2text import html2text
 except ImportError:
     def html2text(x): return x
-
-PATH = '/opt/pygamemenu/'
 
 # lib mods
 cookiejar.MozillaCookieJar.magic_re = r'.*'  # bypass the hardcoded "Netscape HTTP Cookie File" check

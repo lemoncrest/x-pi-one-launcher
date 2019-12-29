@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 from core.partner.gogrepo import AttrDict #issues related to read data with coded
 import logging
 
-PATH = '/opt/pygamemenu/'
+from core.constants import *
 
 logging.basicConfig(filename=os.path.join(PATH, "log.txt"), level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -30,16 +30,8 @@ from core.components.cardmenu import CardMenu
 from core.partner.gog import GOG
 from core.partner.itch import Itch
 
-os.environ['SDL_VIDEO_CENTERED'] = '1'
-
-WINDOW_SIZE = (1024, 600)
-COLOR_BACKGROUND = (61, 61, 202)  # by default if there is no image to load will be shown it
-
-REMOTE_REPOSITORY = "https://gitlab.gameboyzero.es/pygames/repository/raw/master/pool.json"
-
 
 class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
-    FPS = 60
 
     def __init__(self):
         # init
@@ -185,7 +177,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
         self.main_background()  # take into account it should be inside instead out of the while, but at this moment is a better performance
 
         while not exit:
-            self.clock.tick(self.FPS)
+            self.clock.tick(FPS)
 
             self.progressbar.textMessage = self.gog.message
             state = self.gog.state
@@ -264,7 +256,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
         selected = 0
         changes = True
         while not exit:
-            self.clock.tick(self.FPS)
+            self.clock.tick(FPS)
             if changes:
                 # colored background
                 self.main_background()

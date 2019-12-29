@@ -5,12 +5,7 @@ from core.colors import *
 from core.utils import Utils
 from core.components.menu import Menu
 
-WINDOW_SIZE = (1024, 600)
-ALPHA = 192
-BARSIZE = 60
-FONT_SIZE = 20
-
-PATH = '/opt/pygamemenu/'
+from core.constants import *
 
 class UpBar():
 

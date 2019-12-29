@@ -10,7 +10,7 @@ import logging
 logging.basicConfig()
 logger = logging.getLogger(__name__)
 
-WINDOW_SIZE = (1024, 600)
+from core.constants import *
 
 class CardMenu():
 
@@ -52,7 +52,7 @@ class CardMenu():
 
 
         while not exit:
-            self.parent.clock.tick(self.parent.FPS)
+            self.parent.clock.tick(FPS)
 
             #check if there is some downloading process in background
             for i in range(0, len(self.list)):

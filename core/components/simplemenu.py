@@ -8,12 +8,7 @@ except ImportError:
     from urllib.request import urlopen # Python3 but... it's not necessary at this moment, for the furute
     pass
 
-MARGIN = 25
-THUMBNAIL_WIDTH = 300
-THUMBNAIL_HEIGHT = 300
-BUTTON_RADIO = 28
-
-WINDOW_SIZE = (1024, 600)
+from core.constants import *
 
 class SimpleMenu():
 

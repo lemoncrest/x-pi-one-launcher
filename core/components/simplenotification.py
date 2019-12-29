@@ -8,11 +8,11 @@ except:
     import datetime
     pass
 
-FPS = 60
+from core.constants import *
 
 class SimpleNotification():
 
-    def __init__(self,surface=None,clock):
+    def __init__(self,surface=None,clock=None):
         self.surface = surface
         self.clock = clock
         self.x = 0
@@ -28,12 +28,12 @@ class SimpleNotification():
             width = self.font.size(text)[0] + (self.margin*2)
             height = self.font.size(text)[1] + (self.margin*2)
 
-            notificationRect = pygame.Rect(self.x, self.y, width, height)
-            pygame.draw.rect(self.surface, COLOR_BLACK, button_rect, 0)
+            notificationRect = pygame.Rect(self.x, self.y, width, height) #TODO, review
+
+            pygame.draw.rect(self.surface, COLOR_BLACK, notificationRect, 0)
 
             font_color = COLOR_WHITE
             self.font.render(text, True, font_color)
-
 
             self.clock.flip(FPS)
 

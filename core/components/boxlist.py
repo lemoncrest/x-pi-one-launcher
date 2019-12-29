@@ -13,8 +13,7 @@ import logging
 logging.basicConfig()
 logger = logging.getLogger(__name__)
 
-WINDOW_SIZE = (1024, 600)
-
+from core.constants import *
 
 class BoxList():
 
@@ -58,7 +57,7 @@ class BoxList():
             choices.append(index)
 
         while not exit:
-            self.parent.clock.tick(self.parent.FPS)
+            self.parent.clock.tick(FPS)
 
             events = pygame.event.get()
             logger.debug("boxlist event %s" % str(events))

@@ -5,7 +5,7 @@ except ImportError:
     from urllib.request import urlopen # Python3
     pass
 from core.components.progressbar import ProgressBar
-WINDOW_SIZE = (1024, 600)
+from core.constants import WINDOW_SIZE
 
 
 class DownloadProgressBar():

@@ -2,7 +2,7 @@ import pygame
 import os
 from core.colors import *
 
-PATH = '/opt/pygamemenu/'
+from core.constants import PATH
 
 class SquaredMenu():
 
