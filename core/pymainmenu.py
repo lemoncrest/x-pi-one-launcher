@@ -57,7 +57,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
         self.itch = None
 
     def main(self):
-        notification = SimpleNotification(surface=self.surface,clock=self.clock)
+        notification = SimpleNotification(surface=self.surface,clock=self.clock,parent=self)
         notification.showNotification(text='Welcome')
         self.drawMainMenu()
 
@@ -261,29 +261,32 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
     def manageMainEvents(self, menus, visibleOptions=4):  # TODO
         exit = False
         selected = 0
-        changes = True
+        self.changes = True
         lastTime = datetime.now()
+
+        # colored background
+        self.main_background()
+
         while not exit:
+
             self.clock.tick(FPS)
-            if changes:
+
+            if self.changes:
                 # colored background
                 self.main_background()
+
                 # now draw menus
                 rectangles = self.drawSquaredMenus(menus, selected, visibleOptions)
 
                 # draw components
                 self.drawComponents()  # at this moment bars
 
-                lastTime = datetime.now()
-
                 # clean events, needs to be after drawComponents
-                changes = False
+                self.changes = False
 
             if lastTime+timedelta(seconds=1) > datetime.now():
                 lastTime = datetime.now()
                 self.upbar.drawTime()
-                # draw components
-                #self.drawComponents()  # at this moment bars
 
             # get events and configure
             events = pygame.event.get()
@@ -294,7 +297,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
                 if event.type == pygame.QUIT:
                     exit = True
                 elif event.type == pygame.KEYDOWN:
-                    changes = True
+                    self.changes = True
                     if event.key == pygame.K_ESCAPE:
                         exit = True
                     elif event.key == pygame.K_UP:
@@ -319,7 +322,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
                         else:
                             pygame.display.set_mode(WINDOW_SIZE, pygame.FULLSCREEN)
                 elif event.type == pygame.JOYAXISMOTION:
-                    changes = True
+                    self.changes = True
                     if event.axis == 1:  # up and down
                         if event.value > 0:
                             if selected < len(menus) - 1:
@@ -336,7 +339,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
                                 selected -= 1
 
                 elif event.type == pygame.JOYBUTTONDOWN:
-                    changes = True
+                    self.changes = True
                     if event.button == 1:  # button A - enter
                         menus[selected]["action"]()
                     elif event.button == 2:  # button B - back
@@ -344,7 +347,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     i = 0
-                    changes = True
+                    self.changes = True
                     for rectangle in rectangles:
                         if rectangle.collidepoint(event.pos):
                             if visibleOptions > len(menus):
