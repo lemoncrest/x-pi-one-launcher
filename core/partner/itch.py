@@ -190,14 +190,14 @@ class Itch():
                             self.target = link
                             #self.message = "%.2f" % (self.state)
                             i+=1
-                        if i%50==0:
+                        if i%3000==0:
                             f.flush() #flush
                             os.fsync(f.fileno()) #force clean memory (os flush)
             self.state = 100
             self.message = "Finished"
             return local_filename
         except Exception as ex:
-            SimpleNotification(surface=self.parent.surface,clock=self.parent.clock).showNotification(text=str(ex))
+            SimpleNotification(surface=self.parent.surface,clock=self.parent.clock,parent=self.parent).showNotification(text=str(ex))
             pass
 
     def downloadGame(self,link,platform='linux'):

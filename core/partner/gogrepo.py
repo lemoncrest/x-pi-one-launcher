@@ -977,14 +977,20 @@ def cmd_download(savedir, skipextras, skipgames, skipids, dryrun, id, parent=Non
     # work item I/O loop
     def ioloop(tid, path, page, out):
         sz, t0 = True, time.time()
+        i=0
         while sz:
             buf = page.read(4*1024)
             t = time.time()
             out.write(buf)
             sz, dt, t0 = len(buf), t - t0, t
+            i+=1
             with lock:
                 sizes[path] -= sz
                 rates.setdefault(path, []).append((tid, (sz, dt)))
+
+            if i%3000==0:
+                out.flush()
+                os.fsync(out.fileno())
 
     # downloader worker thread main loop
     def worker():
