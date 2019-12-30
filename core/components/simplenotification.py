@@ -30,7 +30,7 @@ class SimpleNotification():
         self.right = right
         self.parent = parent
 
-    def showNotification(self,text="Default notification", seconds=3):
+    def showNotification(self,text="Default notification", seconds=4):
         if not self.up:
             self.y = WINDOW_SIZE[1]
         if self.right:
@@ -63,13 +63,12 @@ class SimpleNotification():
             x -= width
             rect_x -= width
 
+        #effect for fadein
         firstDatetime = datetime.now()
         while bool(firstDatetime + timedelta(seconds=1) > datetime.now()):
             current = firstDatetime + timedelta(seconds=1) - datetime.now()
 
             diff = (current.microseconds / 1000) / 1000
-
-            print(diff)
 
             notificationRect = pygame.Rect(rect_x, rect_y + (height * diff) , width,
                                            height - height * diff)  # TODO, review
@@ -79,11 +78,13 @@ class SimpleNotification():
             self.parent.changes = True
 
         self.parent.changes = True
+
+        #notification displayed
         firstDatetime = datetime.now()
         while bool(firstDatetime+timedelta(seconds=self.seconds) > datetime.now()):
 
             self.clock.tick(FPS)
-            if refresh or self.parent.changes:
+            if refresh or self.parent.changes: #fix for avoid the blink
                 refresh = False
 
                 notificationRect = pygame.Rect(rect_x, rect_y, width, height) #TODO, review
@@ -98,14 +99,13 @@ class SimpleNotification():
 
         self.parent.changes = True #works like refresh because main loop has the power { .flip() }
 
+        #effect for fadeout
         firstDatetime = datetime.now()
         while bool(firstDatetime+timedelta(seconds=1) > datetime.now()):
 
             current = firstDatetime + timedelta(seconds=1) - datetime.now()
 
             diff = (current.microseconds / 1000) / 1000
-
-            print(diff)
 
             notificationRect = pygame.Rect(rect_x, height+rect_y-(height*diff), width, height*diff)  # TODO, review
 
