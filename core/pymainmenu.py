@@ -482,7 +482,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
 
         # first download metadata
         content = self.downloadProgressBar(remote=REMOTE_REPOSITORY)
-        # print(content)
+
         self.main_background()
         # now show metadata content
         self.drawRemoteRepository(json.loads(content))

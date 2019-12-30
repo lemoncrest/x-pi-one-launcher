@@ -50,6 +50,7 @@ class CardMenu():
             #TODO here the up comment, by the way, with 0 is great
             choices.append(index)
 
+        changes = True
 
         while not exit:
             self.parent.clock.tick(FPS)
@@ -60,12 +61,20 @@ class CardMenu():
                     self.list[i]["downloading"] = True
                     logger.debug(self.list[i])
 
+            if changes:
+                # colored background
+                self.parent.main_background()
+                changes = False
+
             events = pygame.event.get()
             if len(events) != 0:
                 logger.debug("cardmenu event %s" % str(events))
 
             for event in events:
                 # normal events
+
+                changes = True #TODO review
+
                 if event.type == pygame.QUIT:
                     exit = True
                 elif event.type == pygame.KEYDOWN:

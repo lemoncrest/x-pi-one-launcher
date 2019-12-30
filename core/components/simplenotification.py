@@ -44,35 +44,40 @@ class SimpleNotification():
     def worker(self):
         firstDatetime = datetime.now()
 
+        refresh = True
+
         while bool(firstDatetime+timedelta(seconds=self.seconds) > datetime.now()):
 
             self.clock.tick(FPS)
+            if refresh:
+                #refresh = False
+                #time.sleep(0.1)
 
-            width = self.font.size(self.text)[0] + (self.margin*2)
-            height = self.font.size(self.text)[1] + (self.margin*2)
+                width = self.font.size(self.text)[0] + (self.margin*2)
+                height = self.font.size(self.text)[1] + (self.margin*2)
 
-            rect_x = self.x
-            rect_y = self.y
+                rect_x = self.x
+                rect_y = self.y
 
-            x = self.x + self.margin
-            y = self.y + self.margin
+                x = self.x + self.margin
+                y = self.y + self.margin
 
-            if not self.up:
-                y -= height
-                rect_y -= height
-            if self.right:
-                x -= width
-                rect_x -= width
+                if not self.up:
+                    y -= height
+                    rect_y -= height
+                if self.right:
+                    x -= width
+                    rect_x -= width
 
 
-            notificationRect = pygame.Rect(rect_x, rect_y, width, height) #TODO, review
+                notificationRect = pygame.Rect(rect_x, rect_y, width, height) #TODO, review
 
-            pygame.draw.rect(self.surface, COLOR_BLACK, notificationRect, 0)
+                pygame.draw.rect(self.surface, COLOR_BLACK, notificationRect, 0)
 
-            txt = self.font.render(self.text, True, COLOR_WHITE)
+                txt = self.font.render(self.text, True, COLOR_WHITE)
 
-            textPoint = (x, y)
-            logger.debug(textPoint)
-            self.surface.blit(txt, textPoint)
+                textPoint = (x, y)
+                logger.debug(textPoint)
+                self.surface.blit(txt, textPoint)
 
-            #pygame.display.flip() #TODO check a multithread throuble
+                #pygame.display.flip() #TODO check a multithread throubles
