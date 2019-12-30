@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 class SimpleNotification():
 
-    def __init__(self,surface=None,clock=None,up=False,right=True):
+    def __init__(self,surface,clock,up=False,right=True):
         self.surface = surface
         self.clock = clock
         self.fontSize = 30

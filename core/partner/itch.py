@@ -10,6 +10,7 @@ from threading import Thread
 import logging
 logging.basicConfig()
 logger = logging.getLogger(__name__)
+from core.components.simplenotification import SimpleNotification
 
 
 class Itch():
@@ -17,12 +18,13 @@ class Itch():
     LOGIN_URL = 'https://itch.io/login'
     PURCHASES = 'https://itch.io/my-purchases'
 
-    def __init__(self, username, password, dir):
+    def __init__(self, username, password, dir,parent):
         self.username = username
         self.password = password
         self.dir = dir
         self.state = 0
         self.message = ""
+        self.parent = parent
 
 
     def login2(self):
@@ -156,30 +158,39 @@ class Itch():
         link2+="file/"+id+"?key="+key
         response2 = self.session.post(url=link2)
         html2 = response2.text
-        jsonloaded = json.loads(html2)
-        url = jsonloaded["url"]
+        try:
+            logger.debug(html2)
+            jsonloaded = json.loads(html2)
+            url = jsonloaded["url"]
 
-        with self.session.get(url, stream=True) as r:
-            r.raise_for_status()
-            filename = r.headers.get('content-disposition')
-            if 'attachment; filename="' in filename:
-                filename = filename[filename.find('"')+1:]
-                filename = filename[:filename.find('"')]
-            size = r.headers.get('content-length')
-            local_filename = os.path.join(self.dir,filename)
-            downloaded = 0
-            with open(local_filename, 'wb') as f:
-                for chunk in r.iter_content(chunk_size=8192):
-                    if chunk:  # filter out keep-alive new chunks
-                        downloaded+=len(chunk)
-                        f.write(chunk)
-                        f.flush()
-                    if downloaded % (1024*1024) == 0:
-                        self.state = (downloaded / int(size))*100
-                        self.message = "F. %s . D: %s %s %s" % (local_filename,downloaded,self.state,size)
-                        logger.info(self.message)
-        self.state = 1
-        return local_filename
+            with self.session.get(url, stream=True) as r:
+                r.raise_for_status()
+                filename = r.headers.get('content-disposition')
+                if 'attachment; filename="' in filename:
+                    filename = filename[filename.find('"')+1:]
+                    filename = filename[:filename.find('"')]
+                size = r.headers.get('content-length')
+                local_filename = os.path.join(self.dir,filename)
+                downloaded = 0
+                i=0
+                with open(local_filename, 'wb') as f:
+                    for chunk in r.iter_content(chunk_size=8192):
+                        if chunk:  # filter out keep-alive new chunks
+                            downloaded+=len(chunk)
+                            f.write(chunk)
+                        if downloaded % (1024*1024) == 0:
+                            self.state = (downloaded / int(size))*100
+                            self.message = "F. %s . D: %s %s %s" % (local_filename,downloaded,self.state,size)
+                            i+=1
+                            logger.info(self.message)
+                        if i%50==0:
+                            f.flush() #flush
+                            os.fsync(f.fileno()) #force clean memory (os flush)
+            self.state = 1
+            return local_filename
+        except Exception as ex:
+            SimpleNotification(surface=self.parent.surface,clock=self.parent.clock).showNotification(text=str(ex))
+            pass
 
     def downloadGame(self,link,platform='linux'):
         self.link = link

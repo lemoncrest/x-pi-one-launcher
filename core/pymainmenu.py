@@ -233,7 +233,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
                         password = element["txt"]
                     elif element["id"] == 'itch_tmp':
                         dir = element["txt"]
-            self.itch = Itch(username,password, dir)
+            self.itch = Itch(username,password, dir,self)
 
             self.itch.login()
             self.elements = self.itch.getGames()
