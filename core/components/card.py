@@ -3,7 +3,9 @@ import pygame
 from core.colors import *
 #from core.components.downloadprogressbar import DownloadProgressBar
 from core.components.progressbar import ProgressBar
-
+import logging
+logging.basicConfig()
+logger = logging.getLogger(__name__)
 
 class Card():
 
@@ -73,12 +75,14 @@ class Card():
                 self.progressbar.textMessage = self.element["message"]
                 self.progressbar.updateProgressBar(parentEvents=True)
         elif "downloading" in self.element and self.element["downloading"]: #itch
-            self.element["progress"] = self.parent.itch.state / 100  # 0 - 1
-            self.progressbar.progress = self.element["progress"]
-            self.progressbar.textMessage = self.parent.itch.message
-            self.progressbar.updateProgressBar(parentEvents=True)
-
-
+            logger.debug(self.parent.itch.target)
+            if self.parent.itch.target == self.element["link"]:
+                self.element["progress"] = self.parent.itch.state / 100  # 0 - 1
+                self.progressbar.progress = self.element["progress"]
+                #self.progressbar.textMessage = self.parent.itch.message
+                self.progressbar.updateProgressBar(parentEvents=True)
+            #logger.debug(self.parent.itch.link+"--"+self.element["link"])
+                
 
         #TODO return main and each clickable element to be checked in main loop with events
 

@@ -25,6 +25,8 @@ class Itch():
         self.state = 0
         self.message = ""
         self.parent = parent
+        self.link = None
+        self.target = ""
 
 
     def login2(self):
@@ -137,7 +139,8 @@ class Itch():
     def download_worker(self):
         if self.session is None:
             self.login()
-        response = self.session.get(url=self.link)
+        link = self.link
+        response = self.session.get(url=link)
         html = response.text
         i=0
         id = ""
@@ -180,16 +183,16 @@ class Itch():
                             f.write(chunk)
                         if downloaded % (1024*1024) == 0:
                             self.state = (downloaded / int(size))*100
-                            self.message = "F. %s . D: %s %s %s" % (local_filename,downloaded,self.state,size)
+                            self.target = link
+                            #self.message = "%.2f" % (self.state)
+                            #self.parent.link = self.link #url
+                            #logger.debug(self.link)
                             i+=1
-                            logger.info(self.message)
                         if i%50==0:
                             f.flush() #flush
-                            os.fsync(f.fileno()) #force clean memory (os flush)
-            self.state = 1
-            for element in self.parent.elements:
-                if "link" in element and self.link == element["link"]:
-                    element["downloading"] = False
+                            #os.fsync(f.fileno()) #force clean memory (os flush)
+            self.state = 100
+            self.message = "Finished"
             return local_filename
         except Exception as ex:
             SimpleNotification(surface=self.parent.surface,clock=self.parent.clock).showNotification(text=str(ex))
