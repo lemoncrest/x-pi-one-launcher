@@ -11,7 +11,10 @@ import codecs
 import sys
 import subprocess
 import time
-from datetime import datetime, timedelta
+try:
+    from datetime import datetime, timedelta
+except:
+    import datetime
 from core.partner.gogrepo import AttrDict #issues related to read data with coded
 import logging
 
@@ -259,26 +262,39 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
         exit = False
         selected = 0
         changes = True
+        lastTime = datetime.now()
         while not exit:
             self.clock.tick(FPS)
             if changes:
                 # colored background
                 self.main_background()
-                # draw components
-                self.drawComponents()  # at this moment bars
                 # now draw menus
                 rectangles = self.drawSquaredMenus(menus, selected, visibleOptions)
+
+                # draw components
+                self.drawComponents()  # at this moment bars
+
+                lastTime = datetime.now()
+
+                # clean events, needs to be after drawComponents
                 changes = False
+
+            if lastTime+timedelta(seconds=1) > datetime.now():
+                lastTime = datetime.now()
+                self.upbar.drawTime()
+                # draw components
+                #self.drawComponents()  # at this moment bars
+
             # get events and configure
             events = pygame.event.get()
             if len(events) != 0:
                 logger.debug("mainEvent event %s" % str(events))
             for event in events:
                 # normal events
-                changes = True
                 if event.type == pygame.QUIT:
                     exit = True
                 elif event.type == pygame.KEYDOWN:
+                    changes = True
                     if event.key == pygame.K_ESCAPE:
                         exit = True
                     elif event.key == pygame.K_UP:
@@ -303,6 +319,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
                         else:
                             pygame.display.set_mode(WINDOW_SIZE, pygame.FULLSCREEN)
                 elif event.type == pygame.JOYAXISMOTION:
+                    changes = True
                     if event.axis == 1:  # up and down
                         if event.value > 0:
                             if selected < len(menus) - 1:
@@ -319,6 +336,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
                                 selected -= 1
 
                 elif event.type == pygame.JOYBUTTONDOWN:
+                    changes = True
                     if event.button == 1:  # button A - enter
                         menus[selected]["action"]()
                     elif event.button == 2:  # button B - back
@@ -326,6 +344,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     i = 0
+                    changes = True
                     for rectangle in rectangles:
                         if rectangle.collidepoint(event.pos):
                             if visibleOptions > len(menus):

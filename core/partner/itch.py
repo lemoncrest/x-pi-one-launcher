@@ -1,4 +1,8 @@
-import http.cookiejar
+try:
+    import http.cookiejar
+except:
+    import cookielib
+    pass
 import urllib
 import logging
 import os
