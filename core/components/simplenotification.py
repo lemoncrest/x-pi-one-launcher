@@ -66,6 +66,7 @@ class SimpleNotification():
         #effect for fadein
         firstDatetime = datetime.now()
         while bool(firstDatetime + timedelta(seconds=1) > datetime.now()):
+            self.clock.tick(FPS)
             current = firstDatetime + timedelta(seconds=1) - datetime.now()
 
             diff = (current.microseconds / 1000) / 1000
@@ -102,7 +103,7 @@ class SimpleNotification():
         #effect for fadeout
         firstDatetime = datetime.now()
         while bool(firstDatetime+timedelta(seconds=1) > datetime.now()):
-
+            self.clock.tick(FPS)
             current = firstDatetime + timedelta(seconds=1) - datetime.now()
 
             diff = (current.microseconds / 1000) / 1000
