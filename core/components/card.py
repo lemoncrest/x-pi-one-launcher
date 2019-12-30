@@ -75,9 +75,9 @@ class Card():
                 self.progressbar.textMessage = self.element["message"]
                 self.progressbar.updateProgressBar(parentEvents=True)
         elif "downloading" in self.element and self.element["downloading"]: #itch
-            logger.debug(self.parent.itch.target)
             if self.parent.itch.target == self.element["link"]:
                 self.element["progress"] = self.parent.itch.state / 100  # 0 - 1
+            if "progress" in self.element:
                 self.progressbar.progress = self.element["progress"]
                 #self.progressbar.textMessage = self.parent.itch.message
                 self.progressbar.updateProgressBar(parentEvents=True)

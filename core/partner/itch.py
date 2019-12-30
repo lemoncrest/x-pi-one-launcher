@@ -185,12 +185,10 @@ class Itch():
                             self.state = (downloaded / int(size))*100
                             self.target = link
                             #self.message = "%.2f" % (self.state)
-                            #self.parent.link = self.link #url
-                            #logger.debug(self.link)
                             i+=1
                         if i%50==0:
                             f.flush() #flush
-                            #os.fsync(f.fileno()) #force clean memory (os flush)
+                            os.fsync(f.fileno()) #force clean memory (os flush)
             self.state = 100
             self.message = "Finished"
             return local_filename
