@@ -29,7 +29,7 @@ class SimpleNotification():
         self.up = up
         self.right = right
 
-    def showNotification(self,text="Default notification", seconds=5):
+    def showNotification(self,text="Default notification", seconds=3):
         if not self.up:
             self.y = WINDOW_SIZE[1]
         if self.right:

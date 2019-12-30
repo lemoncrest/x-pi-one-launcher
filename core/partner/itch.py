@@ -187,6 +187,9 @@ class Itch():
                             f.flush() #flush
                             os.fsync(f.fileno()) #force clean memory (os flush)
             self.state = 1
+            for element in self.parent.elements:
+                if "link" in element and self.link == element["link"]:
+                    element["downloading"] = False
             return local_filename
         except Exception as ex:
             SimpleNotification(surface=self.parent.surface,clock=self.parent.clock).showNotification(text=str(ex))
