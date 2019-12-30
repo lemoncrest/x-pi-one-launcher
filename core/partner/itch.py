@@ -2,7 +2,7 @@ import http.cookiejar
 import urllib
 import logging
 import os
-#logging.basicConfig(filename=os.path.join(os.getcwd(), "log.txt"), level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 import requests
 import json

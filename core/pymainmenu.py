@@ -235,8 +235,8 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
                         dir = element["txt"]
             self.itch = Itch(username,password, dir)
 
-        self.itch.login()
-        elements = self.itch.getGames()
+            self.itch.login()
+            self.elements = self.itch.getGames()
 
         self.cardmenu = CardMenu(
             width=int(WINDOW_SIZE[0]),
@@ -248,7 +248,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
             padding=20,
             surface=self.surface,
             centered=True,
-            list=elements,
+            list=self.elements,
             selected_margin=10,
             parent=self,
             onEventEnter=self.itch.downloadGame
