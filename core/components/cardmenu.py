@@ -73,8 +73,6 @@ class CardMenu():
             for event in events:
                 # normal events
 
-                changes = True #TODO review
-
                 if event.type == pygame.QUIT:
                     exit = True
                 elif event.type == pygame.KEYDOWN:
@@ -83,30 +81,36 @@ class CardMenu():
                     elif event.key == pygame.K_UP:
                         if selected > 0:
                             selected -= 1
+                        changes = True
                     elif event.key == pygame.K_DOWN:
                         if selected < len(self.list) - 1:
                             selected += 1
+                        changes = True
                     elif event.key == pygame.K_LEFT:
                         if choices[selected] > 0:
                             choices[selected] -= 1
+
                     elif event.key == pygame.K_RIGHT:
                         if "choices" in self.list[selected]:
                             if choices[selected] < len(self.list[selected]["choices"]) - 1:
                                 choices[selected] += 1
 
                     elif event.key == pygame.K_RETURN:
+                        #TODO put in a function, copy reference to joybuttondown and do a new function for launching installed game (feature requested)
                         if "genre" in self.list[selected]: #gog
                             target = self.list[selected]["title"]
                         elif "link" in self.list[selected]:
                             target = self.list[selected]["link"]
                         self.list[selected]["downloading"] = True
                         self.onEventEnter(target)
+                        changes = True
                 elif event.type == pygame.JOYBUTTONDOWN:
                     if event.button == 1:  # button A - enter
-                        pass #TODO action
+                        changes = True #TODO action
                     elif event.button == 2:  # button B - back
                         exit = True
                 elif event.type == pygame.JOYAXISMOTION:
+                    changes = True #TODO review
                     if event.axis == 1:  # up and down
                         if event.value > 0:
                             if selected < len(self.list) - 1:

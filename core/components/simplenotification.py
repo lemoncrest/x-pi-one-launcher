@@ -95,7 +95,6 @@ class SimpleNotification():
                 txt = self.font.render(self.text, True, COLOR_WHITE)
 
                 textPoint = (x, y)
-                logger.debug(textPoint)
                 self.surface.blit(txt, textPoint)
 
         self.parent.changes = True #works like refresh because main loop has the power { .flip() }
@@ -114,7 +113,7 @@ class SimpleNotification():
 
             self.parent.changes = True
 
-        #clean
+        #clean background
         self.parent.main_background()
-        #order redraw background
+        #order redraw componentes
         self.parent.changes = True
