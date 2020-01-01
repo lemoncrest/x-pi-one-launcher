@@ -114,4 +114,7 @@ class SimpleNotification():
 
             self.parent.changes = True
 
+        #clean
+        self.parent.main_background()
+        #order redraw background
         self.parent.changes = True
