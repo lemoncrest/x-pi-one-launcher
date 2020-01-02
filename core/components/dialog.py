@@ -62,15 +62,20 @@ class Dialog():
 
         if self.options is not None and len(self.options)>0:
             # draw each option
+            i = 0
             for option in self.options:
-                pass
+                i+=1
+                self.drawButton(message=option["title"],max=len(self.options),figure=i)
         else: #draw an ok
             self.drawButton(message="ok")
 
 
-    def drawButton(self,message):
+    def drawButton(self,message,max=1,figure=1):
+        print((max,figure))
         button_width = self.font.size(message)[1] + (self.margin * 2)
-        xT3 = (WINDOW_SIZE[0] / 2) - (button_width / 2)
+
+        xT3 = ((((self.width/2) / max)) * figure * 2) + self.x - (button_width/2) - ((((self.width/2) / max)) )
+
         yT3 = self.y + self.height - self.button_part
         button_rect = pygame.Rect(xT3, yT3, button_width, self.button_height)
         pygame.draw.rect(self.surface, COLOR_BLACK, button_rect, 0)

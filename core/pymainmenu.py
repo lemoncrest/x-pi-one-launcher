@@ -59,7 +59,12 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
     def main(self):
         notification = SimpleNotification(surface=self.surface,clock=self.clock,parent=self)
         notification.showNotification(text='dev revision')
-        self.dialog = Dialog(surface=self.surface,title="Welcome",message="Please configure before use. Remember we are working in this version and now is a dev")
+        options = [
+            {
+                "title" : "Aceptar"
+            }
+        ]
+        self.dialog = Dialog(surface=self.surface,title="Welcome",message="Please configure before use. Remember we are working in this version and now is a dev",options=options)
         self.dialog.draw()
 
         self.drawMainMenu()
