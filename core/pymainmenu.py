@@ -332,15 +332,18 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
                             if selected < len(menus) - 1:
                                 selected += 1
                     elif event.key == pygame.K_LEFT:
+                        # normal part
+                        if selected > 0:
+                            selected -= 1
+                    elif event.key == pygame.K_RIGHT:
                         if self.dialog is not None and self.dialog.active:
-                            self.dialog.active = False
+                            # normal part
+                            if selected < len(options) - 1:
+                                selected += 1
                         else:
                             # normal part
-                            if selected > 0:
-                                selected -= 1
-                    elif event.key == pygame.K_RIGHT:
-                        if selected < len(menus) - 1:
-                            selected += 1
+                            if selected < len(menus) - 1:
+                                selected += 1
                     elif event.key == pygame.K_b:
                         if self.dialog is not None and self.dialog.active:
                             self.dialog.active = False
