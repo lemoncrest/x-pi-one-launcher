@@ -64,7 +64,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
                 "title" : "Aceptar"
             }
         ]
-        self.dialog = Dialog(surface=self.surface,title="Welcome",message="Please configure before use. Remember we are working in this version and now is a dev",options=options)
+        self.dialog = Dialog(surface=self.surface,title="Welcome",message="Please configure before use",options=options)
         self.dialog.draw()
 
         self.drawMainMenu()
