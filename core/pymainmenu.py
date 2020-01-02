@@ -302,8 +302,9 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
                 logger.debug("mainEvent event %s" % str(events))
 
             #now manage dialog
+            options = None
             if self.dialog is not None and self.dialog.active:
-                self.dialog.draw()
+                options = self.dialog.draw(focus=selected)
             else:
                 self.dialog = None
             for event in events:
@@ -315,18 +316,17 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
                     if event.key == pygame.K_ESCAPE:
                         if self.dialog is not None and self.dialog.active:
                             self.dialog.active = False
+                            selected = 0
                         else:
                             exit = True
                     elif event.key == pygame.K_UP:
-                        if self.dialog is not None and self.dialog.active:
-                            self.dialog.active = False
-                        else:
-                            #normal part
-                            if selected > 0:
-                                selected -= 1
+                        if selected > 0:
+                            selected -= 1
                     elif event.key == pygame.K_DOWN:
                         if self.dialog is not None and self.dialog.active:
-                            self.dialog.active = False
+                            # normal part
+                            if selected < len(options) - 1:
+                                selected += 1
                         else:
                             # normal part
                             if selected < len(menus) - 1:
@@ -339,20 +339,19 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
                             if selected > 0:
                                 selected -= 1
                     elif event.key == pygame.K_RIGHT:
-                        if self.dialog is not None and self.dialog.active:
-                            self.dialog.active = False
-                        else:
-                            # normal part
-                            if selected < len(menus) - 1:
-                                selected += 1
+                        if selected < len(menus) - 1:
+                            selected += 1
                     elif event.key == pygame.K_b:
                         if self.dialog is not None and self.dialog.active:
                             self.dialog.active = False
+                            selected = 0
                         else:
                             #normal part
                             exit = True
                     elif event.key == pygame.K_a or event.key == pygame.K_RETURN:
                         if self.dialog is not None and self.dialog.active:
+                            if "action" in options[selected]:
+                                options[selected]["action"]()
                             self.dialog.active = False
                         else:
                             #normal part
@@ -366,37 +365,31 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
                     self.changes = True
                     if event.axis == 1:  # up and down
                         if event.value > 0:
-                            if self.dialog is not None and self.dialog.active:
-                                self.dialog.active = False
-                            else:
-                                # normal part
-                                if selected < len(menus) - 1:
-                                    selected += 1
+                            if selected < len(menus) - 1:
+                                selected += 1
                         elif event.value < 0:
-                            if self.dialog is not None and self.dialog.active:
-                                self.dialog.active = False
-                            else:
-                                # normal part
-                                if selected > 0:
-                                    selected -= 1
+                            if selected > 0:
+                                selected -= 1
                     elif event.axis == 0:  # left and right
                         if event.value > 0:
                             if self.dialog is not None and self.dialog.active:
-                                self.dialog.active = False
+                                if selected < len(options) - 1:
+                                    selected += 1
                             else:
                                 # normal part
                                 if selected < len(menus) - 1:
                                     selected += 1
                         elif event.value < 0:
-                            if self.dialog is not None and self.dialog.active:
-                                self.dialog.active = False
-                            else:
-                                # normal part
-                                if selected > 0:
-                                    selected -= 1
+                            if selected > 0:
+                                selected -= 1
 
                 elif event.type == pygame.JOYBUTTONDOWN:
                     if self.dialog is not None and self.dialog.active:
+                        if event.button == 1:
+                            if "action" in options[selected]:
+                                options[selected]["action"]()
+                        elif event.button == 2:
+                            selected = 0
                         self.dialog.active = False
                     else:
                         # normal part
@@ -408,7 +401,10 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if self.dialog is not None and self.dialog.active:
-                        self.dialog.active = False
+                        for i in range(0,len(options)):
+                            option = options[i]
+                            if option["rectangle"].collidepoint(event.pos):
+                                selected = i
                     else:
                         #normal part
                         i = 0
@@ -429,7 +425,15 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
                             i += 1
                 elif event.type == pygame.MOUSEBUTTONUP:
                     if self.dialog is not None and self.dialog.active:
-                        self.dialog.active = False
+                        newSelected = -1
+                        for i in range(0, len(options)):
+                            option = options[i]
+                            if option["rectangle"].collidepoint(event.pos):
+                                newSelected = i
+                        if newSelected == selected:
+                            if "action" in options[selected]:
+                                options[selected]["action"]()
+                            self.dialog.active = False
                     else:
                         # normal part
                         i = 0
