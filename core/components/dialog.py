@@ -71,7 +71,7 @@ class Dialog():
 
 
     def drawButton(self,message,max=1,figure=1):
-        print((max,figure))
+        
         button_width = self.font.size(message)[1] + (self.margin * 2)
 
         xT3 = ((((self.width/2) / max)) * figure * 2) + self.x - (button_width/2) - ((((self.width/2) / max)) )
