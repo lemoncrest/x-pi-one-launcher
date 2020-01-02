@@ -34,7 +34,9 @@ class Dialog():
         self.x = (WINDOW_SIZE[0]-self.width)/2
         self.y = (WINDOW_SIZE[1] - self.height) / 2
 
-    def draw(self):
+        self.focus_margin = 3  # TODO calculate
+
+    def draw(self,focus=0):
 
         self.active = True
 
@@ -62,16 +64,23 @@ class Dialog():
 
         if self.options is not None and len(self.options)>0:
             # draw each option
-            i = 0
-            for option in self.options:
-                i+=1
-                self.drawButton(message=option["title"],max=len(self.options),figure=i)
+            for i in range(0,len(self.options)):
+                option = self.options[i]
+                rectangle = self.drawButton(message=option["title"],max=len(self.options),figure=i+1,focus=(focus==i))
+                self.options[i]["rectangle"] = rectangle
+
         else: #draw an ok
-            self.drawButton(message="ok")
+            self.options = []
+            self.options[0] = {
+                "title" : "ok"
+            }
+            rectangle = self.drawButton(message=self.options[0]["title"])
+            self.options[0]["rectangle"] = rectangle
 
+        return self.options
 
-    def drawButton(self,message,max=1,figure=1):
-        
+    def drawButton(self,message,max=1,figure=1,focus=False):
+
         button_width = self.font.size(message)[1] + (self.margin * 2)
 
         xT3 = ((((self.width/2) / max)) * figure * 2) + self.x - (button_width/2) - ((((self.width/2) / max)) )
@@ -80,5 +89,11 @@ class Dialog():
         button_rect = pygame.Rect(xT3, yT3, button_width, self.button_height)
         pygame.draw.rect(self.surface, COLOR_BLACK, button_rect, 0)
 
+        if focus:
+            focus_rect = pygame.Rect(xT3+self.focus_margin, yT3+self.focus_margin, button_width-(self.focus_margin*2), self.button_height-(self.focus_margin*2))
+            pygame.draw.rect(self.surface, COLOR_DARK_GRAY, focus_rect, 0)
+
         txtMessage = self.font.render(message, True, COLOR_WHITE)
         self.surface.blit(txtMessage, (xT3-(self.font.size(message)[0]/2) + (button_width/2) , yT3-(self.font.size(message)[1]/2) + self.button_height/2) )
+
+        return button_rect
