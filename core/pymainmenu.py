@@ -546,7 +546,18 @@ class PyMainMenu(MainPyGame, SquaredMenu, SimpleMenu, DownloadProgressBar):
             centered=True,
             aid=True,
             list=settings,
-            parent=self
+            parent=self,
+            enabledDialog=True,
+            questionTitle="Save changes",
+            questionMessage="Do you want to save changes?",
+            answerds=[
+                {
+                    "title" : "Yes"
+                },
+                {
+                    "title" : "No"
+                }
+            ]
         )
 
         # reload settings in memory (for background)

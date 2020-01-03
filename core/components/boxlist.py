@@ -18,8 +18,7 @@ from core.components.dialog import Dialog
 
 class BoxList():
 
-    def __init__(self, width, height, x, y, margin, visibleOptions, padding, surface, list, centered=True, aid=False,
-                 parent=None):
+    def __init__(self, width, height, x, y, margin, visibleOptions, padding, surface, list, centered=True, aid=False, parent=None, enabledDialog=True,questionTitle="Question",questionMessage="Do you want to accept?",answerds=[{"title":"Yes"},{"title":"No"}]):
         self.width = width
         self.height = height
         self.x = x
@@ -39,6 +38,10 @@ class BoxList():
         self.keyboard = VirtualKeyboard()
         self.parent = parent
         self.dialog = None
+        self.questionTitle = questionTitle
+        self.questionMessage = questionMessage
+        self.answerds = answerds
+        self.enabledDialog = enabledDialog
 
     def show(self):
         # display options
@@ -79,15 +82,8 @@ class BoxList():
                         if self.keyboard.state == 1:
                             self.keyboard.state = 0
                         else:  # no keyboard ->
-                            if self.dialog is None:
-                                options = [
-                                    {
-                                        "title": "Yes"
-                                    },{
-                                        "title": "No"
-                                    }
-                                ]
-                                self.dialog = Dialog(surface=self.surface, title="Question", message="Do you want to save changes?", options=options)
+                            if self.dialog is None and self.enabledDialog:
+                                self.dialog = Dialog(surface=self.surface, title=self.questionTitle, message=self.questionMessage, options=self.answerds)
                             else:
                                 options = None
                                 self.dialog = None
@@ -205,11 +201,11 @@ class BoxList():
                 self.list[i]["selected"] = choices[i]
         if self.dialog is not None and dialogSelected == 0:
             self.dialog = None
-            logger.debug("returning list to be saved")
+            logger.debug("returning list to be used")
             return self.list  # items updated to be saved
         else:
             self.dialog = None
-            logger.debug("returning none to discart changes")
+            logger.debug("returning none to indicate not use")
             return None
 
     def consumer(self, text):
