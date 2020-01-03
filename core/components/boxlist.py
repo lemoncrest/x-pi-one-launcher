@@ -14,6 +14,7 @@ logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 from core.constants import *
+from core.components.dialog import Dialog
 
 class BoxList():
 
@@ -37,6 +38,7 @@ class BoxList():
         self.aid = aid
         self.keyboard = VirtualKeyboard()
         self.parent = parent
+        self.dialog = None
 
     def show(self):
         # display options
@@ -55,12 +57,13 @@ class BoxList():
             if "selected" in self.list[i]:
                 index = self.list[i]["selected"]
             choices.append(index)
-
+        options = None
+        dialogSelected = 0
         while not exit:
             self.parent.clock.tick(FPS)
 
             events = pygame.event.get()
-            logger.debug("boxlist event %s" % str(events))
+            #logger.debug("boxlist event %s" % str(events))
 
             for event in events:
                 try:
@@ -75,27 +78,63 @@ class BoxList():
                     if event.key == pygame.K_ESCAPE:
                         if self.keyboard.state == 1:
                             self.keyboard.state = 0
-                        else:  # no keyboard -> exit
-                            exit = True
+                        else:  # no keyboard ->
+                            if self.dialog is None:
+                                options = [
+                                    {
+                                        "title": "Yes"
+                                    },{
+                                        "title": "No"
+                                    }
+                                ]
+                                self.dialog = Dialog(surface=self.surface, title="Question", message="Do you want to save changes?", options=options)
+                            else:
+                                options = None
+                                self.dialog = None
+                                exit = True
                     elif event.key == pygame.K_UP:
-                        if selected > 0:
-                            selected -= 1
+                        if self.dialog is not None and self.dialog.active:
+                            if dialogSelected > 0:
+                                dialogSelected -=1
+                        else:
+                            if selected > 0:
+                                selected -= 1
                     elif event.key == pygame.K_DOWN:
-                        if selected < len(self.list) - 1:
-                            selected += 1
+                        if self.dialog is not None and self.dialog.active:
+                            if dialogSelected < len(options) - 1:
+                                dialogSelected += 1
+                        else:
+                            if selected < len(self.list) - 1:
+                                selected += 1
                     elif event.key == pygame.K_LEFT:
-                        if choices[selected] > 0:
-                            choices[selected] -= 1
+                        if self.dialog is not None and self.dialog.active:
+                            if dialogSelected > 0:
+                                dialogSelected -= 1
+                        else:
+                            if choices[selected] > 0:
+                                choices[selected] -= 1
                     elif event.key == pygame.K_RIGHT:
-                        if "choices" in self.list[selected]:
-                            if choices[selected] < len(self.list[selected]["choices"]) - 1:
-                                choices[selected] += 1
+                        if self.dialog is not None and self.dialog.active:
+                            if dialogSelected < len(options) - 1:
+                                dialogSelected += 1
+                        else:
+                            if "choices" in self.list[selected]:
+                                if choices[selected] < len(self.list[selected]["choices"]) - 1:
+                                    choices[selected] += 1
 
                     elif event.key == pygame.K_RETURN:
-                        if "txt" in self.list[selected]:
-                            text = self.keyboard.run(self.surface, self.list[selected]["txt"])
-                            self.list[selected]["txt"] = text
-                            self.parent.main_background()
+                        if self.dialog is not None and self.dialog.active:
+                            logger.debug("launching action: %s" % (options[dialogSelected]))
+                            if "action" in options[dialogSelected]:
+                                options[dialogSelected]["action"]()
+                            self.dialog.active = False
+                            self.changes = True
+                            exit = True
+                        else:
+                            if "txt" in self.list[selected]:
+                                text = self.keyboard.run(self.surface, self.list[selected]["txt"])
+                                self.list[selected]["txt"] = text
+                                self.parent.main_background()
                 elif event.type == pygame.JOYBUTTONDOWN:
                     if event.button == 1:  # button A - enter
                         if "txt" in self.list[selected]:
@@ -123,7 +162,28 @@ class BoxList():
                         elif event.value < 0:
                             if choices[selected] > 0:
                                 choices[selected] -= 1
-
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if options is not None:
+                        if self.dialog is not None and self.dialog.active:
+                            for i in range(0, len(options)):
+                                option = options[i]
+                                if option["rectangle"].collidepoint(event.pos):
+                                    dialogSelected = i
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    if options is not None:
+                        if self.dialog is not None and self.dialog.active:
+                            newSelected = -1
+                            for i in range(0, len(options)):
+                                option = options[i]
+                                if option["rectangle"].collidepoint(event.pos):
+                                    newSelected = i
+                            if newSelected == dialogSelected:
+                                logger.debug("launching action: %s" % (options[dialogSelected]))
+                                if "action" in options[dialogSelected]:
+                                    options[dialogSelected]["action"]()
+                                self.dialog.active = False
+                                self.changes = True
+                                exit = True
             if self.keyboard.state == 0:
 
                 # display all options
@@ -135,13 +195,22 @@ class BoxList():
                 if self.aid:
                     self.displayAid(selected, sizeX, sizeY)
 
+                if self.dialog is not None:
+                    options = self.dialog.draw(focus=dialogSelected)
+
             pygame.display.flip()  # update
 
         for i in range(0, len(choices)):
             if "selected" in self.list[i]:
                 self.list[i]["selected"] = choices[i]
-
-        return self.list  # items updated to be saved
+        if self.dialog is not None and dialogSelected == 0:
+            self.dialog = None
+            logger.debug("returning list to be saved")
+            return self.list  # items updated to be saved
+        else:
+            self.dialog = None
+            logger.debug("returning none to discart changes")
+            return None
 
     def consumer(self, text):
         logger.debug('Current text : %s' % text)

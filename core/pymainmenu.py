@@ -34,9 +34,10 @@ from core.partner.gog import GOG
 from core.partner.itch import Itch
 from core.components.dialog import Dialog
 from core.components.simplenotification import SimpleNotification
+from core.components.mainpygame import MainPyGame
 
 
-class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
+class PyMainMenu(MainPyGame, SquaredMenu, SimpleMenu, DownloadProgressBar):
 
     def __init__(self):
         # init
@@ -52,7 +53,6 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
         #self.surface = pygame.display.set_mode(WINDOW_SIZE)
         self.clock = pygame.time.Clock()
         pygame.display.set_caption('Menu principal')
-        self.upbar = UpBar(surface=self.surface)
         self.gog = None #TODO check if it could be serialized, stored, restored and synchronized with background process
         self.itch = None
 
@@ -68,25 +68,6 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
         self.dialog.draw()
 
         self.drawMainMenu()
-
-    def loadSettings(self):
-        self.on = False
-        self.file = None
-        with open(os.path.join(PATH, 'config/configuration.json'), 'r') as json_file:
-            self.data = json.load(json_file)
-        for setting in self.data:
-            if "id" in setting and "selected" in setting and "choices" in setting:
-                if setting["id"] == "wallpaper-file":
-                    selected = setting["selected"]
-                    self.file = setting["choices"][selected]
-                elif setting["id"] == "wallpaper":
-                    self.on = setting["choices"][setting["selected"]] == "Yes"
-        if self.on and self.file is not None:  # play background music
-            # now draw image if exists
-            filename = os.path.join(PATH, "assert/wallpapers", self.file)
-
-            picture = pygame.image.load(filename)
-            self.pic = pygame.transform.scale(picture, WINDOW_SIZE)
 
     def navigateGOG(self):
         self.main_background()
@@ -286,7 +267,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
     #used to get widgets updated
     def lastTimeWorker(self):
         if self.lastTime + timedelta(seconds=1) > datetime.now():
-            logger.debug("refreshing time at %s " % datetime.now())
+            #logger.debug("refreshing time at %s " % datetime.now())
             self.lastTime = datetime.now()
             self.upbar.drawTime()
             self.changes = False
@@ -295,6 +276,8 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
         exit = False
         selected = 0
         self.changes = True
+        #build component
+        self.upbar = UpBar(surface=self.surface)
 
         # colored background
         self.main_background()
@@ -327,7 +310,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
             if (self.notification is not None and self.notification.active): #TODO
                 if (self.notification is not None and self.notification.active):
                     hiddenNotification = datetime.now()
-                    logger.debug("updating when notification is shown... %s" % hiddenNotification)
+                    #logger.debug("updating when notification is shown... %s" % hiddenNotification)
             elif hiddenNotification is not None and hiddenNotification+timedelta(seconds=1) > datetime.now():
                 if not refreshed:
                     self.main_background()
@@ -514,50 +497,6 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
 
             pygame.display.flip()
 
-    def quit(self):
-        logger.debug("Bye bye!")
-        quit()
-
-    def initJoysticks(self):
-        pygame.joystick.init()
-        self.joystick = None
-        self.joysticks = []
-
-        # Enumerate joysticks
-        for i in range(0, pygame.joystick.get_count()):
-            self.joysticks.append(pygame.joystick.Joystick(i).get_name())
-
-        # By default, load the first available joystick.
-        if (len(self.joysticks) > 0):
-            self.joystick = pygame.joystick.Joystick(0)
-            self.joystick.init()
-        try:
-            max_joy = max(self.joystick.get_numaxes(),
-                          self.joystick.get_numbuttons(),
-                          self.joystick.get_numhats())
-        except:
-            logger.debug("no controllers found")
-            pass
-
-    def playMusicFromSettings(self):
-        on = False
-        file = None
-        data = []
-        with open(os.path.join(PATH,'config/configuration.json'), 'r') as json_file:
-            data = json.load(json_file)
-
-        for setting in data:
-            if "id" in setting and "selected" in setting and "choices" in setting:
-                if setting["id"] == "music-file":
-                    file = setting["choices"][setting["selected"]]
-                elif setting["id"] == "music":
-                    on = setting["choices"][setting["selected"]] == "Yes"
-        pygame.mixer.init()
-        pygame.mixer.music.stop()
-        if on and file is not None:  # play background music
-            self.music = pygame.mixer.music.load(os.path.join(PATH, "assert/music", file))
-            pygame.mixer.music.play(-1)
-
     def drawComponents(self):
         self.upbar.draw()
 
@@ -615,16 +554,17 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
         # refresh music if needed
 
         newSettings = self.listbox.show()
-        with open(os.path.join(PATH, 'config/configuration.json'), 'w') as json_file:
-            json.dump(newSettings, json_file, indent=4)
-        for newSetting in newSettings:
-            if newSetting["id"] == "music":
-                newMusic = newSetting["choices"][newSetting["selected"]] == "Yes"
-            elif newSetting["id"] == "music-file":
-                newMusicFile = newSetting["choices"][newSetting["selected"]]
+        if newSettings is not None:
+            with open(os.path.join(PATH, 'config/configuration.json'), 'w') as json_file:
+                json.dump(newSettings, json_file, indent=4)
+            for newSetting in newSettings:
+                if newSetting["id"] == "music":
+                    newMusic = newSetting["choices"][newSetting["selected"]] == "Yes"
+                elif newSetting["id"] == "music-file":
+                    newMusicFile = newSetting["choices"][newSetting["selected"]]
 
-        if music != newMusic or newMusicFile != musicFile:
-            self.playMusicFromSettings()
+            if music != newMusic or newMusicFile != musicFile:
+                self.playMusicFromSettings()
 
         self.main_background()
 
