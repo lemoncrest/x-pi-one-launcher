@@ -8,10 +8,6 @@ logger = logging.getLogger(__name__)
 
 class MainPyGame():
 
-    def quit(self):
-        logger.debug("Bye bye!")
-        quit()
-
     def initJoysticks(self):
         pygame.joystick.init()
         self.joystick = None

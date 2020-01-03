@@ -35,7 +35,7 @@ from core.partner.itch import Itch
 from core.components.dialog import Dialog
 from core.components.simplenotification import SimpleNotification
 from core.components.mainpygame import MainPyGame
-
+from core.components.floatlist import FloatList
 
 class PyMainMenu(MainPyGame, SquaredMenu, SimpleMenu, DownloadProgressBar):
 
@@ -499,6 +499,22 @@ class PyMainMenu(MainPyGame, SquaredMenu, SimpleMenu, DownloadProgressBar):
 
     def drawComponents(self):
         self.upbar.draw()
+
+    def quit(self):
+
+        options = [
+            {
+                "title" : "Apagar el sistema"
+            },{
+                "title" : "Reiniciar"
+            },{
+                "title" : "Salir a la consola"
+            }
+        ]
+
+        floatList = FloatList(surface=self.surface,clock=self.clock,options=options)
+        floatList.draw()
+        quit()
 
     def main_background(self):
 
