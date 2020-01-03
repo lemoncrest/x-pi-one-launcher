@@ -283,18 +283,19 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
                 # colored background
                 self.main_background()
 
-                # now draw menus
-                rectangles = self.drawSquaredMenus(menus, selected, visibleOptions)
-
                 # draw components
                 self.drawComponents()  # at this moment bars
 
                 # clean events, needs to be after drawComponents
                 self.changes = False
 
+            # now draw menus
+            rectangles = self.drawSquaredMenus(menus, selected, visibleOptions)
+
             if lastTime+timedelta(seconds=1) > datetime.now():
                 lastTime = datetime.now()
                 self.upbar.drawTime()
+                self.changes = False
 
             # get events and configure
             events = pygame.event.get()
@@ -437,6 +438,7 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
                             if "action" in options[selected]:
                                 options[selected]["action"]()
                             self.dialog.active = False
+                            self.changes = True
                     else:
                         # normal part
                         i = 0

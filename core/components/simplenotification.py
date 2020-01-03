@@ -83,10 +83,10 @@ class SimpleNotification():
         #notification displayed
         firstDatetime = datetime.now()
         while bool(firstDatetime+timedelta(seconds=self.seconds) > datetime.now()):
-
+            refresh = True
             self.clock.tick(FPS)
             if refresh or self.parent.changes: #fix for avoid the blink
-                refresh = False
+                #refresh = False
 
                 notificationRect = pygame.Rect(rect_x, rect_y, width, height) #TODO, review
 
