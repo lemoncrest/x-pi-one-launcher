@@ -2,6 +2,10 @@ import pygame
 from core.constants import *
 from core.colors import *
 
+import logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 class FloatList():
 
     def __init__(self,surface,clock,options,margin=25,padding=25):
@@ -28,7 +32,17 @@ class FloatList():
 
             events = pygame.event.get()
             for event in events:
-                exit = True #TODO put events
+                #exit = True #TODO put events
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    # normal part
+                    i = 0
+                    for rectangle in rectangles:
+                        if rectangle.collidepoint(event.pos):
+
+                            logger.debug("I will launch and select position %s" % i)
+                            self.options[i]["action"]()
+
+                        i += 1
 
             pygame.display.flip()
 

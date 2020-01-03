@@ -504,17 +504,19 @@ class PyMainMenu(MainPyGame, SquaredMenu, SimpleMenu, DownloadProgressBar):
 
         options = [
             {
-                "title" : "Apagar el sistema"
+                "title" : "Apagar el sistema",
+                "action": quit
             },{
-                "title" : "Reiniciar"
+                "title" : "Reiniciar",
+                "action" : quit
             },{
-                "title" : "Salir a la consola"
+                "title" : "Salir a la consola",
+                "action" : quit
             }
         ]
 
         floatList = FloatList(surface=self.surface,clock=self.clock,options=options)
         floatList.draw()
-        quit()
 
     def main_background(self):
 
