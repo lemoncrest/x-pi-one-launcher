@@ -57,8 +57,8 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
         self.itch = None
 
     def main(self):
-        notification = SimpleNotification(surface=self.surface,clock=self.clock,parent=self)
-        notification.showNotification(text='dev revision')
+        self.notification = SimpleNotification(surface=self.surface,clock=self.clock,parent=self)
+        self.notification.showNotification(text='dev revision')
         options = [
             {
                 "title" : "Aceptar"
@@ -266,38 +266,84 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
         )
         self.cardmenu.show()
 
+    #used to refresh main menu
+    def drawMainMenuComponents(self,menus,selected,visibleOptions):
+        # draw components
+        #self.drawComponents()  # at this moment bars
+        self.upbar.drawBackground()
+        self.upbar.refresh()
+        self.upbar.menu.draw()
+        #self.upbar.drawWidgets()
+
+        # clean events, needs to be after drawComponents
+        self.changes = False
+
+        # now draw menus
+        rectangles = self.drawSquaredMenus(menus, selected, visibleOptions)
+
+        return rectangles
+
+    #used to get widgets updated
+    def lastTimeWorker(self):
+        if self.lastTime + timedelta(seconds=1) > datetime.now():
+            logger.debug("refreshing time at %s " % datetime.now())
+            self.lastTime = datetime.now()
+            self.upbar.drawTime()
+            self.changes = False
+
     def manageMainEvents(self, menus, visibleOptions=4):  # TODO
         exit = False
         selected = 0
         self.changes = True
-        lastTime = datetime.now()
 
         # colored background
         self.main_background()
+
+        refreshed = False
+
+        self.lastTime = datetime.now()
+
+        hiddenNotification = None
 
         while not exit:
 
             self.clock.tick(FPS)
 
             if self.changes:
-                # colored background
+                # clean and put background
                 self.main_background()
 
-                # draw components
-                self.drawComponents()  # at this moment bars
+                rectangles = self.drawMainMenuComponents(menus, selected, visibleOptions)
 
-                # clean events, needs to be after drawComponents
-                self.changes = False
+                # clear events
+                pygame.event.clear()
 
-            # now draw menus
-            rectangles = self.drawSquaredMenus(menus, selected, visibleOptions)
+            if hiddenNotification is not None:
+                self.changes = True
+                if hiddenNotification + timedelta(seconds=1) > datetime.now():
+                    #self.notification = None
+                    pass
 
-            if lastTime+timedelta(seconds=1) > datetime.now():
-                lastTime = datetime.now()
-                self.upbar.drawTime()
-                self.changes = False
+            if (self.notification is not None and self.notification.active): #TODO
+                if (self.notification is not None and self.notification.active):
+                    hiddenNotification = datetime.now()
+                    logger.debug("updating when notification is shown... %s" % hiddenNotification)
+            elif hiddenNotification is not None and hiddenNotification+timedelta(seconds=1) > datetime.now():
+                if not refreshed:
+                    self.main_background()
+                    rectangles = self.drawMainMenuComponents(menus, selected, visibleOptions)
+                    refreshed = True
+                    logger.debug("launched one refresh of the components before wait 1 second of last notification was hidden")
+            elif hiddenNotification is not None:
+                logger.debug("launched final refresh of the components after 1 second of last notification was hidden")
+                hiddenNotification = None
+                if self.notification:
+                    self.main_background()
+                    rectangles = self.drawMainMenuComponents(menus, selected, visibleOptions)
 
-            # get events and configure
+            self.lastTimeWorker()
+
+            # DEBUG: get events and configure
             events = pygame.event.get()
             if len(events) != 0:
                 logger.debug("mainEvent event %s" % str(events))
@@ -360,6 +406,8 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
                         else:
                             #normal part
                             menus[selected]["action"]()
+                            self.changes = True
+                            self.lastTime = datetime.now()
                     elif event.key == pygame.K_f:
                         if self.surface.get_flags() & pygame.FULLSCREEN:
                             pygame.display.set_mode(WINDOW_SIZE)
@@ -400,6 +448,8 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
                         self.changes = True
                         if event.button == 1:  # button A - enter
                             menus[selected]["action"]()
+                            self.changes = True
+                            self.lastTime = datetime.now()
                         elif event.button == 2:  # button B - back
                             exit = True
 
@@ -458,6 +508,8 @@ class PyMainMenu(SquaredMenu, SimpleMenu, DownloadProgressBar):
                                 selected = (start + i)
                                 if launch:
                                     menus[selected]["action"]()
+                                    self.changes = True
+                                    self.lastTime = datetime.now()
                             i += 1
 
             pygame.display.flip()

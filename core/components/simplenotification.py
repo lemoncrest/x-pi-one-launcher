@@ -29,6 +29,7 @@ class SimpleNotification():
         self.up = up
         self.right = right
         self.parent = parent
+        self.active = False
 
     def showNotification(self,text="Default notification", seconds=4):
         if not self.up:
@@ -43,6 +44,7 @@ class SimpleNotification():
 
 
     def worker(self):
+        self.active = True
         firstDatetime = datetime.now()
 
         refresh = True
@@ -114,6 +116,7 @@ class SimpleNotification():
             self.parent.changes = True
 
         #clean background
-        self.parent.main_background()
+        #self.parent.main_background()
         #order redraw componentes
         self.parent.changes = True
+        self.active = False
