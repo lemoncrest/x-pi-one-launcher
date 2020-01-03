@@ -28,7 +28,7 @@ class FloatList():
 
             if self.changes:
                 self.drawMainRectangle()
-                rectangles = self.drawOptions()
+                rectangles = self.drawOptions(selected)
 
             events = pygame.event.get()
             for event in events:
@@ -38,11 +38,47 @@ class FloatList():
                     i = 0
                     for rectangle in rectangles:
                         if rectangle.collidepoint(event.pos):
-
                             logger.debug("I will launch and select position %s" % i)
                             self.options[i]["action"]()
-
+                            exit = True
                         i += 1
+                elif event.type == pygame.JOYBUTTONDOWN:
+                    # normal part
+                    self.changes = True
+                    if event.button == 1:  # button A - execute
+                        self.options[i]["action"]()
+                        exit = True
+                    elif event.button == 2:  # button B - back
+                        exit = True
+                elif event.type == pygame.JOYAXISMOTION:
+                    self.changes = True
+                    if event.axis == 1:  # up and down
+                        if event.value > 0:
+                            if selected < len(self.options) - 1:
+                                selected += 1
+                        elif event.value < 0:
+                            if selected > 0:
+                                selected -= 1
+                    elif event.axis == 0:  # left and right
+                        if event.value > 0:
+                            # normal part
+                            if selected < len(self.options) - 1:
+                                selected += 1
+                        elif event.value < 0:
+                            if selected > 0:
+                                selected -= 1
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_UP:
+                        if selected > 0:
+                            selected -= 1
+                    elif event.key == pygame.K_DOWN:
+                        if selected < len(self.options) - 1:
+                            selected += 1
+                    elif event.key == pygame.K_ESCAPE:
+                        exit = True
+                    elif event.key == pygame.K_RETURN:
+                        self.options[i]["action"]()
+                        exit = True
 
             pygame.display.flip()
 
@@ -70,22 +106,28 @@ class FloatList():
         background_rect = pygame.Rect(self.x, self.y, self.sizeX, self.sizeY)
         pygame.draw.rect(self.surface, COLOR_GRAY, background_rect, 0)
 
-    def drawOptions(self):
+    def drawOptions(self,focus=0):
         rectangles = []
         for i in range(len(self.options)):
             option = self.options[i]
-            rectangle = self.drawOption(option,i)
+            rectangle = self.drawOption(option,i,focus==i)
             rectangles.append(rectangle)
 
         return rectangles
 
-    def drawOption(self,option,i):
+    def drawOption(self,option,i,focus=False):
         total = len(self.options)
         #background rectangle
         x = self.x+self.margin
         y = self.y+((self.margin*2*i)+self.margin) + (self.maxY*i)
         button_rect = pygame.Rect(x, y, self.maxX, self.maxY)
         pygame.draw.rect(self.surface, COLOR_LIGHT_GRAY, button_rect, 0)
+
+        #focus rectangle
+        if focus:
+            button_rect = pygame.Rect(x+self.margin, y+self.margin, self.maxX-(self.margin*2), self.maxY-(self.margin*2))
+            pygame.draw.rect(self.surface, COLOR_LIGHT_GREEN, button_rect, 0)
+
         #text
         txt = self.font.render(option["title"], True, COLOR_BLACK)
         xT = (WINDOW_SIZE[0]-self.font.size(option["title"])[0]) / 2
