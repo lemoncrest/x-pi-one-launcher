@@ -17,6 +17,10 @@ class FloatList():
         self.padding = padding
         self.font = pygame.font.Font(None, 30)
         self.maxX = 0
+        self.focusMargin = 5
+        self.focus_color = COLOR_BLUE
+        self.background_option_color = COLOR_LIGHT_GRAY
+        self.font_color = COLOR_BLACK
 
     def draw(self):
 
@@ -121,15 +125,15 @@ class FloatList():
         x = self.x+self.margin
         y = self.y+((self.margin*2*i)+self.margin) + (self.maxY*i)
         button_rect = pygame.Rect(x, y, self.maxX, self.maxY)
-        pygame.draw.rect(self.surface, COLOR_LIGHT_GRAY, button_rect, 0)
+        pygame.draw.rect(self.surface, self.background_option_color, button_rect, 0)
 
         #focus rectangle
         if focus:
-            button_rect = pygame.Rect(x+self.margin, y+self.margin, self.maxX-(self.margin*2), self.maxY-(self.margin*2))
-            pygame.draw.rect(self.surface, COLOR_LIGHT_GREEN, button_rect, 0)
+            button_rect = pygame.Rect(x+self.focusMargin, y+self.focusMargin, self.maxX-(self.focusMargin*2), self.maxY-(self.focusMargin*2))
+            pygame.draw.rect(self.surface, self.focus_color, button_rect, 0)
 
         #text
-        txt = self.font.render(option["title"], True, COLOR_BLACK)
+        txt = self.font.render(option["title"], True, self.font_color)
         xT = (WINDOW_SIZE[0]-self.font.size(option["title"])[0]) / 2
         yT = y + ((self.maxY - self.font.size(option["title"])[1]) / 2)
         self.surface.blit(txt, (xT, yT))
