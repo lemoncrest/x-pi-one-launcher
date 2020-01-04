@@ -21,12 +21,16 @@ class FloatList():
         self.focus_color = COLOR_BLUE
         self.background_option_color = COLOR_LIGHT_GRAY
         self.font_color = COLOR_BLACK
+        self.background_alpha = COLOR_BLACK + (ALPHA,)
+        self.background = pygame.Surface((WINDOW_SIZE[0], WINDOW_SIZE[1]), pygame.SRCALPHA)
 
     def draw(self):
 
         exit = False
         selected = 0
         rectangles = None
+        pygame.draw.rect(self.background, self.background_alpha, (0, 0, WINDOW_SIZE[0], WINDOW_SIZE[1]))
+        self.surface.blit(self.background, (0, 0))
         while not exit:
             self.clock.tick(FPS)
 

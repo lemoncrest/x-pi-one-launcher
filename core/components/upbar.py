@@ -2,7 +2,6 @@
 import pygame
 import os
 from core.colors import *
-from core.utils import Utils
 from core.components.menu import Menu
 from datetime import datetime
 from core.constants import *
