@@ -36,9 +36,10 @@ class UpBar():
 
     def drawWidgets(self):
         #first time
-        width = self.drawTime()
+        widthTime = self.drawTime()
         #next audio
-        width = self.drawAudio(start=width)
+        widthAudio = self.drawAudio(start=widthTime)
+        #widthAudio2 = self.drawAudio(start=widthTime+widthAudio)
 
     def drawAudio(self,start):
         cmd = "amixer -D pulse sget Master | grep 'Left:' | awk -F'[][]' '{ print $2 }'"
@@ -48,15 +49,18 @@ class UpBar():
         level = level[:len(level)-2] #remove % character
         width = self.font.size(level)[0] + (self.margin * 2)
         height = self.font.size(level)[1] + (self.margin * 2)
-        rect = pygame.Rect(WINDOW_SIZE[0] - width - start, 0, width, height)
-        self.surface.blit(self.bar, rect)
+        x = WINDOW_SIZE[0] - width - start
+        rect = pygame.Rect(x, 0, width, BARSIZE)
+        pygame.draw.rect(self.surface,COLOR_BLACK,rect)
+        #self.surface.blit(self.bar, rect)
+        #pygame.display.update(rect)
         txt = self.font.render(level, True, COLOR_WHITE)
         x = WINDOW_SIZE[0] - width - start + self.margin
         y = height / 2
         textPoint = (x, y)
         self.surface.blit(txt, textPoint)
 
-        #os.system(cmd)
+        return width
 
     def drawTime(self):
 
@@ -67,8 +71,9 @@ class UpBar():
         #white_with_alpha = COLOR_WHITE + (ALPHA,)
         #rect = pygame.draw.rect(self.bar, white_with_alpha, (WINDOW_SIZE[0]-width, 0, width, BARSIZE))
 
-        rect = pygame.Rect(WINDOW_SIZE[0]-width, 0, width, height)
-        self.surface.blit(self.bar, rect)
+        rect = pygame.Rect(WINDOW_SIZE[0]-width, 0, width, BARSIZE)
+        #self.surface.blit(self.bar, rect)
+        pygame.draw.rect(self.surface, COLOR_BLACK, rect)
 
         txt = self.font.render(text, True, COLOR_WHITE)
 
