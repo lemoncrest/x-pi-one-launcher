@@ -1,6 +1,7 @@
 # coding=utf-8
 import pygame
 import os
+import subprocess
 from core.colors import *
 from core.components.menu import Menu
 from datetime import datetime
@@ -34,8 +35,28 @@ class UpBar():
         self.surface.blit(self.bar, (0, 0))
 
     def drawWidgets(self):
+        #first time
         width = self.drawTime()
+        #next audio
+        width = self.drawAudio(start=width)
 
+    def drawAudio(self,start):
+        cmd = "amixer -D pulse sget Master | grep 'Left:' | awk -F'[][]' '{ print $2 }'"
+        proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+        (out, err) = proc.communicate()
+        level = out.decode("utf-8")
+        level = level[:len(level)-2] #remove % character
+        width = self.font.size(level)[0] + (self.margin * 2)
+        height = self.font.size(level)[1] + (self.margin * 2)
+        rect = pygame.Rect(WINDOW_SIZE[0] - width - start, 0, width, height)
+        self.surface.blit(self.bar, rect)
+        txt = self.font.render(level, True, COLOR_WHITE)
+        x = WINDOW_SIZE[0] - width - start + self.margin
+        y = height / 2
+        textPoint = (x, y)
+        self.surface.blit(txt, textPoint)
+
+        #os.system(cmd)
 
     def drawTime(self):
 
@@ -46,7 +67,7 @@ class UpBar():
         #white_with_alpha = COLOR_WHITE + (ALPHA,)
         #rect = pygame.draw.rect(self.bar, white_with_alpha, (WINDOW_SIZE[0]-width, 0, width, BARSIZE))
 
-        rect = pygame.Rect(WINDOW_SIZE[0]-width, 0, width, BARSIZE)
+        rect = pygame.Rect(WINDOW_SIZE[0]-width, 0, width, height)
         self.surface.blit(self.bar, rect)
 
         txt = self.font.render(text, True, COLOR_WHITE)

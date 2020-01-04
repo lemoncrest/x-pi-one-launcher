@@ -269,7 +269,7 @@ class PyMainMenu(MainPyGame, SquaredMenu, SimpleMenu, DownloadProgressBar):
         if self.lastTime + timedelta(seconds=1) > datetime.now():
             #logger.debug("refreshing time at %s " % datetime.now())
             self.lastTime = datetime.now()
-            self.upbar.drawTime()
+            self.upbar.drawWidgets()
             self.changes = False
 
     def manageMainEvents(self, menus, visibleOptions=4):  # TODO
