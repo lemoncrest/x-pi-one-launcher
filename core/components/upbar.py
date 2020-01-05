@@ -84,6 +84,7 @@ class UpBar():
                 txt = self.font.render("X", True, COLOR_RED)
                 textPoint = (init + self.padding*2, y)
                 self.surface.blit(txt, textPoint)
+            width = WINDOW_SIZE[0] - init - start
 
         return width
 
