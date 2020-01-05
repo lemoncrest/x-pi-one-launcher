@@ -16,6 +16,7 @@ class UpBar():
         self.font = pygame.font.Font(os.path.join(PATH,"assert/fonts","DejaVuSans.ttf"), FONT_SIZE)
         self.menu = Menu(title="Menu", first=(0,0) ,parent=(WINDOW_SIZE[0],BARSIZE), font=self.font, surface=self.surface)
         self.margin = 5
+        self.padding = 2
 
     def draw(self):
         self.drawBackground()
@@ -47,18 +48,38 @@ class UpBar():
         (out, err) = proc.communicate()
         level = out.decode("utf-8")
         level = level[:len(level)-2] #remove % character
-        width = self.font.size(level)[0] + (self.margin * 2)
-        height = self.font.size(level)[1] + (self.margin * 2)
-        x = WINDOW_SIZE[0] - width - start
-        rect = pygame.Rect(x, 0, width, BARSIZE)
-        pygame.draw.rect(self.surface,COLOR_BLACK,rect)
-        #self.surface.blit(self.bar, rect)
-        #pygame.display.update(rect)
-        txt = self.font.render(level, True, COLOR_WHITE)
-        x = WINDOW_SIZE[0] - width - start + self.margin
-        y = height / 2
-        textPoint = (x, y)
-        self.surface.blit(txt, textPoint)
+        number = False
+        if number:
+            width = self.font.size("100")[0] + (self.margin * 2) #max sized to be used in background
+            height = self.font.size(level)[1] + (self.margin * 2)
+            x = WINDOW_SIZE[0] - width - start
+            rect = pygame.Rect(x, 0, width, BARSIZE)
+            pygame.draw.rect(self.surface,COLOR_BLACK,rect)
+            #self.surface.blit(self.bar, rect)
+            #pygame.display.update(rect)
+            txt = self.font.render(level, True, COLOR_WHITE)
+            x = WINDOW_SIZE[0] - start
+            y = height / 2
+            textPoint = (x -self.margin*3 -self.padding*3 - (self.font.size(level)[0])/2, y)
+            self.surface.blit(txt, textPoint)
+        else:
+            top = 20
+            width = top*2 + (self.margin*2) + (self.padding*2)
+            height = top
+            x = WINDOW_SIZE[0] - width - start
+            y = (BARSIZE - height) / 2
+            rect = pygame.Rect(x - (self.padding*2) - (self.margin*2), 0, width + (self.padding*2)+ (self.margin*2), BARSIZE)
+            pygame.draw.rect(self.surface, COLOR_BLACK, rect)
+
+            #first display speaker
+            pygame.draw.polygon(self.surface,COLOR_WHITE,( (x+(top/2),y+0),(x+(top/4),y+(top/4)),(x+0,y+(top/4)),(x+0,y+(top*3/4)),(x+(top/4),y+(top*3/4)),(x+(top/2),y+top) ))
+            #next display bars
+            bars = int(int(level)/14)
+            barSize = 2
+            init = WINDOW_SIZE[0] - width - start + top / 2 + self.padding*2
+            for x in range(bars):
+                rect = pygame.Rect(init + self.padding*x*2, y, barSize, top)
+                pygame.draw.rect(self.surface,COLOR_WHITE,rect)
 
         return width
 
