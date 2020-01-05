@@ -53,7 +53,7 @@ class UpBar():
         except:
             level = 0 #no signal
             pass
-        
+
         barHeight = barWidth * 8
         width = (self.padding*2*totalBars) + (barWidth*totalBars) + (self.margin*2)
         #background
@@ -115,7 +115,11 @@ class UpBar():
             #first display speaker
             pygame.draw.polygon(self.surface,COLOR_WHITE,( (x+(top/2),y+0),(x+(top/4),y+(top/4)),(x+0,y+(top/4)),(x+0,y+(top*3/4)),(x+(top/4),y+(top*3/4)),(x+(top/2),y+top) ))
             #next display bars
-            bars = int(int(level)/14)
+            try:
+                bars = int(int(level)/14)
+            except:
+                bars = 0
+                pass
             barSize = 2
             init = WINDOW_SIZE[0] - width - start + top / 2 + self.padding*2
             if bars > 0:
