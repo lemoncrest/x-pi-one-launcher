@@ -37,11 +37,11 @@ class UpBar():
 
     def drawWidgets(self):
         #first time
-        widthTime = self.drawTime()
+        timeRect = self.drawTime()
         #next audio
-        widthAudio = self.drawAudio(start=widthTime)
+        audioRect = self.drawAudio(start=timeRect.width)
         #next wifi
-        widthWifi = self.drawWifi(start=(widthTime+widthAudio))
+        wifiRect = self.drawWifi(start=(timeRect.width+audioRect.width))
 
     def drawWifi(self,start,totalBars=10,barWidth=3):
         cmd = "awk 'NR==3 {print $4}''' /proc/net/wireless"
@@ -57,7 +57,7 @@ class UpBar():
         barHeight = barWidth * 8
         width = (self.padding*2*totalBars) + (barWidth*totalBars) + (self.margin*2)
         #background
-        x = WINDOW_SIZE[0] - start - width - (self.padding*2)
+        x = WINDOW_SIZE[0] - start - width
         rect = pygame.Rect(x, 0, width, BARSIZE)
         pygame.draw.rect(self.surface, COLOR_BLACK, rect)
 
@@ -81,6 +81,7 @@ class UpBar():
             yP = (BARSIZE - barHeight) - (self.font.size(".")[1] / 2)
             textPoint = (xP, yP)
             self.surface.blit(txt, textPoint)
+        return rect
 
 
 
@@ -90,6 +91,7 @@ class UpBar():
         (out, err) = proc.communicate()
         level = out.decode("utf-8")
         level = level[:len(level)-2] #remove % character
+        rect = None
         if number:
             width = self.font.size("100")[0] + (self.margin * 2) #max sized to be used in background
             height = self.font.size(level)[1] + (self.margin * 2)
@@ -109,7 +111,7 @@ class UpBar():
             height = top
             x = WINDOW_SIZE[0] - width - start
             y = (BARSIZE - height) / 2
-            rect = pygame.Rect(x - (self.padding*2) - (self.margin*2), 0, width + (self.padding*2)+ (self.margin*2), BARSIZE)
+            rect = pygame.Rect(x  - (self.margin*2), 0, width  + (self.margin*2), BARSIZE)
             pygame.draw.rect(self.surface, COLOR_BLACK, rect)
 
             #first display speaker
@@ -124,8 +126,8 @@ class UpBar():
             init = WINDOW_SIZE[0] - width - start + top / 2 + self.padding*2
             if bars > 0:
                 for x in range(bars):
-                    rect = pygame.Rect(init + self.padding*x*2, y, barSize, top)
-                    pygame.draw.rect(self.surface,COLOR_WHITE,rect)
+                    rect2 = pygame.Rect(init + self.padding*x*2, y, barSize, top)
+                    pygame.draw.rect(self.surface,COLOR_WHITE,rect2)
             if int(level)==0:
                 txt = self.font.render("X", True, COLOR_RED)
                 textPoint = (init + self.padding*2, y)
@@ -140,7 +142,7 @@ class UpBar():
 
             #width = top*2 + (self.margin*2) + (self.padding*2)
 
-        return width
+        return rect
 
     def drawTime(self):
 
@@ -164,4 +166,4 @@ class UpBar():
 
         #pygame.display.update(pygame.Rect(WINDOW_SIZE[0]-width, 0, width, BARSIZE))
 
-        return width
+        return rect
