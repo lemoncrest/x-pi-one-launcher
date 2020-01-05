@@ -40,7 +40,47 @@ class UpBar():
         widthTime = self.drawTime()
         #next audio
         widthAudio = self.drawAudio(start=widthTime)
-        #widthAudio2 = self.drawAudio(start=widthTime+widthAudio)
+        #next wifi
+        widthWifi = self.drawWifi(start=(widthTime+widthAudio))
+
+    def drawWifi(self,start,totalBars=10,barWidth=3):
+        cmd = "awk 'NR==3 {print $4}''' /proc/net/wireless"
+        proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+        (out, err) = proc.communicate()
+        level = out.decode("utf-8").replace(".","")
+        try:
+            level = 2*(int(level)+80) #dBm conversion to percentage
+        except:
+            level = 0 #no signal
+            pass
+        barHeight = barWidth * 8
+        width = (self.padding*2*totalBars) + (barWidth*totalBars) + (self.margin*2)
+        #background
+        x = WINDOW_SIZE[0] - start - width - (self.padding*2)
+        rect = pygame.Rect(x, 0, width, BARSIZE)
+        pygame.draw.rect(self.surface, COLOR_BLACK, rect)
+
+        #bars
+        if level==0: #when no signal them display red X
+            yP = int((BARSIZE - barHeight)/2)
+            txt = self.font.render("X", True, COLOR_RED)
+            textPoint = (x + (self.padding * (totalBars+1)  + (barWidth*totalBars/2)), yP)
+            self.surface.blit(txt, textPoint)
+        bars = int(level*totalBars/100)
+        for i in range(0,bars,1):
+            xP = x + self.padding * (i+1) * 2 + (barWidth*i) + self.margin
+            ySize = barHeight - int(barHeight/totalBars*i)
+            yP = int((BARSIZE - barHeight)/2) + (barHeight/totalBars*i)
+            rect = pygame.Rect(xP, yP, barWidth, ySize)
+            pygame.draw.rect(self.surface, COLOR_GREEN, rect)
+        for i in range(bars,totalBars,1):  # points
+            txt = self.font.render(".", True, COLOR_WHITE)
+            xP = x + self.padding * (i+1) * 2 + (barWidth*i) + self.margin
+            yP = (BARSIZE - barHeight) - (self.font.size(".")[1] / 2)
+            textPoint = (xP, yP)
+            self.surface.blit(txt, textPoint)
+
+
 
     def drawAudio(self,start,number=False):
         cmd = "amixer -D pulse sget Master | grep 'Left:' | awk -F'[][]' '{ print $2 }'"
@@ -80,11 +120,19 @@ class UpBar():
                 for x in range(bars):
                     rect = pygame.Rect(init + self.padding*x*2, y, barSize, top)
                     pygame.draw.rect(self.surface,COLOR_WHITE,rect)
-            elif int(level)==0:
+            if int(level)==0:
                 txt = self.font.render("X", True, COLOR_RED)
                 textPoint = (init + self.padding*2, y)
                 self.surface.blit(txt, textPoint)
-            width = WINDOW_SIZE[0] - init - start
+            else:
+                #put points in the base of the bars
+                for x in range(bars,int(100/14)): #7
+                    txt = self.font.render(".", True, COLOR_WHITE)
+                    xP = init + self.padding * x * 2
+                    textPoint = (xP, (height / 2) + (self.font.size(".")[1]/2) )
+                    self.surface.blit(txt, textPoint)
+
+            #width = top*2 + (self.margin*2) + (self.padding*2)
 
         return width
 
