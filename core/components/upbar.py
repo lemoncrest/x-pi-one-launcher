@@ -42,13 +42,12 @@ class UpBar():
         widthAudio = self.drawAudio(start=widthTime)
         #widthAudio2 = self.drawAudio(start=widthTime+widthAudio)
 
-    def drawAudio(self,start):
+    def drawAudio(self,start,number=False):
         cmd = "amixer -D pulse sget Master | grep 'Left:' | awk -F'[][]' '{ print $2 }'"
         proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
         (out, err) = proc.communicate()
         level = out.decode("utf-8")
         level = level[:len(level)-2] #remove % character
-        number = False
         if number:
             width = self.font.size("100")[0] + (self.margin * 2) #max sized to be used in background
             height = self.font.size(level)[1] + (self.margin * 2)
@@ -77,9 +76,14 @@ class UpBar():
             bars = int(int(level)/14)
             barSize = 2
             init = WINDOW_SIZE[0] - width - start + top / 2 + self.padding*2
-            for x in range(bars):
-                rect = pygame.Rect(init + self.padding*x*2, y, barSize, top)
-                pygame.draw.rect(self.surface,COLOR_WHITE,rect)
+            if bars > 0:
+                for x in range(bars):
+                    rect = pygame.Rect(init + self.padding*x*2, y, barSize, top)
+                    pygame.draw.rect(self.surface,COLOR_WHITE,rect)
+            elif int(level)==0:
+                txt = self.font.render("X", True, COLOR_RED)
+                textPoint = (init + self.padding*2, y)
+                self.surface.blit(txt, textPoint)
 
         return width
 
