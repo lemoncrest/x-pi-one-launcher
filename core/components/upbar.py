@@ -53,6 +53,7 @@ class UpBar():
         except:
             level = 0 #no signal
             pass
+        
         barHeight = barWidth * 8
         width = (self.padding*2*totalBars) + (barWidth*totalBars) + (self.margin*2)
         #background
@@ -69,8 +70,9 @@ class UpBar():
         bars = int(level*totalBars/100)
         for i in range(0,bars,1):
             xP = x + self.padding * (i+1) * 2 + (barWidth*i) + self.margin
-            ySize = barHeight - int(barHeight/totalBars*i)
-            yP = int((BARSIZE - barHeight)/2) + (barHeight/totalBars*i)
+            ySize = int(barHeight / totalBars * i)
+            yP = barHeight - ySize + BARSIZE/4#(barHeight)-(int((BARSIZE - barHeight)/2) + (barHeight/totalBars*i))
+
             rect = pygame.Rect(xP, yP, barWidth, ySize)
             pygame.draw.rect(self.surface, COLOR_GREEN, rect)
         for i in range(bars,totalBars,1):  # points
