@@ -19,8 +19,6 @@ from core.colors import *
 from core.components.upbar import UpBar
 
 from core.components.squaredmenu import SquaredMenu
-from core.components.simplemenu import SimpleMenu
-from core.components.downloadprogressbar import DownloadProgressBar
 from core.components.dialog import Dialog
 from core.components.simplenotification import SimpleNotification
 from core.components.mainpygame import MainPyGame
@@ -30,7 +28,7 @@ from core.section.repositorypygame import RepositoryPygame
 from core.section.settingspygame import SettingsPygame
 from core.section.quitpygame import QuitPygame
 
-class MenuPygame(MainPyGame, SquaredMenu, SimpleMenu, DownloadProgressBar, GOGPygame, ItchPygame, RepositoryPygame, SettingsPygame, QuitPygame):
+class MenuPygame(MainPyGame, SquaredMenu, GOGPygame, ItchPygame, RepositoryPygame, SettingsPygame, QuitPygame):
 
     def __init__(self):
         # init

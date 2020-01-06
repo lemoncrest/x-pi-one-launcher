@@ -10,7 +10,10 @@ from core.constants import *
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-class RepositoryPygame():
+from core.components.downloadprogressbar import DownloadProgressBar
+from core.components.simplemenu import SimpleMenu
+
+class RepositoryPygame(SimpleMenu,DownloadProgressBar):
 
     def navigateRepository(self):
         # clear screen
