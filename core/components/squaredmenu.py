@@ -6,9 +6,6 @@ from core.constants import PATH
 
 class SquaredMenu():
 
-    def __init__(self,surface=None):
-        self.surface = surface
-
     def drawSquaredMenus(self, menus, selected, visibleOptions):
         if visibleOptions>len(menus):
             visibleOptions = len(menus)
