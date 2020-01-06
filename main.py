@@ -2,8 +2,8 @@
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 
-from core.pymainmenu import PyMainMenu
+from core.section.menupygame import MenuPygame
 
 if __name__ == '__main__':
-    pymenu = PyMainMenu()
+    pymenu = MenuPygame()
     pymenu.main()
