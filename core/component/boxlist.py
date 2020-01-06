@@ -6,7 +6,7 @@ from __future__ import division
 import pygame
 from core.colors import *
 
-from core.components.keyboard import *
+from core.component.keyboard import *
 
 import logging
 
@@ -14,7 +14,7 @@ logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 from core.constants import *
-from core.components.dialog import Dialog
+from core.component.dialog import Dialog
 
 class BoxList():
 

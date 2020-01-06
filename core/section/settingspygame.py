@@ -1,7 +1,7 @@
 import os
 
 import json
-from core.components.boxlist import BoxList
+from core.component.boxlist import BoxList
 
 import logging
 

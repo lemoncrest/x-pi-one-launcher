@@ -1,7 +1,7 @@
 import pygame
 from core.utils import Utils
 from core.colors import *
-from core.components.button import Button
+from core.component.button import Button
 
 class Menu():
 

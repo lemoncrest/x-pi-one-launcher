@@ -14,7 +14,7 @@ from threading import Thread
 import logging
 logging.basicConfig()
 logger = logging.getLogger(__name__)
-from core.components.simplenotification import SimpleNotification
+from core.component.simplenotification import SimpleNotification
 
 
 class Itch():

@@ -10,8 +10,8 @@ from core.constants import *
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-from core.components.downloadprogressbar import DownloadProgressBar
-from core.components.simplemenu import SimpleMenu
+from core.component.downloadprogressbar import DownloadProgressBar
+from core.component.simplemenu import SimpleMenu
 
 class RepositoryPygame(SimpleMenu,DownloadProgressBar):
 

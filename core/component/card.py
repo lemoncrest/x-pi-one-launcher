@@ -2,7 +2,7 @@ import pygame
 
 from core.colors import *
 #from core.components.downloadprogressbar import DownloadProgressBar
-from core.components.progressbar import ProgressBar
+from core.component.progressbar import ProgressBar
 import logging
 logging.basicConfig()
 logger = logging.getLogger(__name__)

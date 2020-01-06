@@ -1,7 +1,7 @@
 import os
 import json
 
-from core.components.cardmenu import CardMenu
+from core.component.cardmenu import CardMenu
 from core.partner.itch import Itch
 
 import logging

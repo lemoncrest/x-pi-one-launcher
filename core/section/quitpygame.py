@@ -1,6 +1,6 @@
 import os
 
-from core.components.floatlist import FloatList
+from core.component.floatlist import FloatList
 
 class QuitPygame():
 

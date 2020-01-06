@@ -16,12 +16,12 @@ from core.constants import *
 logging.basicConfig(filename=os.path.join(PATH, "log.txt"), level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 from core.colors import *
-from core.components.upbar import UpBar
+from core.component.upbar import UpBar
 
-from core.components.squaredmenu import SquaredMenu
-from core.components.dialog import Dialog
-from core.components.simplenotification import SimpleNotification
-from core.components.mainpygame import MainPyGame
+from core.component.squaredmenu import SquaredMenu
+from core.component.dialog import Dialog
+from core.component.simplenotification import SimpleNotification
+from core.component.mainpygame import MainPyGame
 from core.section.gogpygame import GOGPygame
 from core.section.itchpygame import ItchPygame
 from core.section.repositorypygame import RepositoryPygame

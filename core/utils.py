@@ -2,7 +2,7 @@
 import pygame
 from core.colors import *
 
-from core.components.button import Button
+from core.component.button import Button
 
 import logging
 logging.basicConfig(level=logging.DEBUG)

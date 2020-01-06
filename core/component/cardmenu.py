@@ -3,7 +3,7 @@
 from __future__ import division
 
 import pygame
-from core.components.card import Card
+from core.component.card import Card
 from core.colors import *
 
 import logging

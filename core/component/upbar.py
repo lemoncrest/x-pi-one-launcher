@@ -3,7 +3,7 @@ import pygame
 import os
 import subprocess
 from core.colors import *
-from core.components.menu import Menu
+from core.component.menu import Menu
 from datetime import datetime
 from core.constants import *
 

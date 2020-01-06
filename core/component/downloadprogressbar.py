@@ -4,7 +4,7 @@ try:
 except ImportError:
     from urllib.request import urlopen # Python3
     pass
-from core.components.progressbar import ProgressBar
+from core.component.progressbar import ProgressBar
 from core.constants import WINDOW_SIZE
 
 

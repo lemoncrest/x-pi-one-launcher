@@ -5,8 +5,8 @@ import json
 
 from core.constants import *
 
-from core.components.progressbar import ProgressBar
-from core.components.cardmenu import CardMenu
+from core.component.progressbar import ProgressBar
+from core.component.cardmenu import CardMenu
 
 from core.partner.gogrepo import AttrDict #issues related to read data with coded
 from core.partner.gog import GOG
