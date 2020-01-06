@@ -85,7 +85,8 @@ class FloatList():
                     elif event.key == pygame.K_ESCAPE:
                         exit = True
                     elif event.key == pygame.K_RETURN:
-                        self.options[i]["action"]()
+                        if "action" in self.options[selected]:
+                            self.options[selected]["action"]()
                         exit = True
 
             pygame.display.flip()

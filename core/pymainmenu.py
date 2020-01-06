@@ -500,21 +500,65 @@ class PyMainMenu(MainPyGame, SquaredMenu, SimpleMenu, DownloadProgressBar):
     def drawComponents(self):
         self.upbar.draw()
 
-    def quit(self):
+    def halt(self):
+        pass
 
+    def reboot(self):
+        pass
+
+    def exitAndAsk(self):
+        options = [
+            {
+                "title": "Cerrar launcher",
+                "action": quit
+            }
+        ]
+        if os.path.exists("/usr/bin/kodi"):
+            options.insert(0,{
+                "title": "Kodi",
+                "action": self.launchKodi
+            })
+        if os.path.exists("/usr/bin/emulationstation"):
+            options.insert(0,{
+                "title": "EmulationStation",
+                "action": self.launchEmulationstation
+            })
+        if os.path.exists("/usr/bin/retroarch"):
+            options.insert(0,{
+                "title": "RetroArch",
+                "action": self.launchRetroarch
+            })
+        #clear last menu
+        self.main_background()
+        floatList = FloatList(surface=self.surface, clock=self.clock, options=options)
+        floatList.draw()
+
+    def launchRetroarch(self):
+        os.system("/usr/bin/retroarch &")
+        # quit()
+
+    def launchKodi(self):
+        os.system("/usr/bin/kodi &")
+        # quit()
+
+    def launchEmulationstation(self):
+        os.system("/usr/bin/emulationstation &")
+        #quit()
+
+
+    def quit(self):
         options = [
             {
                 "title" : "Apagar el sistema",
-                "action": quit
+                "action": self.halt
             },{
                 "title" : "Reiniciar",
-                "action" : quit
+                "action" : self.reboot
             },{
-                "title" : "Salir a la consola",
-                "action" : quit
+                "title" : "Salir de la consola",
+                "action" : self.exitAndAsk
             }
         ]
-
         floatList = FloatList(surface=self.surface,clock=self.clock,options=options)
         floatList.draw()
 
