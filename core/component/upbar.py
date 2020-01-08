@@ -90,7 +90,8 @@ class UpBar():
 
 
     def drawAudio(self,start,number=False):
-        cmd = "amixer -D pulse sget Master | grep 'Left:' | awk -F'[][]' '{ print $2 }'"
+        #cmd = "amixer -D pulse sget Master | grep 'Left:' | awk -F'[][]' '{ print $2 }'"
+        cmd = "amixer sget PCM | grep '%' | awk -F'[][]' '{ print $2 }'" #TODO make a choice for: raspberries issues
         proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
         (out, err) = proc.communicate()
         level = out.decode("utf-8")
