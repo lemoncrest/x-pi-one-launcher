@@ -7,6 +7,10 @@ from core.component.menu import Menu
 from datetime import datetime
 from core.constants import *
 
+import logging
+logging.basicConfig()
+logger = logging.getLogger(__name__)
+
 class UpBar():
 
     def __init__(self,surface):
@@ -121,6 +125,12 @@ class UpBar():
                 bars = int(int(level)/14)
             except:
                 bars = 0
+                pass
+
+            try:
+                level = int(level)
+            except:
+                logger.debug("couldn't parse level '%s'" % level)
                 pass
             barSize = 2
             init = WINDOW_SIZE[0] - width - start + top / 2 + self.padding*2
