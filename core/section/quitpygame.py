@@ -5,10 +5,10 @@ from core.component.floatlist import FloatList
 class QuitPygame():
 
     def halt(self):
-        pass
+        os.system("sudo shutdown -h now")
 
     def reboot(self):
-        pass
+        os.system("sudo reboot")
 
     def exitAndAsk(self):
         options = [
