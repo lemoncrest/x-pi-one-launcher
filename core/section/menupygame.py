@@ -13,7 +13,7 @@ import logging
 
 from core.constants import *
 
-logging.basicConfig(filename=os.path.join(PATH, "log.txt"), level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 from core.colors import *
 from core.component.upbar import UpBar
