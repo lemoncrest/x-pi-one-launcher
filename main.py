@@ -5,7 +5,7 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 from core.section.menupygame import MenuPygame
 from core.constants import PATH
 import logging
-logging.basicConfig(filename=os.path.join(PATH, "log.txt"))
+logging.basicConfig(filename=os.path.join(PATH, "log.txt"),level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 if __name__ == '__main__':
