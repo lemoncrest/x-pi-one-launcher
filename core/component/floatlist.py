@@ -47,14 +47,14 @@ class FloatList():
                     for rectangle in rectangles:
                         if rectangle.collidepoint(event.pos):
                             logger.debug("I will launch and select position %s" % i)
-                            self.options[i]["action"]()
+                            self.options[selected]["action"]()
                             exit = True
                         i += 1
                 elif event.type == pygame.JOYBUTTONDOWN:
                     # normal part
                     self.changes = True
                     if event.button == 1:  # button A - execute
-                        self.options[i]["action"]()
+                        self.options[selected]["action"]()
                         exit = True
                     elif event.button == 2:  # button B - back
                         exit = True
