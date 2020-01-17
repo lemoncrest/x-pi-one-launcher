@@ -71,12 +71,16 @@ class MenuPygame(MainPyGame, SquaredMenu, GOGPygame, ItchPygame, RepositoryPygam
         menus = [
             {"title": "Itch.io (alpha)", "image": "images/itch.png", "action": self.navigateItch},
             {"title": "GOG (alpha)", "image": "images/GOG.png", "action": self.navigateGOG},
+            {"title": "Wifi Configuration", "image": "images/wifi.png", "action": self.configWifi},
             {"title": "Remote repository", "image": "images/cloud.png", "action": self.navigateRepository},
             {"title": "Local", "image": "images/hdd.png", "action": self.createLocalRepo},
             {"title": "Settings", "image": "images/settings.png", "action": self.settingsMenu},
             {"title": "Exit", "image": "images/exit.png", "action": self.quit}
         ]
         self.manageMainEvents(menus)
+
+    def configWifi(self):
+        pass
 
     #used to refresh main menu
     def drawMainMenuComponents(self,menus,selected,visibleOptions):
