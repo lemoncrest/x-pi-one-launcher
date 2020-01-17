@@ -229,10 +229,12 @@ class BoxList():
         pygame.draw.rect(self.surface, COLOR_LIGHT_GRAY, button_rect, 0)
 
         xT = x + self.padding
-        yT = y + sizeY / 2 - (self.font.size(self.list[selected]["aid"])[1] / 2)
+        yT = y + sizeY / 2
 
-        txt = self.font.render(self.list[selected]["aid"], True, COLOR_BLACK)
-        self.surface.blit(txt, (xT, yT))
+        if len(self.list)>0 and len(self.list)-1 <= selected: #fix for bug
+            yT -= (self.font.size(self.list[selected]["aid"])[1] / 2)
+            txt = self.font.render(self.list[selected]["aid"], True, COLOR_BLACK)
+            self.surface.blit(txt, (xT, yT))
 
     def displayBar(self, sizeX, sizeY, selected):
         x = sizeX + self.x + self.margin + self.padding
@@ -247,9 +249,11 @@ class BoxList():
         button_rect = pygame.Rect(x, y, sizeX, sizeY)
         pygame.draw.rect(self.surface, COLOR_GRAY, button_rect, 0)
 
-        sizeSelectedY = sizeY / len(self.list)
-        button_rect = pygame.Rect(x, y + (selected * sizeSelectedY), sizeX, sizeSelectedY)
-        pygame.draw.rect(self.surface, COLOR_LIGHT_GRAY, button_rect, 0)
+        if len(self.list)>0:
+
+            sizeSelectedY = sizeY / len(self.list)
+            button_rect = pygame.Rect(x, y + (selected * sizeSelectedY), sizeX, sizeSelectedY)
+            pygame.draw.rect(self.surface, COLOR_LIGHT_GRAY, button_rect, 0)
 
     def displayOptions(self, sizeX, sizeY, selected, choices):
 

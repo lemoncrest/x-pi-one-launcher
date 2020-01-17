@@ -1,5 +1,6 @@
 # coding=utf-8
 import os
+import traceback
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 
 from core.section.menupygame import MenuPygame
@@ -18,4 +19,5 @@ if __name__ == '__main__':
         pymenu.main()
     except Exception as ex:
         logger.error(ex)
+        logger.error(traceback.format_exc())
         pass

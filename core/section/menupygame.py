@@ -32,8 +32,9 @@ from core.section.itchpygame import ItchPygame
 from core.section.repositorypygame import RepositoryPygame
 from core.section.settingspygame import SettingsPygame
 from core.section.quitpygame import QuitPygame
+from core.section.wificonfigurationpygame import WifiConfigurationPygame
 
-class MenuPygame(MainPyGame, SquaredMenu, GOGPygame, ItchPygame, RepositoryPygame, SettingsPygame, QuitPygame):
+class MenuPygame(MainPyGame, SquaredMenu, GOGPygame, ItchPygame, RepositoryPygame, SettingsPygame, WifiConfigurationPygame, QuitPygame):
 
     def __init__(self):
         # init
@@ -78,9 +79,6 @@ class MenuPygame(MainPyGame, SquaredMenu, GOGPygame, ItchPygame, RepositoryPygam
             {"title": "Exit", "image": "images/exit.png", "action": self.quit}
         ]
         self.manageMainEvents(menus)
-
-    def configWifi(self):
-        pass
 
     #used to refresh main menu
     def drawMainMenuComponents(self,menus,selected,visibleOptions):
