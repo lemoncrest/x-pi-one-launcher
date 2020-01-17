@@ -47,7 +47,14 @@ class WifiConfigurationPygame():
         logger.debug(lists)
 
         for list in lists.split("\n"):
-            logger.debug(list)
+            if "SSID:" not in list and "SSID List" not in list:
+                element = {}
+                element["title"] = list
+                element["txt"] = list #TODO put the real stored password
+                element["password"] = True
+                if len(list)>0:
+                    networks.append(element)
+                logger.debug(list)
 
         x = int(WINDOW_SIZE[0]) - 100
         y = 50

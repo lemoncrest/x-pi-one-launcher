@@ -231,7 +231,7 @@ class BoxList():
         xT = x + self.padding
         yT = y + sizeY / 2
 
-        if len(self.list)>0 and len(self.list)-1 <= selected: #fix for bug
+        if len(self.list)>0 and len(self.list)-1 <= selected and "aid" in self.list[selected]: #fix for bug
             yT -= (self.font.size(self.list[selected]["aid"])[1] / 2)
             txt = self.font.render(self.list[selected]["aid"], True, COLOR_BLACK)
             self.surface.blit(txt, (xT, yT))
