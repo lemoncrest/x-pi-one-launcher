@@ -250,10 +250,12 @@ class BoxList():
         pygame.draw.rect(self.surface, COLOR_GRAY, button_rect, 0)
 
         if len(self.list)>0:
-
             sizeSelectedY = sizeY / len(self.list)
-            button_rect = pygame.Rect(x, y + (selected * sizeSelectedY), sizeX, sizeSelectedY)
-            pygame.draw.rect(self.surface, COLOR_LIGHT_GRAY, button_rect, 0)
+        else:
+            sizeSelectedY = sizeY
+            selected = 0
+        button_rect = pygame.Rect(x, y + (selected * sizeSelectedY), sizeX, sizeSelectedY)
+        pygame.draw.rect(self.surface, COLOR_LIGHT_GRAY, button_rect, 0)
 
     def displayOptions(self, sizeX, sizeY, selected, choices):
 
