@@ -8,7 +8,7 @@ import subprocess
 from core.constants import *
 
 from core.component.progressbar import ProgressBar
-
+from core.component.dialog import Dialog
 from core.component.boxlist import BoxList
 
 import logging
@@ -48,6 +48,7 @@ class WifiConfigurationPygame():
 
         for list in lists.split("\n"):
             if "SSID:" not in list and "SSID List" not in list:
+                list = list.replace("\\x00","")
                 element = {}
                 element["title"] = list
                 element["txt"] = list #TODO put the real stored password
@@ -71,12 +72,12 @@ class WifiConfigurationPygame():
             padding=15,
             surface=self.surface,
             centered=True,
-            aid=True,
+            aid=False,
             list=networks,
             parent=self,
             enabledDialog=True,
             questionTitle="Exit",
-            questionMessage="Do you want to exit from configuration?",
+            questionMessage="Do you want to exit and save new configuration?",
             answerds=[
                 {
                     "title": "Yes"
@@ -88,3 +89,42 @@ class WifiConfigurationPygame():
         )
 
         newList = self.listbox.show()
+
+        if newList is None:
+            dialog = Dialog(surface=self.surface, title="No network availables", message="No networks availables was detected", options=[{ "title": "Ok"}])
+            dialogSelected = -1
+            exit = False
+            options = dialog.draw()
+            while not exit:
+
+                self.clock.tick(FPS) #review but parent always has a clock
+
+                events = pygame.event.get()
+
+                for event in events:
+                    if event.type == pygame.QUIT:
+                        exit = True
+                    elif event.type == pygame.KEYDOWN:
+                        exit = True
+                    elif event.type == pygame.MOUSEBUTTONDOWN:
+                        if options is not None:
+                            if dialog is not None and dialog.active:
+                                for i in range(0, len(options)):
+                                    option = options[i]
+                                    if option["rectangle"].collidepoint(event.pos):
+                                        dialogSelected = i
+                    elif event.type == pygame.MOUSEBUTTONUP:
+                        if options is not None:
+                            if dialog is not None and dialog.active:
+                                newSelected = -1
+                                for i in range(0, len(options)):
+                                    option = options[i]
+                                    if option["rectangle"].collidepoint(event.pos):
+                                        newSelected = i
+                                if newSelected == dialogSelected:
+                                    dialog.active = False
+                                    exit = True
+
+                options = dialog.draw()
+
+                pygame.display.flip()  # update

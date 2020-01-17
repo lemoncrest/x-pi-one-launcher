@@ -48,6 +48,8 @@ class BoxList():
         self.enabledDialog = enabledDialog
 
     def show(self):
+        if self.visibleOptions <= 0:
+            return None
         # display options
         sizeX = self.width - (self.margin * 2) - (self.padding * 2) - self.barWidth
         figure = self.visibleOptions
