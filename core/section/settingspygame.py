@@ -3,12 +3,15 @@ import os
 import json
 from core.component.boxlist import BoxList
 
-import logging
-
 from core.constants import *
 
+import logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+handler = logging.FileHandler(os.path.join(PATH, "log.txt"))
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 class SettingsPygame():
 

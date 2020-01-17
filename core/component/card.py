@@ -3,9 +3,15 @@ import pygame
 from core.colors import *
 #from core.components.downloadprogressbar import DownloadProgressBar
 from core.component.progressbar import ProgressBar
+import os
+from core.constants import PATH
 import logging
-logging.basicConfig()
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+handler = logging.FileHandler(os.path.join(PATH, "log.txt"))
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 class Card():
 

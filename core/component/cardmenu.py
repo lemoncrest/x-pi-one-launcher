@@ -5,10 +5,15 @@ from __future__ import division
 import pygame
 from core.component.card import Card
 from core.colors import *
-
+from core.constants import PATH
+import os
 import logging
-logging.basicConfig()
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+handler = logging.FileHandler(os.path.join(PATH, "log.txt"))
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 from core.constants import *
 

@@ -4,12 +4,15 @@ import json
 from core.component.cardmenu import CardMenu
 from core.partner.itch import Itch
 
-import logging
-
 from core.constants import *
 
+import logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+handler = logging.FileHandler(os.path.join(PATH, "log.txt"))
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 class ItchPygame():
 

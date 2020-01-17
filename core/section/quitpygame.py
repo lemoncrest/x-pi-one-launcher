@@ -2,6 +2,16 @@ import os
 
 from core.component.floatlist import FloatList
 
+from core.constants import PATH
+
+import logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+handler = logging.FileHandler(os.path.join(PATH, "log.txt"))
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
 class QuitPygame():
 
     def halt(self):

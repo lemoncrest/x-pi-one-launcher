@@ -3,12 +3,15 @@ import pygame
 import json
 import os
 
-import logging
-
 from core.constants import *
 
+import logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+handler = logging.FileHandler(os.path.join(PATH, "log.txt"))
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 from core.component.downloadprogressbar import DownloadProgressBar
 from core.component.simplemenu import SimpleMenu

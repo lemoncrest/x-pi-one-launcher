@@ -4,7 +4,7 @@ from core.colors import *
 from pygame.locals import *
 
 class TextInput(object):
-    ''' Handles the text input box and manages the cursor '''
+
     def __init__(self, background, screen, text, x, y, width, height):
         self.x = x
         self.y = y
@@ -24,7 +24,7 @@ class TextInput(object):
         self.draw()
 
     def draw(self):
-        ''' Draw the text input box '''
+
         self.layer.fill([255, 255, 255, 255])
         color = [0,0,0,200]
         pygame.draw.rect(self.layer, color, (0,0,self.width,self.height), 1)
@@ -37,7 +37,7 @@ class TextInput(object):
         self.drawcursor()
 
     def flashcursor(self):
-        ''' Toggle visibility of the cursor '''
+
         if self.cursorvis:
             self.cursorvis = False
         else:
@@ -51,7 +51,7 @@ class TextInput(object):
         pygame.display.flip()
 
     def addcharatcursor(self, letter):
-        ''' Add a character whereever the cursor is currently located '''
+
         if self.cursorpos < len(self.text):
             # Inserting in the middle
             self.text = self.text[:self.cursorpos] + letter + self.text[self.cursorpos:]
@@ -67,7 +67,7 @@ class TextInput(object):
         self.draw()
 
     def backspace(self):
-        ''' Delete a character before the cursor position '''
+
         if self.cursorpos == 0: return
         self.text = self.text[:self.cursorpos-1] + self.text[self.cursorpos:]
         self.cursorpos -= 1
@@ -76,19 +76,19 @@ class TextInput(object):
 
 
     def deccursor(self):
-        ''' Move the cursor one space left '''
+
         if self.cursorpos == 0: return
         self.cursorpos -= 1
         self.draw()
 
     def inccursor(self):
-        ''' Move the cursor one space right (but not beyond the end of the text) '''
+
         if self.cursorpos == len(self.text): return
         self.cursorpos += 1
         self.draw()
 
     def drawcursor(self):
-        ''' Draw the cursor '''
+
         x = 4
         y = self.y+5
         # Calc width of text to this point
@@ -101,7 +101,7 @@ class TextInput(object):
 
 
 class VirtualKey(object):
-    ''' A single key for the VirtualKeyboard '''
+
     def __init__(self, caption, x, y, w=67, h=67):
         self.x = x
         self.y = y
@@ -120,7 +120,7 @@ class VirtualKey(object):
         self.rect = pygame.draw.rect(self.keylayer, (255,255,255), (0,0,self.width,self.height), 1)
 
     def draw(self, screen, background, shifted=False, forcedraw=False):
-        '''  Draw one key if it needs redrawing '''
+
         if not forcedraw:
             if not self.dirty: return
 
@@ -183,7 +183,6 @@ class VirtualKeyboard(object):
         self.y = 0
         self.clock = pygame.time.Clock()
 
-    ''' Implement a basic full screen virtual keyboard for touchscreens '''
     def run(self, screen, text='',width=800,height=480):
         # First, make a backup of the screen
         self.screen = screen
@@ -269,15 +268,14 @@ class VirtualKeyboard(object):
                 counter = 0
 
     def unselectall(self, force = False):
-        ''' Force all the keys to be unselected
-            Marks any that change as dirty to redraw '''
+
         for key in self.keys:
             if key.selected:
                 key.selected = False
                 key.dirty = True
 
     def clickatmouse(self):
-        ''' Check to see if the user is pressing down on a key and draw it selected '''
+
         self.unselectall()
         for key in self.keys:
             myrect = Rect(key.x,key.y,key.width,key.height)
@@ -310,7 +308,7 @@ class VirtualKeyboard(object):
         return False
 
     def togglecaps(self):
-        ''' Toggle uppercase / lowercase '''
+
         if self.caps:
             self.caps = False
         else:
@@ -319,7 +317,7 @@ class VirtualKeyboard(object):
             key.dirty = True
 
     def selectatmouse(self):
-        ''' User has clicked a key, let's use it '''
+
         self.unselectall()
         for key in self.keys:
             myrect = Rect(key.x,key.y,key.width,key.height)
@@ -332,11 +330,6 @@ class VirtualKeyboard(object):
         self.paintkeys()
 
     def addkeys(self):
-        ''' Adds the setup for the keys.  This would be easy to modify for additional keys
-
-         The default start position places the keyboard slightly left of center by design
-         so many people have issues with the right side of their touchscreens that I did this
-         on purpose. '''
 
         x = 10
         y = 140
@@ -395,13 +388,13 @@ class VirtualKeyboard(object):
 
 
     def paintkeys(self):
-        ''' Draw the keyboard (but only if they're dirty.) '''
+
         for key in self.keys:
             key.draw(self.screen, self.background, self.caps)
 
         pygame.display.flip()
 
     def clear(self):
-        ''' Put the screen back to before we started '''
+
         self.screen.blit(self.background,(0,0))
         pygame.display.flip()

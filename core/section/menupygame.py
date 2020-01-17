@@ -9,12 +9,17 @@ try:
     from datetime import datetime, timedelta
 except:
     import datetime
-import logging
 
 from core.constants import *
 
+import logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+handler = logging.FileHandler(os.path.join(PATH, "log.txt"))
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
 from core.colors import *
 from core.component.upbar import UpBar
 
