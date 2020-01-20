@@ -23,6 +23,14 @@ class WifiConfigurationPygame():
 
     def configWifi(self):
 
+        progressbar = ProgressBar(width=WINDOW_SIZE[0] - 50, height=30, surface=self.surface, x=0, y=50,
+                                  margin=50, centeredText=True, textMessage="Scanning networks...")
+
+
+        progressbar.progress = 0.5
+        progressbar.updateProgressBar(parentEvents=True)
+        pygame.display.flip()
+
         networks = []
 
         #cmd = "awk 'NR==3 {print $1}''' /proc/net/wireless" # needs a out.replace(":","")
