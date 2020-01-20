@@ -181,5 +181,5 @@ class CardMenu():
             choice = choices[i]
             y = self.y + self.margin + ((i + 1 - first) * self.padding) + ((i - first) * sizeY)
             #TODO store in a list (big rectangle) to be checked in main loop for events
-            card = self.Card(surface=self.surface, padding=self.padding, font=self.font, element=self.list[i],parent=self.parent)
+            card = self.card(surface=self.surface, padding=self.padding, font=self.font, element=self.list[i],parent=self.parent)
             card.displayCard(x=x, y=y, sizeX=sizeX, sizeY=sizeY,selected_field=bool(i == selected),selected_choice=0,selected_margin=self.selected_margin)
