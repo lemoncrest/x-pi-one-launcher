@@ -10,6 +10,7 @@ from core.constants import *
 from core.component.progressbar import ProgressBar
 from core.component.dialog import Dialog
 from core.component.boxlist import BoxList
+from core.component.cardmenu import CardMenu
 
 import logging
 logging.basicConfig(level=logging.DEBUG)
@@ -22,6 +23,8 @@ logger.addHandler(handler)
 class WifiConfigurationPygame():
 
     def configWifi(self):
+
+        newList = None
 
         self.main_background()
 
@@ -111,9 +114,26 @@ class WifiConfigurationPygame():
             ]
         )
 
-        self.main_background()
+        self.cardmenu = CardMenu(
+            width=int(WINDOW_SIZE[0]),
+            height=int(WINDOW_SIZE[1]),
+            x=0,
+            y=0,
+            margin=25,
+            visibleOptions=8,
+            padding=20,
+            surface=self.surface,
+            centered=True,
+            list=networks,
+            selected_margin=10,
+            parent=self,
+            onEventEnter=None
+        )
+        newList = self.cardmenu.show()
 
-        newList = self.listbox.show()
+        #self.main_background()
+
+        #newList = self.listbox.show()
 
         if newList is None:
             dialog = Dialog(surface=self.surface, title="No network availables", message="No networks availables was detected", options=[{ "title": "Ok"}])

@@ -40,6 +40,9 @@ class CardMenu():
         self.onEventEnter = onEventEnter
 
     def show(self):
+        if self.visibleOptions<=0:
+            return None #TODO
+
         # display options
         sizeX = self.width - (self.margin * 2) - (self.padding*3) - self.barWidth
         figure = self.visibleOptions
