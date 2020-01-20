@@ -36,7 +36,7 @@ class WifiConfigurationPygame():
         networks = []
 
         #cmd = "for i in $(ls /sys/class/net/ | egrep -v ^lo$); do sudo iw dev $i scan | grep SSID | awk '{print substr($0, index($0,$2)) }'; done 2>/dev/null | sort -u"
-        cmd = "for i in $(ls /sys/class/net/ | egrep -v ^lo$); do sudo iwlist $i scanning | egrep 'Signal|Quality|Address|IEEE|SSID' | sed -r 's/[\"]+/\n/g' | awk '{print substr($0, index($0,$1)) }'; done 2>/dev/null"
+        cmd = "for i in $(ls /sys/class/net/ | egrep -v ^lo$); do sudo iwlist $i scanning | egrep 'Signal|Quality|Address|IEEE|SSID' | sed -r 's/[\"]+/\\n/g' | awk '{print substr($0, index($0,$1)) }'; done 2>/dev/null"
 
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 
@@ -45,6 +45,8 @@ class WifiConfigurationPygame():
         p_status = p.wait() # This makes the wait possible
 
         lists = out.decode("utf-8")
+
+        logger.debug("lists %s" % lists)
 
         logger.debug(lists)
 
