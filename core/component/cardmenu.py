@@ -110,7 +110,8 @@ class CardMenu():
                         elif "link" in self.list[selected]:
                             target = self.list[selected]["link"]
                         self.list[selected]["downloading"] = True
-                        self.onEventEnter(target)
+                        if self.onEventEnter is not None:
+                            self.onEventEnter(target)
                         changes = True
                 elif event.type == pygame.JOYBUTTONDOWN:
                     if event.button == 1:  # button A - enter
