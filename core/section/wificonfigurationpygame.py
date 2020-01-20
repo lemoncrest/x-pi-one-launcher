@@ -36,7 +36,7 @@ class WifiConfigurationPygame():
         networks = []
 
         #cmd = "for i in $(ls /sys/class/net/ | egrep -v ^lo$); do sudo iw dev $i scan | grep SSID | awk '{print substr($0, index($0,$2)) }'; done 2>/dev/null | sort -u"
-        cmd = "for i in $(ls /sys/class/net/ | egrep -v ^lo$); do sudo iwlist $i scanning | egrep 'Signal|Quality|Address|IEEE|SSID' | awk '{print substr($0, index($0,$1)) }'; done 2>/dev/null"
+        cmd = "for i in $(ls /sys/class/net/ | egrep -v ^lo$); do sudo iwlist $i scanning | egrep 'Signal|Quality|Address|IEEE|SSID|Channel' | awk '{print substr($0, index($0,$1)) }'; done 2>/dev/null"
 
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 
@@ -68,7 +68,10 @@ class WifiConfigurationPygame():
             encription = list[list.find('/') + 1:]
             encription = encription[:encription.find(" ")]
 
-            logger.debug("%s %s %s %s %s" % (essid,address,encription,signal,quality))
+            channel = list[list.find('Channel:') + len('Channel:'):]
+            channel = channel[:channel.find("\n")]
+
+            logger.debug("%s %s %s %s %s" % (essid,address,encription,signal,quality,channel))
 
             element["title"] = essid
             element["txt"] = essid #TODO put the real stored password
