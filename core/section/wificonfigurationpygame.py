@@ -23,6 +23,8 @@ class WifiConfigurationPygame():
 
     def configWifi(self):
 
+        self.main_background()
+
         progressbar = ProgressBar(width=WINDOW_SIZE[0] - 50, height=30, surface=self.surface, x=0, y=50,
                                   margin=50, centeredText=True, textMessage="Scanning networks...")
 
@@ -96,6 +98,8 @@ class WifiConfigurationPygame():
             ]
         )
 
+        self.main_background()
+        
         newList = self.listbox.show()
 
         if newList is None:
