@@ -19,7 +19,7 @@ from core.constants import *
 
 class CardMenu():
 
-    def __init__(self, width, height, x, y, margin, visibleOptions, padding, surface, list, centered=True, parent=None, selected_margin=10, onEventEnter=None):
+    def __init__(self, width, height, x, y, margin, visibleOptions, padding, surface, list, centered=True, parent=None, selected_margin=10, onEventEnter=None, card=None):
         self.width = width
         self.height = height
         self.x = x
@@ -38,6 +38,10 @@ class CardMenu():
         self.parent = parent
         self.selected_margin = selected_margin
         self.onEventEnter = onEventEnter
+        self.card = Card
+        if card is not None:
+            self.card = card
+
 
     def show(self):
         if self.visibleOptions<=0:
@@ -177,5 +181,5 @@ class CardMenu():
             choice = choices[i]
             y = self.y + self.margin + ((i + 1 - first) * self.padding) + ((i - first) * sizeY)
             #TODO store in a list (big rectangle) to be checked in main loop for events
-            card = Card(surface=self.surface, padding=self.padding, font=self.font, element=self.list[i],parent=self.parent)
+            card = self.Card(surface=self.surface, padding=self.padding, font=self.font, element=self.list[i],parent=self.parent)
             card.displayCard(x=x, y=y, sizeX=sizeX, sizeY=sizeY,selected_field=bool(i == selected),selected_choice=0,selected_margin=self.selected_margin)
