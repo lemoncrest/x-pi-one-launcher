@@ -71,9 +71,9 @@ class WifiConfigurationPygame():
             logger.debug("%s %s %s %s %s" % (essid,address,encription,signal,quality))
 
             element["title"] = essid
-            element["txt"] = list #TODO put the real stored password
+            element["txt"] = essid #TODO put the real stored password
             element["password"] = True
-            if len(list)>0:
+            if len(essid)>0:
                 networks.append(element)
             logger.debug(list)
 
