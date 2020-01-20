@@ -1,5 +1,5 @@
 from core.constants import PATH
-from core.card.icard import ICard
+from core.card.abstractcard import AbstractCard
 from core.colors import COLOR_WHITE
 import os
 import logging
@@ -10,10 +10,14 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-class WifiCard(ICard):
+class WifiCard(AbstractCard):
+
+    def __init__(self,surface,padding,font,element,parent=None):
+        self.surface = surface
+        self.padding = padding
+        self.font = font
+        self.element = element
+        self.parent = parent
 
     def displayCard(self, x, y, sizeX, sizeY, selected_field=False, selected_choice=0, selected_margin=10):
-        pass #TODO
-
-    def drawText(self, text, x, y, sizeX, sizeY, grid, column, field, centered=False, right=False,font_color=COLOR_WHITE):
         pass #TODO

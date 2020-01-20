@@ -5,7 +5,7 @@ from core.colors import *
 from core.component.progressbar import ProgressBar
 import os
 from core.constants import PATH
-from core.card.icard import ICard
+from core.card.abstractcard import AbstractCard
 import logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -14,7 +14,7 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-class PartnerCard(ICard):
+class PartnerCard(AbstractCard):
 
     def __init__(self,surface,padding,font,element,parent=None):
         self.surface = surface
