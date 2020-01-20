@@ -35,16 +35,8 @@ class WifiConfigurationPygame():
 
         networks = []
 
-        #cmd = "awk 'NR==3 {print $1}''' /proc/net/wireless" # needs a out.replace(":","")
-        cmd = "cat /proc/net/wireless | perl -ne '/(\w+):/ && print $1'"
-
-        #proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-        #(out, err) = proc.communicate()
-        #interface = out.decode("utf-8")
-
-        #fill with network list
-        #cmd = 'iwlist wlan0 scan | grep ESSID'
-        cmd = "for i in $(ls /sys/class/net/ | egrep -v ^lo$); do sudo iw dev $i scan | grep SSID | awk '{print substr($0, index($0,$2)) }'; done 2>/dev/null | sort -u"
+        #cmd = "for i in $(ls /sys/class/net/ | egrep -v ^lo$); do sudo iw dev $i scan | grep SSID | awk '{print substr($0, index($0,$2)) }'; done 2>/dev/null | sort -u"
+        cmd = "for i in $(ls /sys/class/net/ | egrep -v ^lo$); do sudo iwlist $i scanning | egrep 'Signal|Quality|Address|IEEE|SSID' | sed -r 's/[\"]+/\n/g' | awk '{print substr($0, index($0,$1)) }'; done 2>/dev/null"
 
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 
@@ -56,16 +48,32 @@ class WifiConfigurationPygame():
 
         logger.debug(lists)
 
-        for list in lists.split("\n"):
-            if "SSID:" not in list and "SSID List" not in list:
-                list = list.replace("\\x00","")
-                element = {}
-                element["title"] = list
-                element["txt"] = list #TODO put the real stored password
-                element["password"] = True
-                if len(list)>0:
-                    networks.append(element)
-                logger.debug(list)
+        for list in lists.split("Cell "):
+            list = list.replace("\\x00","")
+            element = {}
+            address = list[list.find("Address: ")+len("Address: "):]
+            address = address[:address.find("\n")]
+
+            quality = list[list.find("Quality=") + len("Quality="):]
+            quality = quality[:quality.find("\n")]
+
+            essid = list[list.find('ESSID:"') + len('ESSID:"'):]
+            essid = essid[:essid.find("\n")]
+
+            signal = list[list.find('Signal level=') + len('Signal level='):]
+            signal = signal[:signal.find("\n")]
+
+            encription = list[list.find('/') + 1:]
+            encription = encription[:encription.find(" ")]
+
+            logger.debug("%s %s %s %s %s" % (essid,address,encription,signal,quality))
+
+            element["title"] = essid
+            element["txt"] = list #TODO put the real stored password
+            element["password"] = True
+            if len(list)>0:
+                networks.append(element)
+            logger.debug(list)
 
         x = int(WINDOW_SIZE[0]) - 100
         y = 50
@@ -99,7 +107,7 @@ class WifiConfigurationPygame():
         )
 
         self.main_background()
-        
+
         newList = self.listbox.show()
 
         if newList is None:
