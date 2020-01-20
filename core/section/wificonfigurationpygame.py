@@ -71,7 +71,7 @@ class WifiConfigurationPygame():
             channel = list[list.find('Channel:') + len('Channel:'):]
             channel = channel[:channel.find("\n")]
 
-            logger.debug("%s %s %s %s %s" % (essid,address,encription,signal,quality,channel))
+            logger.debug("%s %s %s %s %s %s" % (essid,address,encription,signal,quality,channel))
 
             element["title"] = essid
             element["txt"] = essid #TODO put the real stored password
