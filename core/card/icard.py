@@ -2,7 +2,9 @@ import abc
 
 from core.colors import COLOR_WHITE
 
-class ICard(abc.ABC):
+class ICard():
+
+    __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
     def displayCard(self, x, y, sizeX, sizeY, selected_field=False, selected_choice=0, selected_margin=10):
