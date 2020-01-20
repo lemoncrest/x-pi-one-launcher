@@ -3,6 +3,7 @@ import os
 import codecs
 import json
 
+from core.card.partnercard import PartnerCard
 from core.constants import *
 
 from core.component.progressbar import ProgressBar
@@ -98,7 +99,8 @@ class GOGPygame():
                 list=elements,
                 selected_margin=10,
                 parent=self,
-                onEventEnter=self.gog.download
+                onEventEnter=self.gog.download,
+                card=PartnerCard
             )
             self.cardmenu.show()
 

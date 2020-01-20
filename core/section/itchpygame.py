@@ -1,6 +1,7 @@
 import os
 import json
 
+from core.card.partnercard import PartnerCard
 from core.component.cardmenu import CardMenu
 from core.partner.itch import Itch
 
@@ -51,6 +52,7 @@ class ItchPygame():
             list=self.elements,
             selected_margin=10,
             parent=self,
-            onEventEnter=self.itch.downloadGame
+            onEventEnter=self.itch.downloadGame,
+            card=PartnerCard
         )
         self.cardmenu.show()

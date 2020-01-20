@@ -5,6 +5,7 @@ import json
 
 import subprocess
 
+from core.card.wificard import WifiCard
 from core.constants import *
 
 from core.component.progressbar import ProgressBar
@@ -127,7 +128,8 @@ class WifiConfigurationPygame():
             list=networks,
             selected_margin=10,
             parent=self,
-            onEventEnter=None
+            onEventEnter=None,
+            card=WifiCard
         )
         newList = self.cardmenu.show()
 

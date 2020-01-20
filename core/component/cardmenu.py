@@ -3,7 +3,6 @@
 from __future__ import division
 
 import pygame
-from core.component.card import Card
 from core.colors import *
 from core.constants import PATH
 import os
@@ -19,7 +18,7 @@ from core.constants import *
 
 class CardMenu():
 
-    def __init__(self, width, height, x, y, margin, visibleOptions, padding, surface, list, centered=True, parent=None, selected_margin=10, onEventEnter=None, card=None):
+    def __init__(self, width, height, x, y, margin, visibleOptions, padding, surface, list, card, centered=True, parent=None, selected_margin=10, onEventEnter=None):
         self.width = width
         self.height = height
         self.x = x
@@ -38,9 +37,7 @@ class CardMenu():
         self.parent = parent
         self.selected_margin = selected_margin
         self.onEventEnter = onEventEnter
-        self.card = Card
-        if card is not None:
-            self.card = card
+        self.card = card
 
 
     def show(self):
