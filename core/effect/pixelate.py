@@ -3,7 +3,7 @@ from pygame.surfarray import *
 from pygame.locals import *
 from core.constants import *
 RES = WINDOW_SIZE
-FRAMES = int(FPS/4)
+FRAMES = int(FPS/4) #15 times
 
 def take_screenshot(screen):
     screen_copy = screen.copy()
