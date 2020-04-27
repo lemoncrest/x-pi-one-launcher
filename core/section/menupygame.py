@@ -33,6 +33,7 @@ from core.section.repositorypygame import RepositoryPygame
 from core.section.settingspygame import SettingsPygame
 from core.section.quitpygame import QuitPygame
 from core.section.wificonfigurationpygame import WifiConfigurationPygame
+from core.effect.pixelate import pixelate
 
 class MenuPygame(MainPyGame, SquaredMenu, GOGPygame, ItchPygame, RepositoryPygame, SettingsPygame, WifiConfigurationPygame, QuitPygame):
 
@@ -120,8 +121,12 @@ class MenuPygame(MainPyGame, SquaredMenu, GOGPygame, ItchPygame, RepositoryPygam
         self.lastTime = datetime.now()
 
         hiddenNotification = None
-
+        pixelateTime = None
         while not exit:
+
+            if not pixelateTime:
+                pixelate(self.surface,False)
+                pixelateTime = True
 
             self.clock.tick(FPS)
 
@@ -177,6 +182,7 @@ class MenuPygame(MainPyGame, SquaredMenu, GOGPygame, ItchPygame, RepositoryPygam
                 elif event.type == pygame.KEYDOWN:
                     self.changes = True
                     if event.key == pygame.K_ESCAPE:
+                        pixelate(self.surface,True)
                         if self.dialog is not None and self.dialog.active:
                             self.dialog.active = False
                             selected = 0
@@ -221,6 +227,7 @@ class MenuPygame(MainPyGame, SquaredMenu, GOGPygame, ItchPygame, RepositoryPygam
                             self.dialog.active = False
                         else:
                             #normal part
+                            pixelate(self.surface,True)
                             menus[selected]["action"]()
                             self.changes = True
                             self.lastTime = datetime.now()
@@ -339,4 +346,3 @@ class MenuPygame(MainPyGame, SquaredMenu, GOGPygame, ItchPygame, RepositoryPygam
             self.surface.blit(self.pic, (0, 0))
         else:
             self.surface.fill(COLOR_BACKGROUND)
-

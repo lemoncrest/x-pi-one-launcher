@@ -142,7 +142,12 @@ class WifiConfigurationPygame():
             dialogSelected = -1
             exit = False
             options = dialog.draw()
+            pixelateTime = None
             while not exit:
+
+                if not pixelateTime:
+                    pixelate(self.surface,False)
+                    pixelateTime = True
 
                 self.clock.tick(FPS) #review but parent always has a clock
 

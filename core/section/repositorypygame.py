@@ -36,10 +36,15 @@ class RepositoryPygame(SimpleMenu,DownloadProgressBar):
     def drawList(self, data):
         selected = 0
         exit = False
+        pixelateTime = None
 
         while not exit:
             # colored background
             self.main_background()
+
+            if not pixelateTime:
+                pixelate(self.surface,False)
+                pixelateTime = True
 
             # get events and configure
             events = pygame.event.get()

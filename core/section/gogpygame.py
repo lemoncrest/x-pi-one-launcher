@@ -126,7 +126,14 @@ class GOGPygame():
 
         self.main_background()  # take into account it should be inside instead out of the while, but at this moment is a better performance
 
+        pixelateTime=None
+
         while not exit:
+
+            if not pixelateTime:
+                pixelate(self.surface,False)
+                pixelateTime = True
+
             self.clock.tick(FPS)
 
             self.progressbar.textMessage = self.gog.message

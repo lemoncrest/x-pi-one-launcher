@@ -1,3 +1,4 @@
 pygame
 html5lib
 requests
+numpy
