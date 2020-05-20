@@ -13,7 +13,7 @@ logger.addHandler(handler)
 
 class FloatList():
 
-    def __init__(self,surface,clock,options,margin=25,padding=25):
+    def __init__(self,surface,clock,options,margin=5,padding=5):
         self.surface = surface
         self.clock = clock
         self.options = options

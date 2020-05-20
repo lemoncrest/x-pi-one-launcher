@@ -18,7 +18,7 @@ class UpBar():
         self.bar = pygame.Surface((WINDOW_SIZE[0], BARSIZE), pygame.SRCALPHA)
         self.bar.set_alpha(ALPHA)
         self.font = pygame.font.Font(os.path.join(PATH,"assert/fonts","DejaVuSans.ttf"), FONT_SIZE)
-        self.menu = Menu(title="Menu", first=(0,0) ,parent=(WINDOW_SIZE[0],BARSIZE), font=self.font, surface=self.surface)
+        #self.menu = Menu(title="Menu", first=(0,0) ,parent=(WINDOW_SIZE[0],BARSIZE), font=self.font, surface=self.surface)
         self.margin = 5
         self.padding = 2
 
@@ -28,7 +28,7 @@ class UpBar():
         self.drawWidgets()
         self.refresh()
 
-        self.menu.draw()
+        #self.menu.draw()
 
 
     def drawBackground(self):
@@ -41,13 +41,13 @@ class UpBar():
 
     def drawWidgets(self):
         #first time
-        timeRect = self.drawTime()
+        #timeRect = self.drawTime()
         #next audio
-        audioRect = self.drawAudio(start=timeRect.width)
+        audioRect = self.drawAudio(start=0)
         #next wifi
-        wifiRect = self.drawWifi(start=(timeRect.width+audioRect.width))
+        wifiRect = self.drawWifi(start=(0+audioRect.width))
 
-    def drawWifi(self,start,totalBars=10,barWidth=3):
+    def drawWifi(self,start=0,totalBars=10,barWidth=3):
         cmd = "awk 'NR==3 {print $4}''' /proc/net/wireless"
         proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
         (out, err) = proc.communicate()
@@ -89,7 +89,7 @@ class UpBar():
 
 
 
-    def drawAudio(self,start,number=False):
+    def drawAudio(self,start=None,number=False):
         #cmd = "amixer -D pulse sget Master | grep 'Left:' | awk -F'[][]' '{ print $2 }'"
         #cmd = "amixer sget Master | grep 'Left' | awk -F'[][]' '{ print $2 }'"
         cmd = "amixer | grep % | head -n 1 | awk -F'[][]' '{ print $2 }'"

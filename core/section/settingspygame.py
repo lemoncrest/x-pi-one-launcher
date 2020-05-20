@@ -41,15 +41,15 @@ class SettingsPygame():
 
         x = 0
         y = 0
-        margin = 50
+        margin = 10
         self.listbox = BoxList(
             width=int(WINDOW_SIZE[0]),
             height=int(WINDOW_SIZE[1]),
             x=x,
             y=y,
             margin=margin,
-            visibleOptions=7,
-            padding=15,
+            visibleOptions=3,
+            padding=5,
             surface=self.surface,
             centered=True,
             aid=True,

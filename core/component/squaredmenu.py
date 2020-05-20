@@ -24,7 +24,7 @@ class SquaredMenu():
 
         return rectangles
 
-    def drawSquaredMenu(self, i, menu, visibleOptions=3, selected=False, verticalCenteredText=False):
+    def drawSquaredMenu(self, i, menu, visibleOptions=1, selected=False, verticalCenteredText=False):
         surfaceSize = self.surface.get_size()
         margin = 100 - (18*visibleOptions)
         padding = 10

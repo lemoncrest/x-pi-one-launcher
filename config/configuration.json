@@ -19,10 +19,10 @@
     },
     {
         "title": "Fondo de pantalla",
-        "selected": 0,
+        "selected": 1,
         "choices": [
-            "wallpaper.jpg",
-            "arm.jpg"
+            "arm.jpg",
+            "wallpaper.jpg"
         ],
         "visible": true,
         "aid": "Fondo de pantalla que se muestra en el launcher",
@@ -44,19 +44,19 @@
         "title": "Archivo de sonido de fondo",
         "selected": 10,
         "choices": [
-            "Oh-Wonder-Body-Gold-Louis-The-Child-Remix.mp3",
-            "Best-Free-Background-Music.mp3",
-            "4_In_1_Fun_Pack_Theme.mid",
             "5-Free-Background-Music.mp3",
-            "8-Best-Free-Background-Music.mp3",
-            "10-Best-Free-Background-Music.mp3",
-            "7-Best-Free-Background-Music-1.mp3",
             "1-Free-Background-Music.mp3",
+            "Oh-Wonder-Body-Gold-Louis-The-Child-Remix.mp3",
+            "4_In_1_Fun_Pack_Theme.mid",
+            "10-Best-Free-Background-Music.mp3",
+            "7-Best-Free-Background-Music.mp3",
             "Free_Intro_Music_for_your_Video.mp3",
-            "9-Best-Free-Background-Music.mp3",
-            "3-Free-Background-Music.mp3",
             "2-Free-Background-Music.mp3",
-            "7-Best-Free-Background-Music.mp3"
+            "Best-Free-Background-Music.mp3",
+            "9-Best-Free-Background-Music.mp3",
+            "8-Best-Free-Background-Music.mp3",
+            "7-Best-Free-Background-Music-1.mp3",
+            "3-Free-Background-Music.mp3"
         ],
         "visible": true,
         "aid": "Selecciona un fondo musical que desees escuchar mientras te encuentras en el launcher",
