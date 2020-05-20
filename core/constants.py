@@ -2,7 +2,7 @@ import os
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 
-PATH = '/opt/pygamemenu/'
+PATH = os.getcwd()
 WINDOW_SIZE = (1024, 600)
 COLOR_BACKGROUND = (61, 61, 202)  # by default if there is no image to load will be shown it
 

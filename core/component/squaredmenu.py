@@ -4,8 +4,6 @@ from core.colors import *
 
 from core.constants import PATH
 
-CWD = os.getcwd()
-
 class SquaredMenu():
 
     def drawSquaredMenus(self, menus, selected, visibleOptions):
@@ -48,7 +46,7 @@ class SquaredMenu():
 
         #draw image
         #filename = os.path.join(PATH,"assert",menu["image"])
-        filename = os.path.join(CWD,"assert",menu["image"])
+        filename = os.path.join(PATH,"assert",menu["image"])
         picture = pygame.image.load(filename)
         pic = pygame.transform.scale(picture, (int(size-padding*2), int(size-padding*2)))
         self.surface.blit(pic, (x+padding, y+padding))
