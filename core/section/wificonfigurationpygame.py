@@ -84,19 +84,19 @@ class WifiConfigurationPygame():
                 networks.append(element)
             logger.debug(list)
 
-        x = int(WINDOW_SIZE[0]) - 100
-        y = 50
+        x = int(WINDOW_SIZE[0])
+        y = 0
 
         margin = 0
 
         self.listbox = BoxList(
-            width=int(WINDOW_SIZE[0])-200,
-            height=int(WINDOW_SIZE[1])-100,
+            width=int(WINDOW_SIZE[0]),
+            height=int(WINDOW_SIZE[1]),
             x=x,
             y=y,
             margin=margin,
-            visibleOptions=8,
-            padding=15,
+            visibleOptions=4,
+            padding=5,
             surface=self.surface,
             centered=True,
             aid=False,
@@ -120,13 +120,13 @@ class WifiConfigurationPygame():
             height=int(WINDOW_SIZE[1]),
             x=0,
             y=0,
-            margin=25,
-            visibleOptions=8,
-            padding=20,
+            margin=5,
+            visibleOptions=4,
+            padding=5,
             surface=self.surface,
             centered=True,
             list=networks,
-            selected_margin=10,
+            selected_margin=5,
             parent=self,
             onEventEnter=None,
             card=WifiCard

@@ -1,6 +1,8 @@
-from core.constants import PATH
+import pygame
+
+from core.constants import *
 from core.card.abstractcard import AbstractCard
-from core.colors import COLOR_WHITE
+from core.colors import *
 import os
 import logging
 logging.basicConfig(level=logging.DEBUG)
@@ -19,5 +21,45 @@ class WifiCard(AbstractCard):
         self.element = element
         self.parent = parent
 
-    def displayCard(self, x, y, sizeX, sizeY, selected_field=False, selected_choice=0, selected_margin=10):
-        pass #TODO
+    def displayCard(self, x, y, sizeX, sizeY, selected_field=False, selected_choice=0, selected_margin=5):
+
+        grid = (2,4)
+
+        # fill image
+        button_rect = pygame.Rect(x, y, (sizeX / grid[0]), sizeY)
+        pygame.draw.rect(self.surface, COLOR_LIGHT_GRAY, button_rect, 0)
+
+        # fill title
+        button_rect = pygame.Rect(x + (sizeX / grid[0]), y, (sizeX / grid[0]), sizeY)
+        pygame.draw.rect(self.surface, COLOR_GRAY, button_rect, 0)
+
+        # fill actions
+        button_rect = pygame.Rect(x + ((sizeX / grid[0])*2), y, (sizeX / grid[0]), sizeY)
+        pygame.draw.rect(self.surface, COLOR_GRAY, button_rect, 0)
+
+        if selected_field:
+            # draw background rectangle
+            button_rect_background = pygame.Rect(x + selected_margin, y + selected_margin,
+                                                 (sizeX / grid[0]) - selected_margin * 2,
+                                                 sizeY - selected_margin * 2)
+            pygame.draw.rect(self.surface, COLOR_BLUE, button_rect_background, 0)
+
+        self.drawText(text=self.element["title"], x=x, y=y, sizeX=sizeX, sizeY=sizeY, grid=grid, field=2, column=0, centered=True, right=True)
+
+        portion = sizeY / grid[1]
+        field = 2 # 0, 1, 2...
+
+
+    def drawText(self,text,x,y,sizeX,sizeY,grid,column,field,centered=False,right=False,font_color=COLOR_WHITE):
+        if centered:
+            x += ((sizeX/grid[0])/2) - ( (self.font.size(text)[0]) / 2)
+        else:
+            if right:
+                x += (sizeX/grid[0]) - self.font.size(text)[0] - self.padding / 2
+            else:
+                x += self.padding / 2
+
+        xT = x + (column * sizeX / grid[0])
+        yT = y + sizeY / 2 - (self.font.size(text)[1] / 2)
+        txt = self.font.render(text, True, font_color)
+        self.surface.blit(txt, (xT, yT))
