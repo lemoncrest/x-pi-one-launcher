@@ -2,6 +2,11 @@ import pygame
 
 from core.colors import *
 from pygame.locals import *
+from core.constants import *
+
+SCREEN_WIDTH = WINDOW_SIZE[0]
+SCREEN_HEIGHT = WINDOW_SIZE[1]
+X_KEY = SCREEN_WIDTH/11
 
 class TextInput(object):
 
@@ -11,7 +16,7 @@ class TextInput(object):
         self.text = text
         self.width = width
         self.height = height
-        self.font = pygame.font.Font(None, 50)
+        self.font = pygame.font.Font(None, FONT_SIZE*2)
         self.cursorpos = len(text)
         self.rect = Rect(self.x,self.y,self.width,self.height)
         self.layer = pygame.Surface((self.width,self.height),SRCALPHA).convert_alpha()
@@ -34,7 +39,7 @@ class TextInput(object):
 
         self.screen.blit(self.background,(self.x, self.y))
         self.screen.blit(self.layer,(self.x,self.y))
-        self.drawcursor()
+        #self.drawcursor()
 
     def flashcursor(self):
 
@@ -46,8 +51,8 @@ class TextInput(object):
         self.screen.blit(self.background,(self.x, self.y))
         self.screen.blit(self.layer,(self.x,self.y))
 
-        if self.cursorvis:
-            self.drawcursor()
+        #if self.cursorvis:
+        #    self.drawcursor()
         pygame.display.flip()
 
     def addcharatcursor(self, letter):
@@ -102,7 +107,7 @@ class TextInput(object):
 
 class VirtualKey(object):
 
-    def __init__(self, caption, x, y, w=67, h=67):
+    def __init__(self, caption, x, y, w=X_KEY, h=X_KEY):
         self.x = x
         self.y = y
         self.caption = caption
@@ -114,7 +119,7 @@ class VirtualKey(object):
         self.selected = False
         self.dirty = True
         self.keylayer = pygame.Surface((self.width,self.height)).convert()
-        self.keylayer.fill(COLOR_BLACK)
+        self.keylayer.fill(COLOR_WHITE)
         #self.keylayer.set_alpha(160)
         # Pre draw the border and store in my layer
         self.rect = pygame.draw.rect(self.keylayer, (255,255,255), (0,0,self.width,self.height), 1)
@@ -182,8 +187,9 @@ class VirtualKeyboard(object):
         self.x = 0 #TODO
         self.y = 0
         self.clock = pygame.time.Clock()
+        self.selected = (0,0)
 
-    def run(self, screen, text='',width=800,height=480):
+    def run(self, screen, text='',width=SCREEN_WIDTH,height=SCREEN_HEIGHT):
         # First, make a backup of the screen
         self.screen = screen
         self.background = pygame.Surface((width,height))
@@ -197,7 +203,7 @@ class VirtualKeyboard(object):
 
         # Shade the background surrounding the keys
         self.keylayer = pygame.Surface((width,height))
-        self.keylayer.fill(COLOR_BLACK)
+        self.keylayer.fill(COLOR_LIGHT_GRAY)
         #self.keylayer.set_alpha(200)
         self.screen.blit(self.keylayer,(self.x,self.y))
 
@@ -209,7 +215,7 @@ class VirtualKeyboard(object):
         pygame.font.init() # Just in case
         self.font = pygame.font.Font(None, 40)
 
-        self.input = TextInput(self.background,self.screen,self.text,self.x,self.y+30,width,60)
+        self.input = TextInput(self.background,self.screen,self.text,self.x,self.y+30,width,FONT_SIZE*2)
 
         self.addkeys()
 
@@ -331,58 +337,67 @@ class VirtualKeyboard(object):
 
     def addkeys(self):
 
-        x = 10
-        y = 140
+        x = 0
+        y = X_KEY*2
 
         row = ['1','2','3','4','5','6','7','8','9','0']
         for item in row:
             onekey = VirtualKey(item,self.x+x,self.y+y)
             onekey.font = self.font
             self.keys.append(onekey)
-            x += 70
+            x += X_KEY
 
         onekey = VirtualKey('<-',self.x+x,self.y+y)
         onekey.font = self.font
         onekey.bskey = True
         self.keys.append(onekey)
 
-        y += 70
-        x = 10
+        y += X_KEY
+        x = 0
 
         row = ['q','w','e','r','t','y','u','i','o','p']
         for item in row:
             onekey = VirtualKey(item,self.x+x,self.y+y)
             onekey.font = self.font
             self.keys.append(onekey)
-            x += 70
-        y += 70
-        x = 10
-        row = ['a','s','d','f','g','h','j','k','l']
-        for item in row:
-            onekey = VirtualKey(item,self.x+x,self.y+y)
-            onekey.font = self.font
-            self.keys.append(onekey)
-            x += 70
+            x += X_KEY
 
-        onekey = VirtualKey('ENTER',self.x+x,self.y+y,138)
+        onekey = VirtualKey('ENTER',self.x+x,self.y+y,h=X_KEY*2)
         onekey.font = self.font
         onekey.enter = True
         self.keys.append(onekey)
 
-        x = 10
-        y += 70
-        onekey = VirtualKey('SPACE',self.x+x,self.y+y,138)
-        onekey.font = self.font
-        self.keys.append(onekey)
-        x += 140
+        y += X_KEY
+        x = 0
+        row = ['a','s','d','f','g','h','j','k','l','ñ']
+        for item in row:
+            onekey = VirtualKey(item,self.x+x,self.y+y)
+            onekey.font = self.font
+            self.keys.append(onekey)
+            x += X_KEY
+
+
+
+
+        x = 0
+        y += X_KEY
 
         row = ['z','x','c','v','b','n','m']
         for item in row:
             onekey = VirtualKey(item,self.x+x,self.y+y)
             onekey.font = self.font
             self.keys.append(onekey)
-            x += 70
-        onekey = VirtualKey('SHIFT',self.x+x,self.y+y,138)
+            x += X_KEY
+
+        sizeX = X_KEY*4
+        onekey = VirtualKey('SHIFT',self.x+x,self.y+y,w=sizeX)
+        onekey.font = self.font
+        self.keys.append(onekey)
+
+        y += X_KEY
+        x = 0
+
+        onekey = VirtualKey('SPACE',self.x+x,self.y+y,w=X_KEY*11)
         onekey.font = self.font
         self.keys.append(onekey)
 

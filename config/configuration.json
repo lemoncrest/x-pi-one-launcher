@@ -1,36 +1,39 @@
 [
     {
-        "aid": "Nombre de usuario de la plataforma",
-        "txt": "bitstuffing",
+        "aid": "username",
+        "txt": "bitstuffin",
         "visible": true,
         "id": "surname",
         "title": "Nombre de usuario"
     },
     {
-        "title": "Activar fondo de pantalla",
+        "title": "Enable bg. picture",
         "selected": 0,
         "choices": [
             "Yes",
             "No"
         ],
         "visible": true,
-        "aid": "Desactiva o activa el fondo de pantalla customizado",
+        "aid": "Fondo de pantalla customizado",
         "id": "wallpaper"
     },
     {
         "title": "Fondo de pantalla",
-        "selected": 1,
+        "selected": 2,
         "choices": [
-            "arm.jpg",
-            "wallpaper.jpg"
+            "pixelart2.jpg",
+            "pixelart4.jpg",
+            "pixelart1.jpg",
+            "pixelart3.jpg",
+            "background1920.png"
         ],
         "visible": true,
-        "aid": "Fondo de pantalla que se muestra en el launcher",
+        "aid": "Picture",
         "folder": "wallpapers",
         "id": "wallpaper-file"
     },
     {
-        "title": "Activar musica de fondo",
+        "title": "Music",
         "selected": 0,
         "choices": [
             "Yes",
@@ -41,72 +44,55 @@
         "id": "music"
     },
     {
-        "title": "Archivo de sonido de fondo",
-        "selected": 10,
+        "title": "M. platform",
+        "selected": 8,
         "choices": [
-            "5-Free-Background-Music.mp3",
-            "1-Free-Background-Music.mp3",
-            "Oh-Wonder-Body-Gold-Louis-The-Child-Remix.mp3",
-            "4_In_1_Fun_Pack_Theme.mid",
-            "10-Best-Free-Background-Music.mp3",
-            "7-Best-Free-Background-Music.mp3",
-            "Free_Intro_Music_for_your_Video.mp3",
-            "2-Free-Background-Music.mp3",
-            "Best-Free-Background-Music.mp3",
-            "9-Best-Free-Background-Music.mp3",
-            "8-Best-Free-Background-Music.mp3",
-            "7-Best-Free-Background-Music-1.mp3",
-            "3-Free-Background-Music.mp3"
+            "arcade_29.ogg",
+            "arcade_37.ogg",
+            "arcade_24.ogg",
+            "arcade_16.ogg",
+            "arcade_12.ogg",
+            "arcade_26.ogg",
+            "arcade_8.ogg",
+            "arcade_22.ogg",
+            "arcade_28.ogg",
+            "arcade_3.ogg",
+            "arcade_15.ogg",
+            "arcade_1.ogg",
+            "arcade_39.ogg",
+            "arcade_35.ogg",
+            "arcade_41.ogg",
+            "arcade_20.ogg",
+            "arcade_25.ogg",
+            "arcade_5.ogg",
+            "arcade_27.ogg",
+            "arcade_36.ogg",
+            "arcade_38.ogg",
+            "arcade_4.ogg",
+            "arcade_11.ogg",
+            "arcade_2.ogg",
+            "arcade_23.ogg",
+            "arcade_19.ogg",
+            "arcade_10.ogg",
+            "arcade_33.ogg",
+            "arcade_17.ogg",
+            "arcade_21.ogg",
+            "arcade_6.ogg",
+            "arcade_42.ogg",
+            "arcade_9.ogg",
+            "arcade_30.ogg",
+            "arcade_13.ogg",
+            "arcade_7.ogg",
+            "arcade_32.ogg",
+            "arcade_14.ogg",
+            "arcade_34.ogg",
+            "arcade_40.ogg",
+            "arcade_18.ogg",
+            "arcade_31.ogg"
         ],
         "visible": true,
-        "aid": "Selecciona un fondo musical que desees escuchar mientras te encuentras en el launcher",
+        "aid": "M\u00fasica que desea escuchar de fondo",
         "folder": "music",
         "id": "music-file"
-    },
-    {
-        "aid": "Nombre de usuario de la plataforma GOG",
-        "txt": "",
-        "visible": true,
-        "id": "gog_user",
-        "title": "GOG user"
-    },
-    {
-        "txt": "",
-        "title": "GOG pass",
-        "visible": true,
-        "aid": "Introduzca su GOG password",
-        "password": true,
-        "id": "gog_password"
-    },
-    {
-        "txt": "/tmp/",
-        "title": "GOG download dir",
-        "visible": true,
-        "aid": "Directorio temporal donde se descarga el contenido de GOG",
-        "password": true,
-        "id": "gog_tmp"
-    },
-    {
-        "aid": "Nombre de usuario de la plataforma Itch",
-        "txt": "",
-        "visible": true,
-        "id": "itch_user",
-        "title": "Itch.io user"
-    },
-    {
-        "txt": "",
-        "title": "Itch pass",
-        "visible": true,
-        "aid": "Introduzca su Itch password",
-        "password": true,
-        "id": "itch_password"
-    },
-    {
-        "txt": "/tmp/",
-        "title": "ITCH download dir",
-        "visible": true,
-        "aid": "Directorio temporal donde se descarga el contenido de Itch",
-        "password": false,
-        "id": "itch_tmp"
     }
 ]
