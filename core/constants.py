@@ -3,7 +3,7 @@ import os
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 
 PATH = os.getcwd()
-WINDOW_SIZE = (320, 240)
+WINDOW_SIZE = (1280, 720)
 COLOR_BACKGROUND = (61, 61, 202)  # by default if there is no image to load will be shown it
 
 REMOTE_REPOSITORY = "https://gitlab.gameboyzero.es/pygames/repository/raw/master/pool.json"

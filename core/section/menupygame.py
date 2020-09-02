@@ -47,8 +47,8 @@ class MenuPygame(MainPyGame, SquaredMenu, GOGPygame, ItchPygame, RepositoryPygam
         self.loadSettings()
         self.playMusicFromSettings()
         # Create pygame screen and objects
-        self.surface = pygame.display.set_mode(WINDOW_SIZE, pygame.FULLSCREEN)
-        #self.surface = pygame.display.set_mode(WINDOW_SIZE)
+        #self.surface = pygame.display.set_mode(WINDOW_SIZE, pygame.FULLSCREEN)
+        self.surface = pygame.display.set_mode(WINDOW_SIZE)
         self.clock = pygame.time.Clock()
         pygame.display.set_caption('Menu principal')
         self.gog = None #TODO check if it could be serialized, stored, restored and synchronized with background process
@@ -71,11 +71,11 @@ class MenuPygame(MainPyGame, SquaredMenu, GOGPygame, ItchPygame, RepositoryPygam
 
     def drawMainMenu(self):
         menus = [
-            #{"title": "Itch.io (alpha)", "image": "images/itch.png", "action": self.navigateItch},
-            #{"title": "GOG (alpha)", "image": "images/GOG.png", "action": self.navigateGOG},
+            {"title": "Itch.io (alpha)", "image": "images/itch.png", "action": self.navigateItch},
+            {"title": "GOG (alpha)", "image": "images/GOG.png", "action": self.navigateGOG},
             {"title": "Wifi Configuration", "image": "images/wifi.png", "action": self.configWifi},
-            #{"title": "Remote repository", "image": "images/cloud.png", "action": self.navigateRepository},
-            #{"title": "Local", "image": "images/hdd.png", "action": self.createLocalRepo},
+            {"title": "Remote repository", "image": "images/cloud.png", "action": self.navigateRepository},
+            {"title": "Local", "image": "images/hdd.png", "action": self.createLocalRepo},
             {"title": "Settings", "image": "images/settings.png", "action": self.settingsMenu},
             {"title": "Exit", "image": "images/exit.png", "action": self.quit}
         ]
@@ -106,7 +106,7 @@ class MenuPygame(MainPyGame, SquaredMenu, GOGPygame, ItchPygame, RepositoryPygam
             self.upbar.drawWidgets()
             self.changes = False
 
-    def manageMainEvents(self, menus, visibleOptions=1):  # TODO
+    def manageMainEvents(self, menus, visibleOptions=4):  # TODO
         exit = False
         selected = 0
         self.changes = True
