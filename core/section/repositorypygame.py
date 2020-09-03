@@ -16,6 +16,8 @@ logger.addHandler(handler)
 from core.component.downloadprogressbar import DownloadProgressBar
 from core.component.simplemenu import SimpleMenu
 
+from core.effect.pixelate import pixelate
+
 class RepositoryPygame(SimpleMenu,DownloadProgressBar):
 
     def navigateRepository(self):

@@ -78,5 +78,51 @@
         "aid": "M\u00fasica que desea escuchar de fondo",
         "folder": "music",
         "id": "music-file"
+    },
+    {
+        "aid": "Nombre de usuario de la plataforma GOG",
+        "txt": "",
+        "visible": true,
+        "id": "gog_user",
+        "title": "GOG user"
+    },
+    {
+        "txt": "",
+        "title": "GOG pass",
+        "visible": true,
+        "aid": "Introduzca su GOG password",
+        "password": true,
+        "id": "gog_password"
+    },
+    {
+        "txt": "/tmp/",
+        "title": "GOG download dir",
+        "visible": true,
+        "aid": "Directorio temporal donde se descarga el contenido de GOG",
+        "password": true,
+        "id": "gog_tmp"
+    },
+    {
+        "aid": "Nombre de usuario de la plataforma Itch",
+        "txt": "",
+        "visible": true,
+        "id": "itch_user",
+        "title": "Itch.io user"
+    },
+    {
+        "txt": "",
+        "title": "Itch pass",
+        "visible": true,
+        "aid": "Introduzca su Itch password",
+        "password": true,
+        "id": "itch_password"
+    },
+    {
+        "txt": "/tmp/",
+        "title": "ITCH download dir",
+        "visible": true,
+        "aid": "Directorio temporal donde se descarga el contenido de Itch",
+        "password": false,
+        "id": "itch_tmp"
     }
 ]

@@ -7,6 +7,7 @@ from core.constants import *
 SCREEN_WIDTH = WINDOW_SIZE[0]
 SCREEN_HEIGHT = WINDOW_SIZE[1]
 X_KEY = SCREEN_WIDTH/11
+Y_KEY = X_KEY/2
 
 class TextInput(object):
 
@@ -107,7 +108,7 @@ class TextInput(object):
 
 class VirtualKey(object):
 
-    def __init__(self, caption, x, y, w=X_KEY, h=X_KEY):
+    def __init__(self, caption, x, y, w=X_KEY, h=Y_KEY):
         self.x = x
         self.y = y
         self.caption = caption
@@ -338,7 +339,7 @@ class VirtualKeyboard(object):
     def addkeys(self):
 
         x = 0
-        y = X_KEY*2
+        y = Y_KEY
 
         row = ['1','2','3','4','5','6','7','8','9','0']
         for item in row:
@@ -352,7 +353,7 @@ class VirtualKeyboard(object):
         onekey.bskey = True
         self.keys.append(onekey)
 
-        y += X_KEY
+        y += Y_KEY
         x = 0
 
         row = ['q','w','e','r','t','y','u','i','o','p']
@@ -367,7 +368,7 @@ class VirtualKeyboard(object):
         onekey.enter = True
         self.keys.append(onekey)
 
-        y += X_KEY
+        y += Y_KEY
         x = 0
         row = ['a','s','d','f','g','h','j','k','l','ñ']
         for item in row:
@@ -380,7 +381,7 @@ class VirtualKeyboard(object):
 
 
         x = 0
-        y += X_KEY
+        y += Y_KEY
 
         row = ['z','x','c','v','b','n','m']
         for item in row:
@@ -394,7 +395,7 @@ class VirtualKeyboard(object):
         onekey.font = self.font
         self.keys.append(onekey)
 
-        y += X_KEY
+        y += Y_KEY
         x = 0
 
         onekey = VirtualKey('SPACE',self.x+x,self.y+y,w=X_KEY*11)
