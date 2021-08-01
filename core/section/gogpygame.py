@@ -9,8 +9,9 @@ from core.constants import *
 from core.component.progressbar import ProgressBar
 from core.component.cardmenu import CardMenu
 
-from core.partner.gogrepo import AttrDict #issues related to read data with coded
 from core.partner.gog import GOG
+
+from core.effect.pixelate import pixelate
 
 import logging
 logging.basicConfig(level=logging.DEBUG)
@@ -25,12 +26,10 @@ class GOGPygame():
     def navigateGOG(self):
         self.main_background()
         endDays = 90
-        # check if cookies exists or is invalid dated
-        cookiesFile = os.path.join(PATH, "config", GOG.COOKIES_FILENAME)
-        login = not os.path.exists(cookiesFile) #TODO python3 issues related to timesstamp for next days in "endDays"
-        manifestFile = os.path.join(PATH, "config", GOG.MANIFEST_FILENAME)
-        update = not os.path.exists(manifestFile) #TODO
-        #login = (not os.path.exists(cookiesFile)) or (os.path.getctime(cookiesFile) < (datetime.now() - timedelta(days=endDays)))
+        
+        login = True
+        update = True
+
         logger.debug("login process %s" % str(login))
         if self.gog is None:
             username = ""
