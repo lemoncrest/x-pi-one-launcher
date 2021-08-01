@@ -133,6 +133,7 @@ class UpBar():
                 level = int(level)
             except:
                 logger.debug("couldn't parse level '%s'" % level)
+                level = 0
                 pass
             barSize = 2
             init = WINDOW_SIZE[0] - width - start + top / 2 + self.padding*2
