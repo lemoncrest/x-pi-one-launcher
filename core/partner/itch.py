@@ -35,7 +35,7 @@ class Itch():
 
     def login2(self):
         headers = {
-            'User-Agent': "Mozilla/5.0 (X11; Linux x86_64; rv:71.0) Gecko/20100101 Firefox/71.0",
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
             'Accept-Language': 'en-US,en;q=0.5',
             'Origin': 'https://itch.io',
@@ -61,7 +61,7 @@ class Itch():
             "password" : self.password
         }
 
-        cookies = ""
+        cookies = ''
 
         for key,value in response.info().items():
             if key.lower() == 'set-cookie':
@@ -92,16 +92,17 @@ class Itch():
         response = self.session.get(Itch.LOGIN_URL)
         html = response.text
         # seek for csrf
-        csrf = html[:html.find('" name="csrf_token" type="hidden"/>')]
-        csrf = csrf[csrf.rfind('<input value="') + len('<input value="'):]
-
+        csrf = html[html.find('<meta name="csrf_token" value="')+len('<meta name="csrf_token" value="'):]
+        csrf = csrf[:csrf.find('"')]
+        print("CSRF: %s" % csrf)
         form = {
             "csrf_token": csrf,
             "username": self.username,
             "password": self.password
         }
 
-        self.session.post(url=Itch.LOGIN_URL,data=form)
+        response = self.session.post(url=Itch.LOGIN_URL,data=form)
+        print(str(response.text))
 
     def getGames(self):
         if self.session is None:
@@ -209,4 +210,3 @@ class Itch():
         t.daemon = True
         t.start()
         logger.info("download launched!")
-
